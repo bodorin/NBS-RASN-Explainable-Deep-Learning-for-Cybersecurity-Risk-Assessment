@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta author="Nicolaie Popescu-Bodorin">
+<meta about="Companion File For: Neuro-Bayesian-Symbolic Residual Attention Shallow Network: Explainable Deep Learning for Cybersecurity Risk Assessment - Nicolaie Popescu-Bodorin & Madeleine Togher">
+<meta about="Companion File For: NBS-RASN Propagation Simulator: Step-by-Step Execution Trace for npm Ecosystem and WordPress+Plugins">
+<title>NBS-RASN · Network Graph  · Nicolaie Popescu-Bodorin  · bodorin@live.com</title>
+</head>
+<body>
+<h3 class="sr-only"><OL><u>NBS-RASN · Network Graph</u>, Companion File For: 
+	<li> Neuro-Bayesian-Symbolic Residual Attention Shallow Network: Explainable Deep Learning for Cybersecurity Risk Assessment - Extended Talk on the topic, IJCCC, 2026/2027.
+	</li><li>NBS-RASN: An Interpretable Shallow Architecture for Cyber-Risk Forecasting - Short Talk on the topic, 2026 11th Intl. Conf. on Computers Communications and Control (ICCCC 2026).
+	</LI><LI>NBS-RASN Propagation Simulator: Step-by-Step Execution Trace on NBS-RASN (companion file for the two above)
+	</LI></OL>
+	NBS-RASN network — 12 layers (L0-to-L11), 80 neurons, 195 connections, Nicolaie Popescu-Bodorin & Madeleine Togher, 2026. 
+	<br>Click any neuron to isolate its connections and read its axiom.
+</h3>
+
+<!--<h3 class="sr-only">NBS-RASN network — 12 layers, 80 neurons, 195 connections. Click any neuron to isolate its connections and read its axiom.</h3>-->
+<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:2px 0 6px">
+  <!--<span style="font-size:13px;font-weight:500;color:var(--color-text-primary)">NBS-RASN  ·  L0→L11  ·  80 neurons  ·  195 connections</span>-->
+  <span style="margin-left:auto;display:flex;gap:10px;flex-wrap:wrap;font-size:22px;color:var(--color-text-secondary);align-items:center">
+    <span><svg width="18" height="4" style="vertical-align:middle"><line x1="0" y1="2" x2="18" y2="2" stroke="#8a8880" stroke-width="1.2"/></svg> data</span>
+    <span><svg width="18" height="4" style="vertical-align:middle"><line x1="0" y1="2" x2="18" y2="2" stroke="#EF9F27" stroke-width="2" stroke-dasharray="4 2"/></svg> ctrl</span>
+    <span><svg width="18" height="5" style="vertical-align:middle"><line x1="0" y1="2.5" x2="18" y2="2.5" stroke="#E24B4A" stroke-width="3"/></svg> residual</span>
+    <span><svg width="18" height="4" style="vertical-align:middle"><line x1="0" y1="2" x2="18" y2="2" stroke="#9575cd" stroke-width="2"/></svg> feedback</span>
+    <span><svg width="18" height="4" style="vertical-align:middle"><line x1="0" y1="2" x2="18" y2="2" stroke="#1D9E75" stroke-width="2" stroke-dasharray="5 2"/></svg> skip</span>
+  </span>
+</div>
+<!--<div id="ninfo" style="font-size:11px;color:var(--color-text-secondary);min-height:16px;padding:1px 0 5px;font-family:var(--font-mono)">click any neuron to highlight its connections and read its axiom</div>
+-->
+<div style="overflow-x:auto;border:0.5px solid var(--color-border-tertiary);border-radius:8px">
+  <svg id="nnet" width="1510" height="790" style="display:block">
+    <defs>
+      <marker id="ma" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+<script>
+(function(){
+const LAYERS=[
+  {id:0,name:'Input',      n:8, c:'#378ADD'},
+  {id:1,name:'Gatekeeper', n:6, c:'#E24B4A'},
+  {id:2,name:'Causal',     n:11,c:'#7F77DD'},
+  {id:3,name:'Lang enc',   n:9, c:'#1D9E75'},
+  {id:4,name:'Factor',     n:5, c:'#639922'},
+  {id:5,name:'Det wt',     n:7, c:'#BA7517'},
+  {id:6,name:'Filter',     n:5, c:'#888780'},
+  {id:7,name:'Exp adj',    n:8, c:'#D4537E'},
+  {id:8,name:'Cross-val',  n:6, c:'#185FA5'},
+  {id:9,name:'Repr',       n:4, c:'#0F6E56'},
+  {id:10,name:'Format',    n:5, c:'#3B6D11'},
+  {id:11,name:'Output',    n:6, c:'#534AB7'},
+];
+const LBL={
+  'N0.1':'lang','N0.2':'surf','N0.3':'eco','N0.4':'cve','N0.5':'sec','N0.6':'strc','N0.7':'inc','N0.8':'qual',
+  'N1.1':'Φ_A1','N1.2':'Φ_A2','N1.3':'Φ_A3','N1.4':'Φ_A4','N1.5':'Φ_A5','N1.6':'gate',
+  'N2.1':'OOB-W','N2.2':'Heap','N2.3':'UAF','N2.4':'PHP','N2.5':'J-ds','N2.6':'J-EL',
+  'N2.7':'eco','N2.8':'auth','N2.9':'RBAC','N2.10':'JS-π','N2.11':'eval',
+  'N3.1':'C++','N3.2':'PHP','N3.3':'Java','N3.4':'JS','N3.5':'Py','N3.6':'Go','N3.7':'Rb','N3.8':'1-lg','N3.9':'n-lg',
+  'N4.1':'f_lg','N4.2':'f_sf','N4.3':'f_ec','N4.4':'f_cv','N4.5':'f_sc',
+  'N5.1':'w·lg','N5.2':'w·sf','N5.3':'w·ec','N5.4':'w·cv','N5.5':'w·sc','N5.6':'Σw=1','N5.7':'det',
+  'N6.1':'SC1','N6.2':'SC2','N6.3':'SC3','N6.4':'SC4','N6.5':'Φ_f',
+  'N7.1':'α_B','N7.2':'α_P','N7.3':'α_S','N7.4':'α_D','N7.5':'α_E','N7.6':'α_I','N7.7':'adj','N7.8':'fin',
+  'N8.1':'CVM1','N8.2':'CVM2','N8.3':'CVM3','N8.4':'CVM4','N8.5':'CVM5','N8.6':'η_fb',
+  'N9.1':'OW-c','N9.2':'lg-c','N9.3':'dep','N9.4':'gap',
+  'N10.1':'≥9C','N10.2':'≥8H','N10.3':'≥7M','N10.4':'<7m','N10.5':'fmt',
+  'N11.1':'scr','N11.2':'risk','N11.3':'CWE','N11.4':'OWS','N11.5':'mit','N11.6':'scn',
+};
+const AX={
+  'N0.1':'Ax0.3 · n_lang(p)∈S_Λ={C_Cpp,PHP,Java,JS,Py,Go,Ruby}',
+  'N0.2':'Ax0.1 · f_surf(p)∈[1,10]  attack surface',
+  'N0.3':'Ax0.1 · f_eco(p)∈[1,10]  ecosystem complexity',
+  'N0.4':'Ax0.1 · f_cve(p)∈[1,10]  historical CVE rate',
+  'N0.5':'Ax0.1 · f_sec(p)∈[1,10]  security program gap',
+  'N0.6':'Ax0.3 · b_struct(p)  structural properties',
+  'N0.7':'Ax0.3 · N_inc(p)⊆S_C  incident CVE set',
+  'N0.8':'Ax0.2 · q(p)∈S_B×S_P×S_S×S_D×S_E×S_I  amplifier levels',
+  'N1.1':'Ax1.1 · Φ_A1: vocabulary precision — predictions grounded in CWE/OWASP',
+  'N1.2':'Ax1.2 · Φ_A2: causal primacy — causal chains, not correlation',
+  'N1.3':'Ax1.3 · Φ_A3: falsifiability — stated CWE set is falsification condition',
+  'N1.4':'Ax1.4 · Φ_A4: decomp separation — det(p) and adj(p) both reported',
+  'N1.5':'Ax1.5 · Φ_A5: transparency — all 11 hidden params declared in manifest',
+  'N1.6':'Ax1.6 · gate(p)=Φ_A1∧Φ_A2∧Φ_A3∧Φ_A4∧Φ_A5  CTRL to all L2 neurons',
+  'N2.1':'Ax2.1 · enables(C_Cpp,787)∧enables(C_Cpp,120) — OOB Write / Classic BoF',
+  'N2.2':'Ax2.2 · enables(C_Cpp,121)∧enables(C_Cpp,122) — Stack / Heap Overflow',
+  'N2.3':'Ax2.3 · enables(C_Cpp,416)∧enables(C_Cpp,125) — UAF / OOB Read',
+  'N2.4':'Ax2.4 · enables(PHP,89)∧enables(PHP,79)∧enables(PHP,352) — injection triad',
+  'N2.5':'Ax2.5 · enables(Java,502)∧prevents(Java,787,416) — unsafe deserialization',
+  'N2.6':'Ax2.6 · enables(Java,94) — CWE-94 via OGNL/SpEL expression language',
+  'N2.7':'Ax2.7 · causal_link(large_ecosystem,1395) — CWE-1395 supply chain',
+  'N2.8':'Ax2.8 · causal_link(default_no_auth,306) — CWE-306 missing authentication',
+  'N2.9':'Ax2.9 · causal_link(complex_RBAC,862,284) — authorization failures',
+  'N2.10':'Ax2.10 · enables(JS,1321)∧enables(JS,94) — CWE-1321 prototype pollution',
+  'N2.11':'Ax2.11 · enables(Py,94)∧causal_link(dyn_eval,94) — SSTI / dynamic exec',
+  'N3.1':'Ax3.1 · ρ(C/C++)=10','N3.2':'Ax3.2 · ρ(PHP)=9',
+  'N3.3':'Ax3.3 · ρ(Java)=7','N3.4':'Ax3.4 · ρ(JS)=7',
+  'N3.5':'Ax3.5 · ρ(Python)=6','N3.6':'Ax3.6 · ρ(Go)=4','N3.7':'Ax3.7 · ρ(Ruby)=6',
+  'N3.8':'Ax3.8 · |Lang(p)|=1 → f_lang=ρ(n_lang(p))  single-language rule',
+  'N3.9':'Ax3.9 · |Lang(p)|>1 → f_lang=Σfrac_i·ρ(l_i)+δ  multi-language rule',
+  'N4.1':'Ax4.1 · f_lang∈[1,10] (from L3)','N4.2':'Ax4.2 · f_surf∈[1,10]',
+  'N4.3':'Ax4.3 · f_eco∈[1,10]','N4.4':'Ax4.4 · f_cve∈[1,10]','N4.5':'Ax4.5 · f_sec∈[1,10]',
+  'N5.1':'Ax5.1 · w_lang=0.25 → term=0.25·f_lang','N5.2':'Ax5.2 · w_surf=0.25',
+  'N5.3':'Ax5.3 · w_eco=0.20','N5.4':'Ax5.4 · w_cve=0.20','N5.5':'Ax5.5 · w_sec=0.10',
+  'N5.6':'Ax5.6 · Σw_k=1  normalisation check',
+  'N5.7':'Ax5.7 · det(p)=0.25f_lg+0.25f_sf+0.20f_ec+0.20f_cv+0.10f_sc  → RESIDUAL→N7.8',
+  'N6.1':'Ax6.1 · SC1: ∀p. ∃o∈S_O. covers(p,o)  OWASP coverage',
+  'N6.2':'Ax6.2 · SC2: ∀l∈S_Λ. ∃p. lang(p)=l  language coverage',
+  'N6.3':'Ax6.3 · SC3: ∀p. ∃c∈S_C. confirmed(p,c)  incident anchoring',
+  'N6.4':'Ax6.4 · SC4: confidence(p)≥0.75  confidence floor',
+  'N6.5':'Ax6.5 · Φ_filter=SC1∧SC2∧SC3∧SC4',
+  'N7.1':'Ax7.1 · α_B: NONE→0 LOW→.10 MED→.25 HIGH→.50 CRIT→.60',
+  'N7.2':'Ax7.2 · α_P: SLOW→0 MOD→.10 FAST→.20 INSTANT→.30',
+  'N7.3':'Ax7.3 · α_S: INCIDENTAL→0 MIXED→.20 STRUCTURAL→.40 FOUNDATIONAL→.60',
+  'N7.4':'Ax7.4 · α_D: NONE→0 PARTIAL→.20 FULL→.70',
+  'N7.5':'Ax7.5 · α_E: INDIVIDUAL→0 TARGETED→.20 MASS→.40',
+  'N7.6':'Ax7.6 · α_I: LOW→0 MED→.10 HIGH→.30 CRIT→.55',
+  'N7.7':'Ax7.7 · adj(p)=α_B+α_P+α_S+α_D+α_E+α_I',
+  'N7.8':'Ax7.8 · final(p)=clamp(det+adj,0,10)  receives RESIDUAL from N5.7',
+  'N8.1':'Ax8.1 · CVM1: |pred∩conf|/|pred|≥0.80  hold-out precision',
+  'N8.2':'Ax8.2 · CVM2: ρ_Sp(rank(O7),rank(CVE_freq))≥0.70',
+  'N8.3':'Ax8.3 · CVM3: rank_inversion≤0.20  temporal holdout',
+  'N8.4':'Ax8.4 · CVM4: ICC(O7,expert_panel)≥0.75',
+  'N8.5':'Ax8.5 · CVM5: |adj(p)−Σα_j(ℓ_j)|≤ε  decomp sanity',
+  'N8.6':'Ax8.6 · η_fb: ¬(CVM1∧…∧CVM4)→update(ℓ_j)  FEEDBACK→N7.1–N7.6',
+  'N9.1':'Ax9.1 · ∀o∈S_O. |{p|covers(p,o)}|≥2  OWASP coverage',
+  'N9.2':'Ax9.2 · ∀l∈S_Λ. ∃p. lang(p)=l  language coverage',
+  'N9.3':'Ax9.3 · |deploy_types|≥5  deployment diversity',
+  'N9.4':'Ax9.4 · G={A09-weak,Ruby-absent}  gap identification',
+  'N10.1':'Ax10.1 · classify(s)=CRITICAL iff s≥9.0',
+  'N10.2':'Ax10.2 · classify(s)=HIGH iff 8.0≤s<9.0',
+  'N10.3':'Ax10.3 · classify(s)=MEDIUM iff 7.0≤s<8.0',
+  'N10.4':'Ax10.4 · classify(s)=MODERATE iff s<7.0',
+  'N10.5':'Ax10.5 · O_10=(final,classify,O_2,{o|covers},adj_decomp)',
+  'N11.1':'Ax11.1 · output_score=final(p)  receives direct SKIP from N7.8',
+  'N11.2':'Ax11.2 · output_risk_level=classify(final(p))',
+  'N11.3':'Ax11.3 · output_CWE=pred_CWE  receives SKIP from N2.7,N2.8,N2.9,N2.10',
+  'N11.4':'Ax11.4 · output_OWASP=pred_OWASP',
+  'N11.5':'Ax11.5 · output_mitig=gen_mitigations(pred_CWE)',
+  'N11.6':'Ax11.6 · output_scenarios=Step11_link(p)',
+};
+const KEY_NEURONS=new Set(['N1.6','N5.7','N6.5','N7.7','N7.8','N8.6']);
+
+const LX=Array.from({length:12},(_,k)=>64+k*126);
+const SP=56,MN=11;
+function nsy(n){return 56+SP*(MN-n)/2;}
+function ny(i,n){return nsy(n)+i*SP;}
+
+const pos={};
+LAYERS.forEach(L=>{
+  for(let i=0;i<L.n;i++){
+    const id=`N${L.id}.${i+1}`;
+    pos[id]={x:LX[L.id],y:ny(i,L.n),c:L.c};
+  }
+});
+
+const EL=[];
+function cc(fs,ts,type){for(const f of fs)for(const t of ts)EL.push({f,t,type});}
+
+cc(['N0.1'],['N1.1','N1.2','N1.3'],'DATA');
+cc(['N0.2','N0.3','N0.4'],['N1.1','N1.4'],'DATA');
+cc(['N0.5'],['N1.4'],'DATA');
+cc(['N0.6'],['N1.2'],'DATA');
+cc(['N0.7'],['N1.3'],'DATA');
+cc(['N1.1','N1.2','N1.3','N1.4','N1.5'],['N1.6'],'DATA');
+cc(['N0.1'],['N2.1','N2.2','N2.3','N2.4','N2.5','N2.6','N2.10','N2.11'],'DATA');
+cc(['N0.6'],['N2.7','N2.8','N2.9'],'DATA');
+cc(['N0.8'],['N2.7','N2.8','N2.9'],'DATA');
+cc(['N1.6'],['N2.1','N2.2','N2.3','N2.4','N2.5','N2.6','N2.7','N2.8','N2.9','N2.10','N2.11'],'CTRL');
+cc(['N0.1'],['N3.1','N3.2','N3.3','N3.4','N3.5','N3.6','N3.7'],'DATA');
+cc(['N3.1','N3.2','N3.3','N3.4','N3.5','N3.6','N3.7'],['N3.8','N3.9'],'DATA');
+cc(['N3.8','N3.9'],['N4.1'],'DATA');
+cc(['N0.2'],['N4.2'],'DATA');cc(['N0.3'],['N4.3'],'DATA');
+cc(['N0.4'],['N4.4'],'DATA');cc(['N0.5'],['N4.5'],'DATA');
+cc(['N4.1'],['N5.1'],'DATA');cc(['N4.2'],['N5.2'],'DATA');
+cc(['N4.3'],['N5.3'],'DATA');cc(['N4.4'],['N5.4'],'DATA');
+cc(['N4.5'],['N5.5'],'DATA');
+cc(['N5.1','N5.2','N5.3','N5.4','N5.5'],['N5.6','N5.7'],'DATA');
+cc(['N5.6'],['N5.7'],'DATA');
+EL.push({f:'N5.7',t:'N7.8',type:'RESIDUAL'});
+EL.push({f:'N5.7',t:'N6.4',type:'DATA'});
+cc(['N4.2','N4.3','N4.4'],['N6.4'],'DATA');
+cc(['N2.1','N2.2','N2.3','N2.4','N2.5','N2.6','N2.7','N2.8','N2.9','N2.10','N2.11'],['N6.1'],'DATA');
+cc(['N3.1','N3.2','N3.3','N3.4','N3.5','N3.6','N3.7'],['N6.2'],'DATA');
+EL.push({f:'N0.7',t:'N6.3',type:'DATA'});
+EL.push({f:'N0.1',t:'N6.2',type:'DATA'});
+cc(['N6.1','N6.2','N6.3','N6.4'],['N6.5'],'DATA');
+cc(['N0.8'],['N7.1','N7.2','N7.3','N7.4','N7.5','N7.6'],'DATA');
+cc(['N7.1','N7.2','N7.3','N7.4','N7.5','N7.6'],['N7.7'],'DATA');
+EL.push({f:'N7.7',t:'N7.8',type:'DATA'});
+cc(['N6.5'],['N8.1','N8.2','N8.3','N8.4','N8.5'],'DATA');
+cc(['N7.8'],['N8.1','N8.2','N8.3','N8.4','N8.5'],'DATA');
+cc(['N8.1','N8.2','N8.3','N8.4','N8.5'],['N8.6'],'DATA');
+cc(['N8.6'],['N7.1','N7.2','N7.3','N7.4','N7.5','N7.6'],'FEEDBACK');
+cc(['N6.5'],['N9.1','N9.2','N9.3','N9.4'],'DATA');
+cc(['N7.8'],['N9.1','N9.2','N9.3','N9.4'],'DATA');
+cc(['N2.1','N2.2','N2.3','N2.4','N2.5','N2.6','N2.7','N2.8','N2.9','N2.10','N2.11'],['N10.5'],'DATA');
+cc(['N7.8'],['N10.1','N10.2','N10.3','N10.4','N10.5'],'DATA');
+cc(['N9.1','N9.2','N9.3','N9.4'],['N10.5'],'DATA');
+cc(['N10.1','N10.2','N10.3','N10.4'],['N10.5'],'DATA');
+cc(['N10.5'],['N11.1','N11.2','N11.3','N11.4','N11.5','N11.6'],'DATA');
+cc(['N10.1','N10.2','N10.3','N10.4'],['N11.2'],'DATA');
+EL.push({f:'N7.8',t:'N11.1',type:'SKIP'});
+cc(['N2.7','N2.10','N2.8','N2.9'],['N11.3'],'SKIP');
+
+const ADJ={};
+EL.forEach((e,i)=>{
+  (ADJ[e.f]||(ADJ[e.f]=[])).push(i);
+  (ADJ[e.t]||(ADJ[e.t]=[])).push(i);
+});
+
+const NS='http://www.w3.org/2000/svg';
+const svg=document.getElementById('nnet');
+function mk(tag,a,p){
+  const e=document.createElementNS(NS,tag);
+  for(const[k,v]of Object.entries(a||{}))e.setAttribute(k,v);
+  (p||svg).appendChild(e);
+  return e;
+}
+
+const EST={
+  DATA:    {s:'#9a9890',w:0.7,o:0.16},
+  CTRL:    {s:'#EF9F27',w:1.6,o:0.82,da:'5,2'},
+  RESIDUAL:{s:'#E24B4A',w:3.2,o:0.93},
+  FEEDBACK:{s:'#9575cd',w:2.2,o:0.88},
+  SKIP:    {s:'#1D9E75',w:2.0,o:0.84,da:'5,2'},
+};
+
+function mpath(f,t,type){
+  const p1=pos[f],p2=pos[t];
+  if(!p1||!p2)return null;
+  const{x:x1,y:y1}=p1,{x:x2,y:y2}=p2;
+  if(type==='FEEDBACK'){
+    const by=760;
+    return`M${x1},${y1} C${x1+55},${by} ${x2-55},${by} ${x2},${y2}`;
+  }
+  if(type==='RESIDUAL'){
+    return`M${x1},${y1} C${x1+100},22 ${x2-100},22 ${x2},${y2}`;
+  }
+  if(type==='SKIP'){
+    const ay=Math.min(y1,y2)-48;
+    return`M${x1},${y1} Q${(x1+x2)/2},${ay} ${x2},${y2}`;
+  }
+  if(x1===x2){
+    const cx=x1+50;
+    return`M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}`;
+  }
+  const cpx=(x1+x2)/2;
+  return`M${x1},${y1} C${cpx},${y1} ${cpx},${y2} ${x2},${y2}`;
+}
+
+const bgG=mk('g');
+LAYERS.forEach(L=>{
+  const x=LX[L.id];
+  mk('rect',{x:x-42,y:42,width:84,height:640,rx:6,
+    fill:L.c,'fill-opacity':0.07,stroke:L.c,'stroke-opacity':0.22,'stroke-width':0.5},bgG);
+  const t=mk('text',{x,y:37,'text-anchor':'middle','font-size':9.5,fill:L.c,'font-weight':600},bgG);
+  t.textContent=`L${L.id}`;
+  const t2=mk('text',{x,y:698,'text-anchor':'middle','font-size':8.5,fill:L.c},bgG);
+  t2.textContent=L.name;
+});
+
+const edgeG=mk('g');
+const EP=[];
+['DATA','CTRL','SKIP','RESIDUAL','FEEDBACK'].forEach(type=>{
+  EL.forEach((e,i)=>{
+    if(e.type!==type)return;
+    const d=mpath(e.f,e.t,type);
+    if(!d)return;
+    const st=EST[type];
+    const attrs={d,fill:'none',stroke:st.s,'stroke-width':st.w,'stroke-opacity':st.o,'marker-end':'url(#ma)'};
+    if(st.da)attrs['stroke-dasharray']=st.da;
+    EP[i]=mk('path',attrs,edgeG);
+  });
+});
+
+const neuG=mk('g');
+const NE={};
+let active=null;
+
+Object.entries(pos).forEach(([id,{x,y,c}])=>{
+  const isKey=KEY_NEURONS.has(id);
+  const g=mk('g',{cursor:'pointer'},neuG);
+  if(isKey)mk('circle',{cx:x,cy:y,r:18,fill:'none',stroke:c,'stroke-width':1.5,'stroke-opacity':0.45},g);
+  const circ=mk('circle',{cx:x,cy:y,r:14,fill:c,'fill-opacity':0.88,stroke:c,'stroke-width':1.5},g);
+  const t1=mk('text',{x,y:y-1.5,'text-anchor':'middle','dominant-baseline':'auto',
+    'font-size':7.5,fill:'#fff','font-weight':500,'pointer-events':'none',
+    style:'font-family:var(--font-mono,monospace)'},g);
+  t1.textContent=LBL[id]||'?';
+  const t2=mk('text',{x,y:y+7.5,'text-anchor':'middle','dominant-baseline':'auto',
+    'font-size':6.5,fill:'rgba(255,255,255,0.72)','pointer-events':'none'},g);
+  t2.textContent=id;
+  NE[id]={g,circ};
+  g.addEventListener('mouseenter',()=>{if(!active)hl(id,false);});
+  g.addEventListener('mouseleave',()=>{if(!active)rst();});
+  g.addEventListener('click',()=>{
+    if(active===id){active=null;rst();}
+    else{active=id;hl(id,true);}
+  });
+});
+
+function hl(id,sticky){
+  const ci=new Set(ADJ[id]||[]);
+  const cn=new Set([id,...(ADJ[id]||[]).flatMap(i=>[EL[i].f,EL[i].t])]);
+  EL.forEach((e,i)=>{
+    const p=EP[i];if(!p)return;
+    const st=EST[e.type];
+    if(ci.has(i)){p.setAttribute('stroke-opacity',Math.min(st.o*2.5,1));p.setAttribute('stroke-width',st.w*2.2);}
+    else{p.setAttribute('stroke-opacity',0.025);}
+  });
+  Object.entries(NE).forEach(([nid,{circ}])=>{
+    circ.setAttribute('fill-opacity',cn.has(nid)?0.96:0.18);
+  });
+  const el=(ADJ[id]||[]).length;
+  document.getElementById('ninfo').textContent=`[${id}]  ${AX[id]||id}  ·  ${el} edge${el!==1?'s':''}`;
+  document.getElementById('ninfo').style.fontWeight=sticky?'500':'400';
+}
+function rst(){
+  EL.forEach((e,i)=>{const p=EP[i];if(!p)return;const st=EST[e.type];p.setAttribute('stroke-opacity',st.o);p.setAttribute('stroke-width',st.w);});
+  Object.values(NE).forEach(({circ})=>circ.setAttribute('fill-opacity',0.88));
+  document.getElementById('ninfo').textContent='click any neuron to highlight its connections and read its axiom';
+  document.getElementById('ninfo').style.fontWeight='400';
+}
+})();
+</script>
+</body>

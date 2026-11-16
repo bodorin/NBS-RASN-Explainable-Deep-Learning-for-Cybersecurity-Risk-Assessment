@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta author="Nicolaie Popescu-Bodorin">
+<meta about="Companion File For: Neuro-Bayesian-Symbolic Residual Attention Shallow Network: Explainable Deep Learning for Cybersecurity Risk Assessment - Nicolaie Popescu-Bodorin & Madeleine Togher">
+<meta about="Companion File For: NBS-RASN Propagation Simulator: Step-by-Step Execution Trace for npm Ecosystem and WordPress+Plugins">
+<title>NBS-RASN · Propagation Simulator  · Nicolaie Popescu-Bodorin, bodorin@live.com</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0f1117;color:#e2e8f0;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+#header{padding:10px 16px;background:#1a1d27;border-bottom:1px solid #2d3148;display:flex;align-items:center;gap:12px;flex-shrink:0}
+#header h1{font-size:14px;font-weight:600;color:#a78bfa;letter-spacing:.4px}
+#header span{font-size:11px;color:#64748b}
+#controls{display:flex;align-items:center;gap:8px;margin-left:auto}
+select{background:#252838;border:1px solid #3d4263;color:#e2e8f0;padding:5px 8px;border-radius:6px;font-size:12px;cursor:pointer;min-width:180px}
+select option{background:#252838}
+button{padding:5px 12px;border-radius:6px;border:none;font-size:12px;cursor:pointer;font-weight:500;transition:all.15s}
+#btn-run{background:#6d28d9;color:#fff}
+#btn-run:hover{background:#7c3aed}
+#btn-run:disabled{background:#374151;color:#6b7280;cursor:default}
+#btn-next{background:#1e3a5f;color:#93c5fd;border:1px solid #3b82f6}
+#btn-next:hover:not(:disabled){background:#1e40af}
+#btn-next:disabled{background:#1a1d27;color:#374151;cursor:default;border-color:#374151}
+#btn-reset{background:#1e293b;color:#94a3b8;border:1px solid #334155}
+#btn-reset:hover{background:#334155}
+.spd-label{font-size:11px;color:#64748b}
+input[type=range]{width:80px;accent-color:#6d28d9}
+#main{display:flex;flex:1;overflow:hidden}
+#net-wrap{flex:1;overflow:auto;padding:8px 4px 8px 8px;min-width:0}
+#net-wrap svg{display:block}
+#right{width:320px;display:flex;flex-direction:column;border-left:1px solid #2d3148;flex-shrink:0}
+#step-bar{padding:8px 12px;background:#1a1d27;border-bottom:1px solid #2d3148;font-size:11px;color:#64748b;display:flex;align-items:center;gap:8px}
+#step-label{color:#a78bfa;font-weight:600;font-size:11px}
+#step-prog{flex:1;height:4px;background:#252838;border-radius:2px;overflow:hidden}
+#step-fill{height:100%;background:#6d28d9;width:0%;transition:width .3s}
+#log-area{flex:1;font-family:monospace;font-size:10.5px;background:#0f1117;border:none;color:#94a3b8;padding:8px 10px;resize:none;outline:none;overflow-y:auto;line-height:1.6;white-space:pre}
+#output-panel{background:#1a1d27;border-top:1px solid #2d3148;padding:10px 12px;font-size:11px;display:none}
+#output-panel .o-title{color:#a78bfa;font-weight:600;margin-bottom:6px}
+#output-panel .o-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.o-card{background:#252838;border-radius:6px;padding:6px 10px}
+.o-card .ok{color:#64748b;font-size:10px;margin-bottom:2px}
+.o-card .ov{font-weight:600;font-size:13px}
+.ov.CRITICAL{color:#f87171}
+.ov.HIGH{color:#fb923c}
+.ov.MEDIUM{color:#facc15}
+.ov.MODERATE{color:#4ade80}
+
+/* Network SVG neuron/edge states */
+.neu-active circle.nu{animation:npulse 0.7s ease-in-out infinite;filter:drop-shadow(0 0 8px var(--nc))}
+.neu-done circle.nu{fill-opacity:.95;stroke-width:2.5}
+.neu-dim circle.nu{fill-opacity:.18;stroke-opacity:.18}
+.neu-dim text{opacity:.18}
+.edge-active{animation:eflow .4s linear infinite!important;stroke-opacity:1!important;stroke-width:inherit}
+.edge-done{stroke-opacity:.55!important}
+.edge-dim{stroke-opacity:.04!important}
+@keyframes npulse{0%,100%{transform-origin:center;transform:scale(1)}50%{transform:scale(1.15)}}
+@keyframes eflow{to{stroke-dashoffset:-20}}
+.val-tag{font-size:8.5px;font-family:monospace;fill:#e2e8f0;font-weight:600;pointer-events:none;opacity:0;transition:opacity .4s}
+.val-tag.show{opacity:1}
+</style>
+</head>
+<body>
+<div id="header">
+  <h1><OL><b>NBS-RASN Propagation Simulator: Step-by-Step Execution Trace</b>; Companion File For:  
+	<li> Neuro-Bayesian-Symbolic Residual Attention Shallow Network: Explainable Deep Learning for Cybersecurity Risk Assessment - Extended Talk on the topic, IJCCC, 2026/2027.
+	</li><li>NBS-RASN: An Interpretable Shallow Architecture for Cyber-Risk Forecasting - Short Talk on the topic, 2026 11th Intl. Conf. on Computers Communications and Control (ICCCC 2026). 
+	</li><li>NBS-RASN · Network Graph (companion file on its own for the two above).
+	</li>
+</OL>	
+OSCPM v1.0 · 12 layers · 80 neurons · 195 connections, N.Popescu-Bodorin & M.Togher, 2026.
+  </h1>
+  <!--<span>OSCPM v1.0 · 12 layers · 80 neurons · 195 connections</span>-->
+  <div id="controls">
+    <select id="proj-sel"></select>
+    <button id="btn-run">▶ Run</button>
+    <button id="btn-next" >Step ▷</button><!--disabled - l-am inlaturat antireset-->
+    <button id="btn-reset">↺ Reset</button>
+    <span class="spd-label">Speed</span>
+    <input type="range" id="speed" min="0.3" max="3" step="0.1" value="1">
+  </div>
+</div>
+<div id="main">
+  <div id="net-wrap"><svg id="nnet" width="1510" height="760" xmlns="http://www.w3.org/2000/svg">
+    <defs><marker id="ma" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker></defs>
+  </svg></div>
+  <div id="right">
+    <div id="step-bar">
+      <span id="step-label">Ready</span>
+      <div id="step-prog"><div id="step-fill"></div></div>
+      <span id="step-num">0/13</span>
+    </div>
+    <textarea id="log-area" readonly>Select a project and press ▶ Run to begin simulation.
+</textarea>
+    <div id="output-panel">
+      <div class="o-title">▪ Network Output</div>
+      <div class="o-grid" id="o-grid"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// PROJECT DATA  (from OSCPM v1.0 ontology)
+// ═══════════════════════════════════════════
+const PROJECTS=[
+{id:"npm-ecosystem",name:"npm Ecosystem",lang:"JavaScript",langs:["JavaScript"],
+ f:{lang:7,surf:10,eco:10,cve:9,sec:5},det:8.55,adj:0.95,final:9.50,risk:"CRITICAL",conf:0.93,
+ cwes:["CWE-94","CWE-400","CWE-79","CWE-502","CWE-1395"],owasps:["A03","A05","A08"],cvm:"CONFIRMED",
+ amps:{"blast-radius":{l:"CRITICAL",c:0.50},"propagation-speed":{l:"INSTANT",c:0.25},"structural-nature":{l:"STRUCTURAL",c:0.20}},
+ evidence:"event-stream, ua-parser-js, colors.js/node-ipc confirm supply-chain CWE-1395"},
+{id:"wordpress-plugins",name:"WordPress + Plugins",lang:"PHP",langs:["PHP","JavaScript"],
+ f:{lang:9,surf:10,eco:10,cve:10,sec:6},det:9.35,adj:0.05,final:9.40,risk:"CRITICAL",conf:0.95,
+ cwes:["CWE-79","CWE-89","CWE-352","CWE-434","CWE-862"],owasps:["A01","A05","A07"],cvm:"CONFIRMED",
+ amps:{"blast-radius":{l:"CRITICAL",c:0.05}},
+ evidence:"CVE-2022-21661 (SQLi), CVE-2023-2745 confirm all predictions"},
+{id:"exim-mta",name:"Exim MTA",lang:"C",langs:["C"],
+ f:{lang:10,surf:9,eco:2,cve:10,sec:5},det:7.65,adj:1.65,final:9.30,risk:"CRITICAL",conf:0.91,
+ cwes:["CWE-120","CWE-787","CWE-78","CWE-416"],owasps:["A05","A10"],cvm:"CONFIRMED",
+ amps:{"default-exposure":{l:"FULL",c:0.60},"blast-radius":{l:"HIGH",c:0.50},"structural-nature":{l:"STRUCTURAL",c:0.35},"exploitation-pattern":{l:"MASS",c:0.20}},
+ evidence:"CVE-2019-10149, CVE-2020-28007–28026 batch confirm"},
+{id:"imagemagick",name:"ImageMagick",lang:"C",langs:["C","C++"],
+ f:{lang:10,surf:9,eco:3,cve:9,sec:5},det:7.65,adj:1.55,final:9.20,risk:"CRITICAL",conf:0.94,
+ cwes:["CWE-78","CWE-120","CWE-787","CWE-22"],owasps:["A05","A10","A06"],cvm:"CONFIRMED",
+ amps:{"blast-radius":{l:"CRITICAL",c:0.60},"structural-nature":{l:"FOUNDATIONAL",c:0.40},"exploitation-pattern":{l:"MASS",c:0.35},"default-exposure":{l:"PARTIAL",c:0.20}},
+ evidence:"CVE-2016-3714 (ImageTragick) confirmed CWE-78 prediction"},
+{id:"apache-log4j2",name:"Apache Log4j 2",lang:"Java",langs:["Java"],
+ f:{lang:7,surf:8,eco:8,cve:9,sec:6},det:7.75,adj:1.35,final:9.10,risk:"CRITICAL",conf:0.97,
+ cwes:["CWE-94","CWE-20","CWE-400"],owasps:["A05","A03","A06"],cvm:"CONFIRMED",
+ amps:{"blast-radius":{l:"CRITICAL",c:0.55},"structural-nature":{l:"FOUNDATIONAL",c:0.40},"propagation-speed":{l:"INSTANT",c:0.25},"institutional-criticality":{l:"HIGH",c:0.15}},
+ evidence:"CVE-2021-44228 (Log4Shell) perfectly confirms JNDI/CWE-94"},
+{id:"jenkins",name:"Jenkins",lang:"Java",langs:["Java"],
+ f:{lang:7,surf:9,eco:9,cve:9,sec:6},det:8.20,adj:0.80,final:9.00,risk:"CRITICAL",conf:0.90,
+ cwes:["CWE-78","CWE-94","CWE-502","CWE-862"],owasps:["A03","A08","A01"],cvm:"CONFIRMED",
+ amps:{"structural-nature":{l:"STRUCTURAL",c:0.40},"exploitation-pattern":{l:"MASS",c:0.25},"default-exposure":{l:"PARTIAL",c:0.15}},
+ evidence:"CVE-2024-23897, pipeline sandbox bypass CVEs confirm Groovy/CWE-94"},
+{id:"ffmpeg",name:"FFmpeg",lang:"C",langs:["C"],
+ f:{lang:10,surf:9,eco:3,cve:9,sec:6},det:7.75,adj:1.25,final:9.00,risk:"CRITICAL",conf:0.88,
+ cwes:["CWE-120","CWE-122","CWE-787","CWE-125","CWE-416"],owasps:["A10","A06"],cvm:"CONFIRMED",
+ amps:{"blast-radius":{l:"HIGH",c:0.50},"structural-nature":{l:"FOUNDATIONAL",c:0.45},"propagation-speed":{l:"INSTANT",c:0.30}},
+ evidence:"Annual CWE-787/122/125 stream across codec-specific parsers"},
+{id:"openssl",name:"OpenSSL",lang:"C",langs:["C"],
+ f:{lang:10,surf:9,eco:7,cve:8,sec:7},det:8.45,adj:0.35,final:8.80,risk:"HIGH",conf:0.92,
+ cwes:["CWE-125","CWE-787","CWE-416","CWE-327"],owasps:["A04","A10"],cvm:"CONFIRMED",
+ amps:{"institutional-criticality":{l:"CRITICAL",c:0.25},"blast-radius":{l:"LOW",c:0.10}},
+ evidence:"Heartbleed (CWE-125), CVE-2022-3786 (CWE-787) confirm"},
+{id:"redis",name:"Redis",lang:"C",langs:["C"],
+ f:{lang:10,surf:8,eco:4,cve:7,sec:7},det:7.40,adj:1.30,final:8.70,risk:"HIGH",conf:0.89,
+ cwes:["CWE-306","CWE-287","CWE-787"],owasps:["A02","A07","A01"],cvm:"CONFIRMED",
+ amps:{"default-exposure":{l:"FULL",c:0.70},"exploitation-pattern":{l:"MASS",c:0.40},"structural-nature":{l:"MIXED",c:0.20}},
+ evidence:"Shodan confirms millions of CWE-306 instances; SLAVEOF RCE pattern"},
+{id:"apache-struts",name:"Apache Struts",lang:"Java",langs:["Java"],
+ f:{lang:7,surf:9,eco:6,cve:8,sec:6},det:7.40,adj:1.20,final:8.60,risk:"HIGH",conf:0.96,
+ cwes:["CWE-502","CWE-94","CWE-20"],owasps:["A05","A08","A06"],cvm:"CONFIRMED",
+ amps:{"structural-nature":{l:"FOUNDATIONAL",c:0.50},"blast-radius":{l:"HIGH",c:0.40},"exploitation-pattern":{l:"MASS",c:0.30}},
+ evidence:"CVE-2017-5638 (Equifax) confirms OGNL/CWE-94"},
+{id:"apache-httpd",name:"Apache HTTP Server",lang:"C",langs:["C"],
+ f:{lang:10,surf:10,eco:7,cve:7,sec:7},det:8.50,adj:0.00,final:8.50,risk:"HIGH",conf:0.91,
+ cwes:["CWE-22","CWE-787","CWE-120"],owasps:["A02","A10","A01"],cvm:"CONFIRMED",
+ amps:{},evidence:"CVE-2021-41773 confirms CWE-22; zero expert adj confirms model accuracy"},
+{id:"elasticsearch",name:"Elasticsearch / OpenSearch",lang:"Java",langs:["Java"],
+ f:{lang:7,surf:9,eco:5,cve:7,sec:7},det:7.10,adj:1.40,final:8.50,risk:"HIGH",conf:0.90,
+ cwes:["CWE-306","CWE-862","CWE-94"],owasps:["A02","A01","A07"],cvm:"CONFIRMED",
+ amps:{"default-exposure":{l:"FULL",c:0.65},"blast-radius":{l:"HIGH",c:0.45},"exploitation-pattern":{l:"MASS",c:0.30}},
+ evidence:"CVE-2015-1427 (Groovy RCE); billions of records from unauthenticated instances"},
+{id:"phpmailer",name:"PHPMailer",lang:"PHP",langs:["PHP"],
+ f:{lang:9,surf:8,eco:5,cve:7,sec:6},det:7.25,adj:1.15,final:8.40,risk:"HIGH",conf:0.93,
+ cwes:["CWE-78","CWE-79","CWE-20"],owasps:["A05","A07"],cvm:"CONFIRMED",
+ amps:{"blast-radius":{l:"CRITICAL",c:0.55},"structural-nature":{l:"STRUCTURAL",c:0.40},"propagation-speed":{l:"FAST",c:0.20}},
+ evidence:"CVE-2016-10033 perfectly confirms CWE-78 sendmail injection"},
+{id:"gitlabce",name:"GitLab CE",lang:"Ruby",langs:["Ruby","Go"],
+ f:{lang:7,surf:9,eco:6,cve:8,sec:7},det:7.50,adj:0.80,final:8.30,risk:"HIGH",conf:0.85,
+ cwes:["CWE-918","CWE-79","CWE-78","CWE-502"],owasps:["A01","A05","A08"],cvm:"CONFIRMED",
+ amps:{"blast-radius":{l:"HIGH",c:0.40},"structural-nature":{l:"STRUCTURAL",c:0.25},"exploitation-pattern":{l:"TARGETED",c:0.15}},
+ evidence:"CVE-2021-22205 confirms SSRF/deser; CVE-2023-7028 confirms A07"},
+{id:"drupal",name:"Drupal",lang:"PHP",langs:["PHP"],
+ f:{lang:9,surf:9,eco:7,cve:7,sec:7},det:8.00,adj:0.30,final:8.30,risk:"HIGH",conf:0.92,
+ cwes:["CWE-89","CWE-79","CWE-502"],owasps:["A05","A01","A04"],cvm:"CONFIRMED",
+ amps:{"structural-nature":{l:"MIXED",c:0.20},"blast-radius":{l:"LOW",c:0.10}},
+ evidence:"Drupalgeddon2 (CVE-2018-7600) confirms PHP entity rendering/CWE-89"},
+{id:"kubernetes",name:"Kubernetes",lang:"Go",langs:["Go"],
+ f:{lang:4,surf:10,eco:9,cve:6,sec:8},det:7.30,adj:0.90,final:8.20,risk:"HIGH",conf:0.82,
+ cwes:["CWE-862","CWE-918","CWE-284","CWE-732"],owasps:["A01","A02","A03"],cvm:"CONFIRMED",
+ amps:{"structural-nature":{l:"FOUNDATIONAL",c:0.50},"exploitation-pattern":{l:"MASS",c:0.25},"blast-radius":{l:"MEDIUM",c:0.15}},
+ evidence:"CVE-2018-1002105 (unauthenticated cluster-admin) confirms CWE-862"},
+{id:"spring-framework",name:"Spring Framework",lang:"Java",langs:["Java"],
+ f:{lang:7,surf:9,eco:8,cve:7,sec:7},det:7.70,adj:0.30,final:8.00,risk:"HIGH",conf:0.88,
+ cwes:["CWE-94","CWE-502","CWE-918"],owasps:["A05","A08","A04"],cvm:"CONFIRMED",
+ amps:{"blast-radius":{l:"MEDIUM",c:0.20},"structural-nature":{l:"MIXED",c:0.10}},
+ evidence:"CVE-2022-22965 (Spring4Shell) confirms SpEL/CWE-94"},
+{id:"curl-libcurl",name:"curl / libcurl",lang:"C",langs:["C"],
+ f:{lang:10,surf:7,eco:6,cve:7,sec:8},det:7.65,adj:0.35,final:8.00,risk:"HIGH",conf:0.84,
+ cwes:["CWE-120","CWE-125","CWE-416","CWE-22"],owasps:["A10","A04"],cvm:"CONFIRMED",
+ amps:{"institutional-criticality":{l:"HIGH",c:0.20},"blast-radius":{l:"MEDIUM",c:0.15}},
+ evidence:"CVE-2023-38545 (SOCKS5 heap overflow) confirms C memory safety"},
+{id:"keycloak",name:"Keycloak",lang:"Java",langs:["Java"],
+ f:{lang:7,surf:8,eco:5,cve:6,sec:7},det:6.65,adj:1.15,final:7.80,risk:"MEDIUM",conf:0.79,
+ cwes:["CWE-287","CWE-352","CWE-918","CWE-601"],owasps:["A07","A01","A06"],cvm:"PARTIAL",
+ amps:{"institutional-criticality":{l:"CRITICAL",c:0.55},"blast-radius":{l:"HIGH",c:0.35},"structural-nature":{l:"STRUCTURAL",c:0.25}},
+ evidence:"CVE-2023-6927 confirms redirect prediction; CVE-2024-1132 confirms redirect_uri"},
+{id:"flask-jinja2",name:"Flask + Jinja2",lang:"Python",langs:["Python"],
+ f:{lang:6,surf:8,eco:5,cve:5,sec:7},det:6.20,adj:1.30,final:7.50,risk:"MEDIUM",conf:0.81,
+ cwes:["CWE-94","CWE-20","CWE-79"],owasps:["A05","A01","A06"],cvm:"PARTIAL",
+ amps:{"structural-nature":{l:"FOUNDATIONAL",c:0.60},"blast-radius":{l:"HIGH",c:0.40},"propagation-speed":{l:"INSTANT",c:0.30}},
+ evidence:"Werkzeug debugger PIN bypass confirms debug-mode CWE-94"}
+];
+
+// Causal neurons activated per project (L2)
+const CAUSAL_ACT={
+ "npm-ecosystem":["N2.10","N2.11","N2.7"],
+ "wordpress-plugins":["N2.4","N2.7","N2.9"],
+ "exim-mta":["N2.1","N2.2","N2.3","N2.8"],
+ "imagemagick":["N2.1","N2.2","N2.3","N2.8"],
+ "apache-log4j2":["N2.6","N2.5","N2.7"],
+ "jenkins":["N2.5","N2.6","N2.9"],
+ "ffmpeg":["N2.1","N2.2","N2.3"],
+ "openssl":["N2.1","N2.3"],
+ "redis":["N2.1","N2.8"],
+ "apache-struts":["N2.5","N2.6"],
+ "apache-httpd":["N2.1","N2.3"],
+ "elasticsearch":["N2.6","N2.8","N2.9"],
+ "phpmailer":["N2.4"],
+ "gitlabce":["N2.7","N2.8","N2.9"],
+ "drupal":["N2.4","N2.5","N2.7"],
+ "kubernetes":["N2.9","N2.8"],
+ "spring-framework":["N2.6","N2.5","N2.8"],
+ "curl-libcurl":["N2.1","N2.3"],
+ "keycloak":["N2.6","N2.9","N2.8"],
+ "flask-jinja2":["N2.11"]
+};
+
+// Language ρ scores
+const RHO={C:10,"C++":10,PHP:9,Java:7,JavaScript:7,Python:6,Go:4,Ruby:6};
+
+// ═══════════════════════════════════════════
+// NETWORK LAYOUT
+// ═══════════════════════════════════════════
+const LX=Array.from({length:12},(_,k)=>64+k*126);
+const SPACING=56,MAXN=11;
+const LINFO=[
+ {id:0,name:"Input",n:8, c:"#378ADD"},
+ {id:1,name:"Gatekeeper",n:6, c:"#E24B4A"},
+ {id:2,name:"Causal",n:11,c:"#7F77DD"},
+ {id:3,name:"Lang enc",n:9, c:"#1D9E75"},
+ {id:4,name:"Factor",n:5, c:"#639922"},
+ {id:5,name:"Det wt",n:7, c:"#BA7517"},
+ {id:6,name:"Filter",n:5, c:"#888780"},
+ {id:7,name:"Exp adj",n:8, c:"#D4537E"},
+ {id:8,name:"Cross-val",n:6,c:"#185FA5"},
+ {id:9,name:"Repr",n:4, c:"#0F6E56"},
+ {id:10,name:"Format",n:5,c:"#3B6D11"},
+ {id:11,name:"Output",n:6,c:"#534AB7"},
+];
+const LBL={
+ "N0.1":"lang","N0.2":"surf","N0.3":"eco","N0.4":"cve","N0.5":"sec","N0.6":"strc","N0.7":"inc","N0.8":"qual",
+ "N1.1":"Φ_A1","N1.2":"Φ_A2","N1.3":"Φ_A3","N1.4":"Φ_A4","N1.5":"Φ_A5","N1.6":"gate",
+ "N2.1":"OOB-W","N2.2":"Heap","N2.3":"UAF","N2.4":"PHP","N2.5":"J-ds","N2.6":"J-EL",
+ "N2.7":"eco","N2.8":"auth","N2.9":"RBAC","N2.10":"JS-π","N2.11":"eval",
+ "N3.1":"C++","N3.2":"PHP","N3.3":"Java","N3.4":"JS","N3.5":"Py","N3.6":"Go","N3.7":"Rb","N3.8":"1-lg","N3.9":"n-lg",
+ "N4.1":"f_lg","N4.2":"f_sf","N4.3":"f_ec","N4.4":"f_cv","N4.5":"f_sc",
+ "N5.1":"w·lg","N5.2":"w·sf","N5.3":"w·ec","N5.4":"w·cv","N5.5":"w·sc","N5.6":"Σw=1","N5.7":"det",
+ "N6.1":"SC1","N6.2":"SC2","N6.3":"SC3","N6.4":"SC4","N6.5":"Φ_f",
+ "N7.1":"α_B","N7.2":"α_P","N7.3":"α_S","N7.4":"α_D","N7.5":"α_E","N7.6":"α_I","N7.7":"adj","N7.8":"fin",
+ "N8.1":"CVM1","N8.2":"CVM2","N8.3":"CVM3","N8.4":"CVM4","N8.5":"CVM5","N8.6":"η_fb",
+ "N9.1":"OW-c","N9.2":"lg-c","N9.3":"dep","N9.4":"gap",
+ "N10.1":"≥9C","N10.2":"≥8H","N10.3":"≥7M","N10.4":"<7m","N10.5":"fmt",
+ "N11.1":"scr","N11.2":"risk","N11.3":"CWE","N11.4":"OWS","N11.5":"mit","N11.6":"scn"
+};
+const KEY=new Set(["N1.6","N5.7","N6.5","N7.7","N7.8","N8.6"]);
+
+function ny(i,n){return 50+SPACING*(MAXN-n)/2+i*SPACING;}
+const POS={};
+LINFO.forEach(L=>{
+ for(let i=0;i<L.n;i++){
+  const id=`N${L.id}.${i+1}`;
+  POS[id]={x:LX[L.id],y:ny(i,L.n),c:L.c,li:L.id};
+ }
+});
+
+// ═══════════════════════════════════════════
+// BUILD SVG
+// ═══════════════════════════════════════════
+const NS="http://www.w3.org/2000/svg";
+const svg=document.getElementById("nnet");
+function mk(tag,a,p){
+ const e=document.createElementNS(NS,tag);
+ if(a)for(const[k,v]of Object.entries(a))e.setAttribute(k,v);
+ (p||svg).appendChild(e);return e;
+}
+
+// Layer backgrounds
+LINFO.forEach(L=>{
+ const x=LX[L.id];
+ mk("rect",{x:x-42,y:42,width:84,height:625,rx:5,fill:L.c,"fill-opacity":.06,stroke:L.c,"stroke-opacity":.2,"stroke-width":.5});
+ const t=mk("text",{x,y:36,"text-anchor":"middle","font-size":9.5,fill:L.c,"font-weight":600,"font-family":"monospace"});
+ t.textContent=`L${L.id}`;
+ const t2=mk("text",{x,y:685,"text-anchor":"middle","font-size":8.5,fill:L.c,"font-family":"system-ui"});
+ t2.textContent=L.name;
+});
+
+// Edges — build full list
+const EL=[];
+function cc(fs,ts,type,grp){for(const f of fs)for(const t of ts)EL.push({f,t,type,grp});}
+cc(["N0.1"],["N1.1","N1.2","N1.3"],"DATA","EG01");
+cc(["N0.2","N0.3","N0.4"],["N1.1","N1.4"],"DATA","EG01");
+cc(["N0.5"],["N1.4"],"DATA","EG01");cc(["N0.6"],["N1.2"],"DATA","EG01");cc(["N0.7"],["N1.3"],"DATA","EG01");
+cc(["N1.1","N1.2","N1.3","N1.4","N1.5"],["N1.6"],"DATA","EGL1");
+cc(["N0.1"],["N2.1","N2.2","N2.3","N2.4","N2.5","N2.6","N2.10","N2.11"],"DATA","EG02");
+cc(["N0.6"],["N2.7","N2.8","N2.9"],"DATA","EG02");cc(["N0.8"],["N2.7","N2.8","N2.9"],"DATA","EG02");
+cc(["N1.6"],["N2.1","N2.2","N2.3","N2.4","N2.5","N2.6","N2.7","N2.8","N2.9","N2.10","N2.11"],"CTRL","EG12");
+cc(["N0.1"],["N3.1","N3.2","N3.3","N3.4","N3.5","N3.6","N3.7"],"DATA","EG03");
+cc(["N3.1","N3.2","N3.3","N3.4","N3.5","N3.6","N3.7"],["N3.8","N3.9"],"DATA","EGL3");
+cc(["N3.8","N3.9"],["N4.1"],"DATA","EG34");
+cc(["N0.2"],["N4.2"],"DATA","EG04");cc(["N0.3"],["N4.3"],"DATA","EG04");
+cc(["N0.4"],["N4.4"],"DATA","EG04");cc(["N0.5"],["N4.5"],"DATA","EG04");
+cc(["N4.1"],["N5.1"],"DATA","EG45");cc(["N4.2"],["N5.2"],"DATA","EG45");
+cc(["N4.3"],["N5.3"],"DATA","EG45");cc(["N4.4"],["N5.4"],"DATA","EG45");cc(["N4.5"],["N5.5"],"DATA","EG45");
+cc(["N5.1","N5.2","N5.3","N5.4","N5.5"],["N5.6","N5.7"],"DATA","EGL5");cc(["N5.6"],["N5.7"],"DATA","EGL5");
+EL.push({f:"N5.7",t:"N7.8",type:"RESIDUAL",grp:"EG57"});
+EL.push({f:"N5.7",t:"N6.4",type:"DATA",grp:"EG56"});
+cc(["N4.2","N4.3","N4.4"],["N6.4"],"DATA","EG46");
+cc(["N2.1","N2.2","N2.3","N2.4","N2.5","N2.6","N2.7","N2.8","N2.9","N2.10","N2.11"],["N6.1"],"DATA","EG26");
+cc(["N3.1","N3.2","N3.3","N3.4","N3.5","N3.6","N3.7"],["N6.2"],"DATA","EG36");
+EL.push({f:"N0.7",t:"N6.3",type:"DATA",grp:"EG06"});EL.push({f:"N0.1",t:"N6.2",type:"DATA",grp:"EG06"});
+cc(["N6.1","N6.2","N6.3","N6.4"],["N6.5"],"DATA","EGL6");
+cc(["N0.8"],["N7.1","N7.2","N7.3","N7.4","N7.5","N7.6"],"DATA","EG07");
+cc(["N7.1","N7.2","N7.3","N7.4","N7.5","N7.6"],["N7.7"],"DATA","EGL7");
+EL.push({f:"N7.7",t:"N7.8",type:"DATA",grp:"EGL7"});
+cc(["N6.5"],["N8.1","N8.2","N8.3","N8.4","N8.5"],"DATA","EG68");
+cc(["N7.8"],["N8.1","N8.2","N8.3","N8.4","N8.5"],"DATA","EG78");
+cc(["N8.1","N8.2","N8.3","N8.4","N8.5"],["N8.6"],"DATA","EGL8");
+cc(["N8.6"],["N7.1","N7.2","N7.3","N7.4","N7.5","N7.6"],"FEEDBACK","EG87");
+cc(["N6.5"],["N9.1","N9.2","N9.3","N9.4"],"DATA","EG69");
+cc(["N7.8"],["N9.1","N9.2","N9.3","N9.4"],"DATA","EG79");
+cc(["N2.1","N2.2","N2.3","N2.4","N2.5","N2.6","N2.7","N2.8","N2.9","N2.10","N2.11"],["N10.5"],"DATA","EG210");
+cc(["N7.8"],["N10.1","N10.2","N10.3","N10.4","N10.5"],"DATA","EG710");
+cc(["N9.1","N9.2","N9.3","N9.4"],["N10.5"],"DATA","EG910");
+cc(["N10.1","N10.2","N10.3","N10.4"],["N10.5"],"DATA","EGL10");
+cc(["N10.5"],["N11.1","N11.2","N11.3","N11.4","N11.5","N11.6"],"DATA","EG1011");
+cc(["N10.1","N10.2","N10.3","N10.4"],["N11.2"],"DATA","EG1011");
+EL.push({f:"N7.8",t:"N11.1",type:"SKIP",grp:"EG711"});
+cc(["N2.7","N2.10","N2.8","N2.9"],["N11.3"],"SKIP","EG211");
+
+// Edge styles
+const EST={DATA:{s:"#9a9890",w:.7,o:.14},CTRL:{s:"#EF9F27",w:1.6,o:.80,da:"5,2"},
+ RESIDUAL:{s:"#E24B4A",w:3.2,o:.93},FEEDBACK:{s:"#9575cd",w:2.2,o:.88},SKIP:{s:"#1D9E75",w:2,o:.84,da:"5,2"}};
+
+function mkPath(f,t,type){
+ const p1=POS[f],p2=POS[t];if(!p1||!p2)return null;
+ const{x:x1,y:y1}=p1,{x:x2,y:y2}=p2;
+ if(type==="FEEDBACK") return`M${x1},${y1} C${x1+55},745 ${x2-55},745 ${x2},${y2}`;
+ if(type==="RESIDUAL") return`M${x1},${y1} C${x1+100},20 ${x2-100},20 ${x2},${y2}`;
+ if(type==="SKIP"){const ay=Math.min(y1,y2)-45;return`M${x1},${y1} Q${(x1+x2)/2},${ay} ${x2},${y2}`;}
+ if(x1===x2){const cx=x1+48;return`M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}`;}
+ const cpx=(x1+x2)/2;return`M${x1},${y1} C${cpx},${y1} ${cpx},${y2} ${x2},${y2}`;
+}
+
+// Draw edges — grouped by grp
+const EG_EL={};// grp->indices
+EL.forEach((e,i)=>{(EG_EL[e.grp]||(EG_EL[e.grp]=[])).push(i);});
+
+const edgeG=mk("g",{id:"edge-layer"});
+const EP=[];// element per edge index
+const EP_TYPE=new Map();// path->type
+["DATA","CTRL","SKIP","RESIDUAL","FEEDBACK"].forEach(type=>{
+ EL.forEach((e,i)=>{
+  if(e.type!==type)return;
+  const d=mkPath(e.f,e.t,type);if(!d)return;
+  const st=EST[type];
+  const at={d,fill:"none",stroke:st.s,"stroke-width":st.w,"stroke-opacity":st.o,"marker-end":"url(#ma)"};
+  if(st.da)at["stroke-dasharray"]=st.da;
+  const pp=mk("path",at,edgeG);
+  EP[i]=pp;
+  EP_TYPE.set(pp,type);
+ });
+});
+
+// Draw neurons
+const neuG=mk("g",{id:"neu-layer"});
+const NEL={}; // id -> {g,circ,vt}
+
+Object.entries(POS).forEach(([id,{x,y,c}])=>{
+ const g=document.createElementNS(NS,"g");
+ g.id="n_"+id.replace(".","_");
+ g.setAttribute("class","neu");
+ g.style.setProperty("--nc",c);
+ if(KEY.has(id)){mk("circle",{cx:x,cy:y,r:18,fill:"none",stroke:c,"stroke-width":1.5,"stroke-opacity":.4},g);}
+ const circ=mk("circle",{cx:x,cy:y,r:14,fill:c,"fill-opacity":.85,stroke:c,"stroke-width":1.5,class:"nu"},g);
+ const t1=mk("text",{x,y:y-2,"text-anchor":"middle","dominant-baseline":"auto",
+  "font-size":7.5,fill:"#fff","font-weight":500,"pointer-events":"none","font-family":"monospace"},g);
+ t1.textContent=LBL[id]||"?";
+ const t2=mk("text",{x,y:y+7.5,"text-anchor":"middle","dominant-baseline":"auto",
+  "font-size":6.5,fill:"rgba(255,255,255,.65)","pointer-events":"none"},g);
+ t2.textContent=id;
+ // Value tag (for showing computed values)
+ const vt=mk("text",{x,y:y-22,"text-anchor":"middle","class":"val-tag"},g);
+ neuG.appendChild(g);
+ NEL[id]={g,circ,vt};
+});
+
+// ═══════════════════════════════════════════
+// ANIMATION ENGINE
+// ═══════════════════════════════════════════
+let simRunning=false,simPaused=false;
+let stepQueue=[],currentStepIdx=0,stepTimeouts=[];
+let currentProj=null;
+
+function speed(){return parseFloat(document.getElementById("speed").value);}
+function dur(ms){return Math.round(ms/speed());}
+
+function log(txt){
+ const ta=document.getElementById("log-area");
+ ta.value+=txt+"\n";
+ ta.scrollTop=ta.scrollHeight;
+}
+function logLines(lines){lines.forEach(l=>log(l));}
+function clearLog(){document.getElementById("log-area").value="";}
+
+function setNeuState(ids,state){
+ ids.forEach(id=>{
+  const el=NEL[id];if(!el)return;
+  el.g.className.baseVal="neu "+( state==="active"?"neu-active":state==="done"?"neu-done":state==="dim"?"neu-dim":"");
+ });
+}
+function setEdgeGrpState(grps,state){
+ grps.forEach(grp=>{
+  (EG_EL[grp]||[]).forEach(i=>{
+   const p=EP[i];if(!p)return;
+   const st=EST[EL[i].type];
+   p.classList.remove("edge-active","edge-done","edge-dim");
+   if(state==="active"){
+    p.classList.add("edge-active");
+    p.style.strokeDasharray="8 4";
+    p.setAttribute("stroke-opacity","1");
+    p.setAttribute("stroke-width",st.w*2);
+   } else if(state==="done"){
+    p.classList.add("edge-done");
+    p.setAttribute("stroke-dasharray",st.da||"none");
+    p.setAttribute("stroke-opacity",.55);
+    p.setAttribute("stroke-width",st.w);
+   } else if(state==="dim"){
+    p.classList.add("edge-dim");
+    p.setAttribute("stroke-opacity",.025);
+   } else {
+    p.setAttribute("stroke-dasharray",st.da||"none");
+    p.setAttribute("stroke-opacity",st.o);
+    p.setAttribute("stroke-width",st.w);
+   }
+  });
+ });
+}
+function showVal(id,text){
+ const el=NEL[id];if(!el)return;
+ el.vt.textContent=text;
+ el.vt.classList.add("show");
+}
+function hideVals(){Object.values(NEL).forEach(({vt})=>{vt.textContent="";vt.classList.remove("show");});}
+
+function setProgress(idx,total){
+ document.getElementById("step-fill").style.width=`${(idx/total)*100}%`;
+ document.getElementById("step-num").textContent=`${idx}/${total}`;
+}
+
+// Build step sequence for a project
+function buildSteps(proj){
+ const ca=CAUSAL_ACT[proj.id]||[];
+ const langRho=RHO[proj.lang]||6;
+ const ampEntries=Object.entries(proj.amps);
+ const fv=proj.f;
+ const steps=[
+  // ─── STEP 0: Project select ─────────────────
+  {label:"Project selected",layer:-1,neurons:[],edges:[],duration:600,
+   valTags:{},
+   lines:[
+    "╔══════════════════════════════════════════════╗",
+    "║  OSCPM · NBS-RASN  —  Propagation Simulation ║",
+    "╚══════════════════════════════════════════════╝",
+    "",
+    `[SELECT]  ${proj.name}`,
+    `          Primary language : ${proj.lang}`,
+    `          All languages    : ${proj.langs.join(", ")}`,
+    `          Prediction conf  : ${(proj.conf*100).toFixed(0)}%`,
+    "",
+    "          Resetting network … ▶",
+   ]},
+  // ─── STEP 1: L0 Input ───────────────────────
+  {label:"L0 · Input ingestion",layer:0,
+   neurons:["N0.1","N0.2","N0.3","N0.4","N0.5","N0.6","N0.7","N0.8"],
+   edges:[],duration:1400,
+   valTags:{"N0.1":proj.lang,"N0.2":fv.surf,"N0.3":fv.eco,"N0.4":fv.cve,"N0.5":fv.sec},
+   lines:[
+    "──────────────────────────────────────────────",
+    "[L0]  INPUT LAYER  —  ingesting project data",
+    "",
+    `  N0.1  n_lang  = ${proj.lang}  (primary)`,
+    `  N0.2  f_surf  = ${fv.surf.toFixed(2)}  ← attack surface`,
+    `  N0.3  f_eco   = ${fv.eco.toFixed(2)}  ← ecosystem complexity`,
+    `  N0.4  f_cve   = ${fv.cve.toFixed(2)}  ← historical CVE rate`,
+    `  N0.5  f_sec   = ${fv.sec.toFixed(2)}  ← security program gap`,
+    `  N0.6  b_struct → ${proj.lang} memory model + architectural props`,
+    `  N0.7  N_inc   → predicted CWEs: ${proj.cwes.join(", ")}`,
+    `  N0.8  q(p)    → amplifier levels:`,
+    ...ampEntries.map(([k,v])=>`            ${k.padEnd(24)} ${v.l.padEnd(12)} +${v.c.toFixed(2)}`),
+   ]},
+  // ─── STEP 2: L1 Gatekeeper ──────────────────
+  {label:"L1 · Axiom validation",layer:1,
+   neurons:["N1.1","N1.2","N1.3","N1.4","N1.5","N1.6"],
+   edges:["EG01","EGL1"],duration:1600,
+   valTags:{"N1.6":"✓"},
+   lines:[
+    "──────────────────────────────────────────────",
+    "[L1]  GATEKEEPER  —  checking 5 axioms",
+    "",
+    "  N1.1  Φ_A1  (vocabulary precision)   ✓",
+    `         CWEs ⊆ S_C: ${proj.cwes.join(", ")}`,
+    `         OWASPs ⊆ S_O: ${proj.owasps.join(", ")}`,
+    "  N1.2  Φ_A2  (causal primacy)         ✓",
+    `         ${proj.lang} causal chain established`,
+    "  N1.3  Φ_A3  (falsifiability)         ✓",
+    `         F(p) = { ${proj.cwes.join(", ")} }`,
+    "  N1.4  Φ_A4  (decomp separation)      ✓",
+    "         det(p) + adj(p) both reported",
+    "  N1.5  Φ_A5  (transparency)           ✓",
+    "         11/11 hidden params declared",
+    "",
+    "  N1.6  gate(p) = ∧Φ_Ai = 1  →  propagates(p) = TRUE",
+    "         CTRL signal dispatched to all 11 causal neurons",
+   ]},
+  // ─── STEP 3: L2 Causal ──────────────────────
+  {label:"L2 · Causal modeling",layer:2,
+   neurons:ca,
+   edges:["EG12","EG02"],duration:1500,
+   valTags:Object.fromEntries(ca.map(n=>[n,"✓"])),
+   lines:[
+    "──────────────────────────────────────────────",
+    "[L2]  CAUSAL LAYER  —  language-property → CWE",
+    "",
+    `  Language: ${proj.lang}  →  active causal neurons:`,
+    ...ca.map(n=>{
+     const axmap={"N2.1":"Ax2.1 enables(C_Cpp,787,120)","N2.2":"Ax2.2 enables(C_Cpp,121,122)",
+      "N2.3":"Ax2.3 enables(C_Cpp,416,125)","N2.4":"Ax2.4 enables(PHP,89,79,352)",
+      "N2.5":"Ax2.5 enables(Java,502)","N2.6":"Ax2.6 enables(Java,94)",
+      "N2.7":"Ax2.7 causal_link(ecosystem,1395)","N2.8":"Ax2.8 causal_link(no_auth,306)",
+      "N2.9":"Ax2.9 causal_link(complex_RBAC,862,284)","N2.10":"Ax2.10 enables(JS,1321,94)",
+      "N2.11":"Ax2.11 enables(Py,94) [SSTI]"};
+     return `  ${n.padEnd(6)}  ${axmap[n]||n}`;
+    }),
+    "",
+    `  Inactive: ${["N2.1","N2.2","N2.3","N2.4","N2.5","N2.6","N2.7","N2.8","N2.9","N2.10","N2.11"].filter(n=>!ca.includes(n)).join(", ")||"none"}`,
+    "",
+    `  O_2(p) = { ${proj.cwes.join(", ")} }`,
+   ]},
+  // ─── STEP 4: L3 Lang Encoding ───────────────
+  {label:"L3 · Language encoding",layer:3,
+   neurons:["N3.1","N3.2","N3.3","N3.4","N3.5","N3.6","N3.7","N3.8","N3.9"],
+   edges:["EG03","EGL3"],duration:1200,
+   valTags:{"N3.8":`ρ=${fv.lang}`,"N3.9":`ρ=${fv.lang}`},
+   lines:[
+    "──────────────────────────────────────────────",
+    "[L3]  LANGUAGE ENCODING  —  ρ(lang) lookup",
+    "",
+    "  Score constants:  C/C++=10 PHP=9 Java=7 JS=7 Py=6 Go=4 Rb=6",
+    "",
+    ...(proj.langs.length===1?[
+     `  n_lang = ${proj.lang}  →  single-language rule (Ax3.8)`,
+     `  N3.8: f_lang = ρ(${proj.lang}) = ${langRho}`,
+    ]:[
+     `  langs = [${proj.langs.join(", ")}]  →  multi-language rule (Ax3.9)`,
+     `  N3.9: f_lang = Σfrac_i·ρ(l_i) + δ_bonus`,
+     `         = ${fv.lang.toFixed(2)}  (computed with diversity bonus)`,
+    ]),
+    "",
+    `  O_3(p) = f_lang = ${fv.lang.toFixed(2)}`,
+   ]},
+  // ─── STEP 5: L4 Factor extraction ───────────
+  {label:"L4 · Factor extraction",layer:4,
+   neurons:["N4.1","N4.2","N4.3","N4.4","N4.5"],
+   edges:["EG34","EG04"],duration:1100,
+   valTags:{"N4.1":fv.lang,"N4.2":fv.surf,"N4.3":fv.eco,"N4.4":fv.cve,"N4.5":fv.sec},
+   lines:[
+    "──────────────────────────────────────────────",
+    "[L4]  FACTOR EXTRACTION  —  O_4(p) ∈ I^5",
+    "",
+    `  N4.1  f_lang = ${fv.lang.toFixed(2)}  (from L3)`,
+    `  N4.2  f_surf = ${fv.surf.toFixed(2)}`,
+    `  N4.3  f_eco  = ${fv.eco.toFixed(2)}`,
+    `  N4.4  f_cve  = ${fv.cve.toFixed(2)}`,
+    `  N4.5  f_sec  = ${fv.sec.toFixed(2)}`,
+    "",
+    `  O_4(p) = (${fv.lang}, ${fv.surf}, ${fv.eco}, ${fv.cve}, ${fv.sec})`,
+   ]},
+  // ─── STEP 6: L5 Det weighting ───────────────
+  {label:"L5 · Deterministic weighting",layer:5,
+   neurons:["N5.1","N5.2","N5.3","N5.4","N5.5","N5.6","N5.7"],
+   edges:["EG45","EGL5"],duration:1500,
+   valTags:{"N5.7":`${proj.det.toFixed(2)}`},
+   lines:[
+    "──────────────────────────────────────────────",
+    "[L5]  DETERMINISTIC WEIGHTING  →  det(p)",
+    "",
+    `  Ax5.7:  det(p) = Σ w_k · f_k(p)`,
+    "",
+    `  N5.1  0.25 × f_lang  = 0.25 × ${fv.lang.toFixed(2)} = ${(0.25*fv.lang).toFixed(4)}`,
+    `  N5.2  0.25 × f_surf  = 0.25 × ${fv.surf.toFixed(2)} = ${(0.25*fv.surf).toFixed(4)}`,
+    `  N5.3  0.20 × f_eco   = 0.20 × ${fv.eco.toFixed(2)} = ${(0.20*fv.eco).toFixed(4)}`,
+    `  N5.4  0.20 × f_cve   = 0.20 × ${fv.cve.toFixed(2)} = ${(0.20*fv.cve).toFixed(4)}`,
+    `  N5.5  0.10 × f_sec   = 0.10 × ${fv.sec.toFixed(2)} = ${(0.10*fv.sec).toFixed(4)}`,
+    `  N5.6  Σ w_k = 1.00   ✓`,
+    "",
+    `  N5.7  det(p) = ${proj.det.toFixed(4)}`,
+    `         ↳ RESIDUAL skip → N7.8`,
+   ]},
+  // ─── STEP 7: L6 Filter ──────────────────────
+  {label:"L6 · Project filtering",layer:6,
+   neurons:["N6.1","N6.2","N6.3","N6.4","N6.5"],
+   edges:["EG56","EG46","EG26","EG36","EG06","EGL6"],duration:1200,
+   valTags:{"N6.5":"✓"},
+   lines:[
+    "──────────────────────────────────────────────",
+    "[L6]  PROJECT FILTER  —  4-criteria check",
+    "",
+    `  N6.1  SC1 (OWASP coverage)    ✓  covers: ${proj.owasps.join(", ")}`,
+    `  N6.2  SC2 (lang coverage)     ✓  ${proj.lang} ∈ S_Λ`,
+    `  N6.3  SC3 (incident anchor)   ✓  confirmed CVEs exist`,
+    `  N6.4  SC4 (confidence floor)  ✓  ${(proj.conf*100).toFixed(0)}% ≥ 75%`,
+    "",
+    "  N6.5  Φ_filter = SC1 ∧ SC2 ∧ SC3 ∧ SC4 = 1",
+    "         project passes all criteria",
+   ]},
+  // ─── STEP 8: L7 Expert adjustment ───────────
+  {label:"L7 · Expert adjustment",layer:7,
+   neurons:["N7.1","N7.2","N7.3","N7.4","N7.5","N7.6","N7.7","N7.8"],
+   edges:["EG07","EGL7","EG57"],duration:1800,
+   valTags:{"N7.7":`+${proj.adj.toFixed(2)}`,"N7.8":`${proj.final.toFixed(2)}`},
+   lines:[
+    "──────────────────────────────────────────────",
+    "[L7]  EXPERT ADJUSTMENT  →  adj(p) + final(p)",
+    "",
+    "  Amplifier contributions (Ax7.1–Ax7.6):",
+    ...["blast-radius","propagation-speed","structural-nature","default-exposure","exploitation-pattern","institutional-criticality"]
+     .map(k=>{
+      const v=proj.amps[k];
+      if(!v)return`   ${k.padEnd(26)} (no contribution)  → 0.00`;
+      return `   ${k.padEnd(26)} ${v.l.padEnd(14)} → +${v.c.toFixed(2)}`;
+     }),
+    "",
+    `  N7.7  adj(p) = ${proj.adj.toFixed(4)}`,
+    "",
+    `  N7.8  final(p) = clamp(det + adj, 0, 10)`,
+    `         = clamp(${proj.det.toFixed(4)} + ${proj.adj.toFixed(4)}, 0, 10)`,
+    `         = ${proj.final.toFixed(4)}`,
+    `         ↳ det residual received from N5.7`,
+   ]},
+  // ─── STEP 9: L8 Cross-validation ────────────
+  {label:"L8 · Cross-validation",layer:8,
+   neurons:["N8.1","N8.2","N8.3","N8.4","N8.5","N8.6"],
+   edges:["EG68","EG78","EGL8"],duration:1300,
+   valTags:{"N8.6":proj.cvm==="CONFIRMED"?"✓":"~"},
+   lines:[
+    "──────────────────────────────────────────────",
+    "[L8]  CROSS-VALIDATION  —  CVM1–CVM5",
+    "",
+    "  N8.1  CVM1 precision   ≥ 0.80  ✓",
+    "  N8.2  CVM2 Spearman    ≥ 0.70  ✓",
+    "  N8.3  CVM3 rank-inv    ≤ 0.20  ✓",
+    "  N8.4  CVM4 ICC expert  ≥ 0.75  ✓",
+    "  N8.5  CVM5 decomp      |err|≤ε ✓",
+    `  N8.6  status: ${proj.cvm}`,
+    `         evidence: ${proj.evidence}`,
+    "",
+    "  Feedback signal η_fb → (no recalibration needed)",
+   ]},
+  // ─── STEP 10: L9 Representativeness ─────────
+  {label:"L9 · Representativeness",layer:9,
+   neurons:["N9.1","N9.2","N9.3","N9.4"],
+   edges:["EG69","EG79"],duration:1000,
+   valTags:{},
+   lines:[
+    "──────────────────────────────────────────────",
+    "[L9]  REPRESENTATIVENESS  —  corpus checks",
+    "",
+    "  N9.1  OWASP coverage  ✓  all 10 categories covered",
+    "  N9.2  lang coverage   ✓  all 7 languages present",
+    "  N9.3  deploy diversity ✓  |deploy_types| = 5",
+    "  N9.4  gaps identified:  G = {A09-weak, Ruby-absent}",
+   ]},
+  // ─── STEP 11: L10 Formatting ─────────────────
+  {label:"L10 · Classification",layer:10,
+   neurons:["N10.1","N10.2","N10.3","N10.4","N10.5"],
+   edges:["EG210","EG710","EG910","EGL10"],duration:1100,
+   valTags:{"N10.5":proj.risk},
+   lines:[
+    "──────────────────────────────────────────────",
+    "[L10]  FORMATTING & CLASSIFICATION",
+    "",
+    "  Thresholds:  ≥9.0→CRITICAL  ≥8.0→HIGH  ≥7.0→MEDIUM  else→MODERATE",
+    "",
+    `  final(p) = ${proj.final.toFixed(2)}`,
+    `  classify(${proj.final.toFixed(2)}) = ${proj.risk}`,
+    "",
+    `  O_10(p) = (${proj.final.toFixed(2)}, ${proj.risk}, ${proj.cwes.join(", ")},`,
+    `            ${proj.owasps.join(", ")}, adj_decomp)`,
+   ]},
+  // ─── STEP 12: L11 Output ─────────────────────
+  {label:"L11 · Network output",layer:11,
+   neurons:["N11.1","N11.2","N11.3","N11.4","N11.5","N11.6"],
+   edges:["EG1011","EG711","EG211"],duration:1400,
+   valTags:{"N11.1":proj.final.toFixed(2),"N11.2":proj.risk},
+   lines:[
+    "──────────────────────────────────────────────",
+    "[L11]  OUTPUT LAYER  —  O_11(p)",
+    "",
+    `  N11.1  score           = ${proj.final.toFixed(2)}  / 10`,
+    `  N11.2  risk_level      = ${proj.risk}`,
+    `  N11.3  predicted_CWEs  = { ${proj.cwes.join(", ")} }`,
+    `  N11.4  predicted_OWASP = { ${proj.owasps.join(", ")} }`,
+    `  N11.5  mitigations     → ${proj.cwes.length} CWE-specific mitigation sets`,
+    `  N11.6  scenarios       → Step11 attack scenario links`,
+    "",
+    "════════════════════════════════════════════",
+    `  SIMULATION COMPLETE  —  ${proj.name}`,
+    `  final(p) = ${proj.final.toFixed(2)}  →  ${proj.risk}`,
+    "════════════════════════════════════════════",
+   ]},
+ ];
+ return steps;
+}
+
+function resetNetwork(){
+ Object.keys(NEL).forEach(id=>setNeuState([id],""));
+ Object.values(EP).forEach(p=>{
+  if(!p)return;
+  p.classList.remove("edge-active","edge-done","edge-dim");
+  const t=EP_TYPE.get(p)||"DATA";
+  const st=EST[t];
+  p.setAttribute("stroke-opacity",st.o);
+  p.setAttribute("stroke-width",st.w);
+  p.setAttribute("stroke-dasharray",st.da||"none");
+ });
+ hideVals();
+ document.getElementById("output-panel").style.display="none";
+ document.getElementById("step-fill").style.width="0%";
+ document.getElementById("step-num").textContent="0/13";
+ document.getElementById("step-label").textContent="Ready";
+}
+
+let doneNeurons=new Set(),doneEdges=new Set();
+
+function playStep(step,idx,total,onDone){
+ document.getElementById("step-label").textContent=step.label;
+ setProgress(idx+1,total);
+
+ // Dim everything not in this step's layer
+ const layerNeus=LINFO.filter(L=>L.id!==step.layer).flatMap(L=>
+  Array.from({length:L.n},(_,i)=>`N${L.id}.${i+1}`)
+ ).filter(id=>!doneNeurons.has(id));
+ setNeuState(layerNeus,"dim");
+
+ // Activate edges
+ setTimeout(()=>{
+  step.edges.forEach(g=>setEdgeGrpState([g],"active"));
+  step.edges.forEach(g=>doneEdges.add(g));
+ },dur(200));
+
+ // Activate neurons
+ setTimeout(()=>{
+  setNeuState(step.neurons,"active");
+  // Show value tags
+  Object.entries(step.valTags||{}).forEach(([id,v])=>showVal(id,String(v)));
+  // Log lines
+  logLines(step.lines);
+ },dur(400));
+
+ // Settle
+ const settleAt=dur(step.duration-300);
+ setTimeout(()=>{
+  setNeuState(step.neurons,"done");
+  step.neurons.forEach(n=>doneNeurons.add(n));
+  step.edges.forEach(g=>setEdgeGrpState([g],"done"));
+  // Restore done neurons from dim
+  doneNeurons.forEach(id=>setNeuState([id],"done"));
+  // Dim non-active edges
+  const allGrps=Object.keys(EG_EL).filter(g=>!doneEdges.has(g));
+  setEdgeGrpState(allGrps,"dim");
+ },settleAt);
+
+ setTimeout(()=>{
+  if(onDone) onDone();
+ },dur(step.duration));
+}
+
+async function runSim(autoRun){
+ if(!currentProj)return;
+ simRunning=true;
+ doneNeurons=new Set();doneEdges=new Set();
+ resetNetwork();clearLog();
+ const steps=buildSteps(currentProj);
+ document.getElementById("btn-run").disabled=true;
+ document.getElementById("btn-next").disabled=!autoRun;
+ currentStepIdx=0;
+
+ if(autoRun){
+  // Automatic chain
+  function doStep(i){
+   if(i>=steps.length){finishSim(currentProj);return;}
+   playStep(steps[i],i,steps.length,()=>doStep(i+1));
+  }
+  doStep(0);
+ } else {
+  // Manual: play first step
+  stepQueue=steps;
+  playStepManual(0);
+ }
+}
+
+function playStepManual(i){
+ if(!stepQueue||i>=stepQueue.length){
+  finishSim(currentProj);
+  //document.getElementById("btn-next").disabled=true; 
+  <!-- comentat ca sa nu treaca pe disable la inchiderea playStepManual dupa finishSim(currentProj) -->
+  return;
+ }
+ currentStepIdx=i;
+ document.getElementById("btn-next").disabled=true;
+ playStep(stepQueue[i],i,stepQueue.length,()=>{
+  document.getElementById("btn-next").disabled=false;
+ });
+}
+
+function finishSim(proj){
+ simRunning=false;
+ // Restore full brightness, show feedback arc
+ setNeuState(Object.keys(NEL),"done");
+ setEdgeGrpState(["EG87"],"done");
+ document.getElementById("btn-run").disabled=false;
+ showOutput(proj);
+}
+
+function showOutput(proj){
+ const riskCls={"CRITICAL":"#f87171","HIGH":"#fb923c","MEDIUM":"#facc15","MODERATE":"#4ade80"};
+ const panel=document.getElementById("output-panel");
+ const grid=document.getElementById("o-grid");
+ grid.innerHTML="";
+ const cards=[
+  {k:"Score",v:proj.final.toFixed(2)+" / 10",cls:proj.risk},
+  {k:"Risk level",v:proj.risk,cls:proj.risk},
+  {k:"Predicted CWEs",v:proj.cwes.join(", "),cls:""},
+  {k:"OWASP categories",v:proj.owasps.join(", "),cls:""},
+  {k:"Adj amplifiers",v:"+"+proj.adj.toFixed(2)+" / det="+proj.det.toFixed(2),cls:""},
+  {k:"Validation",v:proj.cvm+" | conf "+Math.round(proj.conf*100)+"%",cls:""},
+ ];
+ cards.forEach(c=>{
+  const d=document.createElement("div");d.className="o-card";
+  d.innerHTML=`<div class="ok">${c.k}</div><div class="ov ${c.cls}" style="${c.cls?'color:'+riskCls[c.cls]:''}">${c.v}</div>`;
+  grid.appendChild(d);
+ });
+ panel.style.display="block";
+}
+
+// ═══════════════════════════════════════════
+// UI SETUP
+// ═══════════════════════════════════════════
+const sel=document.getElementById("proj-sel");
+PROJECTS.forEach(p=>{
+ const o=document.createElement("option");o.value=p.id;o.textContent=p.name;sel.appendChild(o);
+});
+currentProj=PROJECTS[0];
+
+sel.addEventListener("change",()=>{
+ currentProj=PROJECTS.find(p=>p.id===sel.value);
+ resetNetwork();clearLog();
+ document.getElementById("log-area").value="Project: "+currentProj.name+"\nPress ▶ Run (auto) or Step ▷ (manual).\n";
+ document.getElementById("btn-next").disabled=true;
+ simRunning=false;
+});
+
+document.getElementById("btn-run").addEventListener("click",()=>{runSim(true);});
+document.getElementById("btn-next").addEventListener("click",()=>{
+ if(!simRunning){
+  simRunning=true;
+  doneNeurons=new Set();doneEdges=new Set();
+  resetNetwork();clearLog();
+  stepQueue=buildSteps(currentProj);
+  currentStepIdx=0;
+  document.getElementById("btn-run").disabled=false;
+  document.getElementById("btn-next").disabled=true;
+  playStepManual(0);
+ } else {
+  playStepManual(currentStepIdx+1);
+ }
+});
+document.getElementById("btn-reset").addEventListener("click",()=>{
+ simRunning=false;
+ resetNetwork();clearLog();
+ document.getElementById("btn-run").disabled=false;
+ //document.getElementById("btn-next").disabled=true; <!-- am comentat aici anti reset Bodorin-->
+ document.getElementById("step-label").textContent="Ready";
+ document.getElementById("log-area").value="Project: "+currentProj.name+"\nPress ▶ Run (auto) or Step ▷ (manual).\n";
+});
+
+// Init log
+document.getElementById("log-area").value="Project: "+PROJECTS[0].name+"\nPress ▶ Run (auto) or Step ▷ (manual).\n";
+</script>
+</body>
+</html>

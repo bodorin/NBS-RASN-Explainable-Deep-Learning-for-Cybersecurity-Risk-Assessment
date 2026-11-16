@@ -1,0 +1,1629 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ╔══════════════════════════════════════════════════════════════════════════════╗
+  ║  OSCPM · Open-Source Cybersecurity Prediction Model Ontology · Version 1.0   ║
+  ║  (Encodes the Core Prediction Framework for NBS_RASN Architecture & Flow     ║
+  ║  Author:                                                                     ║
+  ║     Nicolaie Popescu-Bodorin, 2025-09-27, bodorin@live.com, +40 722882471    ║
+  ║     https://lmrec.org/bodorin/                                               ║
+  ║  Companion File For the Article:                                             ║
+  ║     Neuro-Bayesian-Symbolic Residual Attention Shallow Network:              ║
+  ║     Explainable Deep Learning for Cybersecurity Risk Assessment              ║
+  ║     Authors:                                                                 ║
+  ║        Nicolaie Popescu-Bodorin, bodorin@live.com, +40 722882471             ║
+  ║        Madeleine Togher, mtogher@hct.ac.ae, +971 589252062                   ║
+  ║                                                                              ║
+  ║  Triple purpose:                                                             ║
+  ║    1. Human-readable technical reference                                     ║
+  ║    2. Programmatically parseable structured data                             ║
+  ║    3. Reasoning scaffold for future analyses                                 ║
+  ║                                                                              ║
+  ║  step-origin="N" fingerprints every element with the framework step          ║
+  ║  in which it first came into existence.                                      ║
+  ╚══════════════════════════════════════════════════════════════════════════════╝
+  Companion File For: 
+	Neuro-Bayesian-Symbolic Residual Attention Shallow Network: 
+		Explainable Deep Learning for Cybersecurity Risk Assessment
+			Nicolaie Popescu-Bodorin & Madeleine Togher, 2026, IJCCC
+  Companion File For: 
+	NBS-RASN Propagation Simulator: 
+		Step-by-Step Execution Trace for npm Ecosystem and WordPress+Plugins
+			Nicolaie Popescu-Bodorin & Madeleine Togher, 2026, IJCCC
+-->
+<oscpm:ontology
+  xmlns:oscpm  = "urn:oscpm:prediction:v1.0"
+  xmlns:owasp  = "urn:owasp:top10:2025"
+  xmlns:cwe    = "urn:mitre:cwe:top25:2025"
+  xmlns:xsi    = "http://www.w3.org/2001/XMLSchema-instance"
+  version      = "1.0.0"
+  created-by   = "Nicolaie Popescu-Bodorin"
+  created-at   = "2025-09-27"
+  step-origin  = "1"
+  trainable    = "true"
+  calibration-status = "initial"
+  cross-validation-status = "pending">
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 1 · PROCESS LOG  (Steps 1–11 meta-information)
+     Each step records its purpose, key decision, and primary ontology output.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:process-log step-origin="1">
+
+  <oscpm:step id="1" name="Vocabulary anchoring">
+    <oscpm:purpose>Establish precise, falsifiable target vocabulary before any project analysis. Refuse vague "this project is risky" claims. Require every susceptibility claim to map back to a specific CWE identifier.</oscpm:purpose>
+    <oscpm:key-decision>Use OWASP Top 10:2025 and CWE Top 25:2025 as the twin vocabularies. Every prediction must resolve to at least one CWE and one OWASP category.</oscpm:key-decision>
+    <oscpm:primary-outputs>
+      <oscpm:output ref="oscpm:axioms" />
+      <oscpm:output ref="oscpm:vocabulary-anchors" />
+    </oscpm:primary-outputs>
+  </oscpm:step>
+
+  <oscpm:step id="2" name="Causal model framing">
+    <oscpm:purpose>Reject the observational framing ("which projects have the most CVEs?") in favour of the causal framing ("what structural properties make specific vulnerability classes inevitable?"). This produces predictions rather than descriptions.</oscpm:purpose>
+    <oscpm:key-decision>The primary question is: what properties of a project make a vulnerability class structurally inevitable, regardless of security investment? This causal re-framing is the foundational methodological choice of the entire framework.</oscpm:key-decision>
+    <oscpm:primary-outputs>
+      <oscpm:output ref="oscpm:causal-model" />
+    </oscpm:primary-outputs>
+  </oscpm:step>
+
+  <oscpm:step id="3" name="Language-to-CWE mapping">
+    <oscpm:purpose>Derive, from first principles, which CWE classes are structurally enabled or impossible in each programming language based on the language's memory model and standard library idioms.</oscpm:purpose>
+    <oscpm:key-decision>Language determines the set of physically achievable CWE classes. This mapping is categorical (not probabilistic) for the core vulnerability classes. C/C++ structurally enables memory corruption classes that are impossible in GC languages.</oscpm:key-decision>
+    <oscpm:primary-outputs>
+      <oscpm:output ref="oscpm:language-vulnerability-model" />
+    </oscpm:primary-outputs>
+  </oscpm:step>
+
+  <oscpm:step id="4" name="Prediction factor identification">
+    <oscpm:purpose>Identify the minimal set of factors that, together, explain whether a theoretically possible vulnerability becomes an actually exploited CVE.</oscpm:purpose>
+    <oscpm:key-decision>Five factors identified: Language Risk, Input Surface, Ecosystem Complexity, Historical CVE Rate, Security Program Maturity. A sixth hidden factor, Expert Knowledge Gap, is implicitly used to adjust for qualitative information not captured by the five.</oscpm:key-decision>
+    <oscpm:primary-outputs>
+      <oscpm:output ref="oscpm:prediction-factors" />
+    </oscpm:primary-outputs>
+  </oscpm:step>
+
+  <oscpm:step id="5" name="Factor weighting">
+    <oscpm:purpose>Assign weights to the five factors reflecting their relative causal importance for producing real-world exploitable vulnerabilities.</oscpm:purpose>
+    <oscpm:key-decision>Weights: lang=0.25, surface=0.25, eco=0.20, cve=0.20, security=0.10. Lang and surface share highest weight (jointly 50%) as the primary exploitability determinants. Security gap receives lowest weight as it is the most temporally variable factor.</oscpm:key-decision>
+    <oscpm:primary-outputs>
+      <oscpm:output ref="oscpm:weighting-rationale" />
+    </oscpm:primary-outputs>
+  </oscpm:step>
+
+  <oscpm:step id="6" name="Project selection">
+    <oscpm:purpose>Select 20 representative open-source projects covering all OWASP categories, major language risk classes, and diverse deployment contexts.</oscpm:purpose>
+    <oscpm:key-decision>Selection criteria: (a) covers all 10 OWASP categories, (b) spans all language risk classes, (c) includes at least one major confirmed breach incident per project, (d) represents diverse deployment contexts. Projects with low prediction confidence were excluded.</oscpm:key-decision>
+    <oscpm:primary-outputs>
+      <oscpm:output ref="oscpm:project-selection-criteria" />
+    </oscpm:primary-outputs>
+  </oscpm:step>
+
+  <oscpm:step id="7" name="Scoring — deterministic and expert components">
+    <oscpm:purpose>Score all 20 projects using the deterministic formula, then apply expert knowledge adjustments for qualitative factors not captured by the five numeric factors.</oscpm:purpose>
+    <oscpm:key-decision>The final score is NOT a pure weighted average. The deterministic component provides a disciplined baseline; the expert adjustment encodes qualitative properties (blast radius, structural nature, default exposure, exploitation pattern, institutional criticality) that resist numeric encoding but materially affect real-world risk. The gap between deterministic and final score is explicitly named and decomposed into named amplifiers.</oscpm:key-decision>
+    <oscpm:primary-outputs>
+      <oscpm:output ref="oscpm:scoring-model" />
+      <oscpm:output ref="oscpm:expert-knowledge-amplifiers" />
+      <oscpm:output ref="oscpm:projects" />
+    </oscpm:primary-outputs>
+  </oscpm:step>
+
+  <oscpm:step id="8" name="Cross-validation against CVE and breach history">
+    <oscpm:purpose>Validate predictions against three empirical sources: CISA KEV catalog, major breach incidents, and annual CVE volume per project.</oscpm:purpose>
+    <oscpm:key-decision>Where empirical evidence contradicted theory, revise factor scores or final score. Key revision example: Kubernetes scored higher than the Go language factor alone would predict, because real-world RBAC misconfiguration incidents pushed it above the language-predicted baseline.</oscpm:key-decision>
+    <oscpm:primary-outputs>
+      <oscpm:output ref="oscpm:cross-validation-schema" />
+    </oscpm:primary-outputs>
+  </oscpm:step>
+
+  <oscpm:step id="9" name="Representativeness verification">
+    <oscpm:purpose>Confirm the selected 20 projects collectively cover the intended design space (OWASP categories, language classes, deployment contexts).</oscpm:purpose>
+    <oscpm:key-decision>Verified that each of the 10 OWASP Top 10:2025 categories has at least two projects as primary exemplars, and that all major language risk classes are represented.</oscpm:key-decision>
+    <oscpm:primary-outputs>
+      <oscpm:output ref="oscpm:representativeness-matrix" />
+    </oscpm:primary-outputs>
+  </oscpm:step>
+
+  <oscpm:step id="10" name="Interactive format translation">
+    <oscpm:purpose>Translate the scoring framework and project assessments into an interactive, searchable, filterable UI for operational use.</oscpm:purpose>
+    <oscpm:key-decision>Add "attack scenarios" deep-dive prompt links per project, enabling Step 11 on-demand. The interactive format must preserve the deterministic/expert decomposition and all factor values for user inspection.</oscpm:key-decision>
+    <oscpm:primary-outputs>
+      <oscpm:output ref="oscpm:ui-specification" />
+    </oscpm:primary-outputs>
+  </oscpm:step>
+
+  <oscpm:step id="11" name="Deep-dive: attack scenarios, detection, mitigation">
+    <oscpm:purpose>For a given project, enumerate top-N attack scenarios with complete kill chains, detection signatures by stage (pre-install / install-time / runtime), SIEM rule examples, tooling recommendations, and mitigation priorities.</oscpm:purpose>
+    <oscpm:key-decision>Detection signatures are organised by kill-chain timing (Registry / Install-time / Runtime) to convey whether detection is proactive or reactive. SIEM rules are intent-expressive pseudocode adaptable to common platforms (Splunk, Elastic, Falco, auditd).</oscpm:key-decision>
+    <oscpm:completion-status>
+      <oscpm:complete ref="npm-ecosystem" attack-scenarios="5" />
+      <oscpm:pending count="19" />
+    </oscpm:completion-status>
+    <oscpm:primary-outputs>
+      <oscpm:output ref="oscpm:step11-analyses" />
+    </oscpm:primary-outputs>
+  </oscpm:step>
+
+</oscpm:process-log>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 2 · AXIOMS  (step-origin="1")
+     Foundational constraints that every downstream element must satisfy.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:axioms step-origin="1">
+
+  <oscpm:axiom id="A1" name="Vocabulary precision">
+    Every susceptibility claim must resolve to at least one CWE identifier and one OWASP Top 10:2025 category. Claims without this resolution are invalid.
+  </oscpm:axiom>
+
+  <oscpm:axiom id="A2" name="Causal primacy">
+    The primary question is structural inevitability: what project properties make a vulnerability class physically achievable and likely to be realised as a CVE? Historical CVE counts are evidence, not cause.
+  </oscpm:axiom>
+
+  <oscpm:axiom id="A3" name="Falsifiability">
+    Every prediction must state its falsification condition: which CWE classes are predicted, and what evidence (CVE records, breach incidents) would confirm or refute the prediction.
+  </oscpm:axiom>
+
+  <oscpm:axiom id="A4" name="Deterministic-expert separation">
+    The final risk score is always the sum of a deterministic weighted-average component and a named, decomposed expert adjustment component. The two must always be reported separately.
+  </oscpm:axiom>
+
+  <oscpm:axiom id="A5" name="Transparency of hidden parameters">
+    All parameters used in scoring — including those not explicitly stated in prose — must be declared in the hidden-parameters-manifest section and tagged with their step-origin.
+  </oscpm:axiom>
+
+</oscpm:axioms>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 3 · VOCABULARY ANCHORS  (step-origin="1")
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:vocabulary-anchors step-origin="1">
+
+  <oscpm:standard id="OWASP-2025" name="OWASP Top 10:2025"
+    url="https://owasp.org/Top10/2025/" release-year="2025">
+    <oscpm:category ref="A01" name="Broken Access Control" />
+    <oscpm:category ref="A02" name="Security Misconfiguration" />
+    <oscpm:category ref="A03" name="Software Supply Chain Failures" />
+    <oscpm:category ref="A04" name="Cryptographic Failures" />
+    <oscpm:category ref="A05" name="Injection" />
+    <oscpm:category ref="A06" name="Insecure Design" />
+    <oscpm:category ref="A07" name="Authentication Failures" />
+    <oscpm:category ref="A08" name="Software or Data Integrity Failures" />
+    <oscpm:category ref="A09" name="Security Logging and Alerting Failures" />
+    <oscpm:category ref="A10" name="Mishandling of Exceptional Conditions" />
+  </oscpm:standard>
+
+  <oscpm:standard id="CWE-2025" name="CWE Top 25:2025"
+    url="https://cwe.mitre.org/top25/archive/2025/2025_cwe_top25.html"
+    release-year="2025" cve-records-analyzed="39080">
+    <oscpm:weakness ref="CWE-79"  rank="1"  name="Cross-Site Scripting" />
+    <oscpm:weakness ref="CWE-89"  rank="2"  name="SQL Injection" />
+    <oscpm:weakness ref="CWE-352" rank="3"  name="CSRF" />
+    <oscpm:weakness ref="CWE-862" rank="4"  name="Missing Authorization" />
+    <oscpm:weakness ref="CWE-787" rank="5"  name="Out-of-Bounds Write" />
+    <oscpm:weakness ref="CWE-22"  rank="6"  name="Path Traversal" />
+    <oscpm:weakness ref="CWE-416" rank="7"  name="Use After Free" />
+    <oscpm:weakness ref="CWE-125" rank="8"  name="Out-of-Bounds Read" />
+    <oscpm:weakness ref="CWE-78"  rank="9"  name="OS Command Injection" />
+    <oscpm:weakness ref="CWE-94"  rank="10" name="Code Injection" />
+    <oscpm:weakness ref="CWE-120" rank="11" name="Classic Buffer Overflow" />
+    <oscpm:weakness ref="CWE-121" rank="12" name="Stack-Based Buffer Overflow" />
+    <oscpm:weakness ref="CWE-122" rank="13" name="Heap-Based Buffer Overflow" />
+    <oscpm:weakness ref="CWE-20"  rank="14" name="Improper Input Validation" />
+    <oscpm:weakness ref="CWE-476" rank="15" name="NULL Pointer Dereference" />
+    <oscpm:weakness ref="CWE-287" rank="16" name="Improper Authentication" />
+    <oscpm:weakness ref="CWE-434" rank="17" name="Unrestricted File Upload" />
+    <oscpm:weakness ref="CWE-502" rank="18" name="Insecure Deserialization" />
+    <oscpm:weakness ref="CWE-284" rank="19" name="Improper Access Control" />
+    <oscpm:weakness ref="CWE-798" rank="20" name="Hard-coded Credentials" />
+    <oscpm:weakness ref="CWE-306" rank="21" name="Missing Auth for Critical Function" />
+    <oscpm:weakness ref="CWE-918" rank="22" name="SSRF" />
+    <oscpm:weakness ref="CWE-362" rank="23" name="Race Condition" />
+    <oscpm:weakness ref="CWE-639" rank="24" name="Auth Bypass via User-Controlled Key" />
+    <oscpm:weakness ref="CWE-400" rank="25" name="Uncontrolled Resource Consumption" />
+  </oscpm:standard>
+
+</oscpm:vocabulary-anchors>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 4 · CAUSAL MODEL  (step-origin="2")
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:causal-model step-origin="2">
+
+  <oscpm:framing-decision id="CAUSAL-FRAMING" step-origin="2">
+    <oscpm:rejected-alternative name="Observational count model">Count historical CVEs per project and rank by frequency. Rejected because: high CVE count may indicate good disclosure culture; zero CVEs may indicate nobody looked; counts measure past output not structural risk.</oscpm:rejected-alternative>
+    <oscpm:adopted-approach name="Causal inevitability model">Identify project properties that structurally enable specific CWE classes regardless of developer skill or security investment. The question is: is this vulnerability class physically achievable given the language, architecture, and ecosystem?</oscpm:adopted-approach>
+  </oscpm:framing-decision>
+
+  <oscpm:causal-chain-template step-origin="2">
+    <!-- Template: language-property → CWE class → OWASP category                       -->
+    <!-- 11 entries correspond 1-to-1 with the 11 causal neurons Ax2.1–Ax2.11 in NBS-RASN -->
+    <!-- Ax2.1 — C/C++ OOB-Write and Classic Buffer Overflow -->
+    <oscpm:link id="Ax2.1" from="C/C++ manual memory management (write paths)" to="CWE-787 CWE-120" via="unbounded writes to stack/heap buffers; no automatic size checking or bounds enforcement" owasp="A10" />
+    <!-- Ax2.2 — C/C++ Stack/Heap Buffer Overflow sub-classes -->
+    <oscpm:link id="Ax2.2" from="C/C++ manual memory management (allocation sub-classes)" to="CWE-121 CWE-122" via="stack and heap buffer allocations without bounds enforcement in their respective memory regions" owasp="A10" />
+    <!-- Ax2.3 — C/C++ Use-After-Free and OOB-Read -->
+    <oscpm:link id="Ax2.3" from="C/C++ manual memory management (lifetime and read paths)" to="CWE-416 CWE-125" via="pointer lifetime management errors (UAF) and unchecked read offsets (OOB-Read) in manual memory model" owasp="A10" />
+    <!-- Ax2.4 — PHP injection idioms -->
+    <oscpm:link id="Ax2.4" from="PHP string interpolation idioms" to="CWE-89 CWE-79 CWE-352" via="natural language patterns encourage direct string concatenation of user input; no default encoding or CSRF" owasp="A05" />
+    <!-- Ax2.5 — Java object serialization -->
+    <oscpm:link id="Ax2.5" from="Java ObjectInputStream" to="CWE-502" via="full object graph reconstruction including method invocation during deserialization of untrusted data" owasp="A08" />
+    <!-- Ax2.6 — Java expression language evaluation -->
+    <oscpm:link id="Ax2.6" from="Java expression languages (OGNL SpEL MVEL)" to="CWE-94" via="string-to-code evaluation paths reachable from user-controlled HTTP parameters or request headers" owasp="A05" />
+    <!-- Ax2.7 — Large package ecosystem supply chain -->
+    <oscpm:link id="Ax2.7" from="Large package ecosystem" to="CWE-1395" via="independently-maintained packages with variable security posture multiply attack surface non-linearly via transitive dependencies" owasp="A03" />
+    <!-- Ax2.8 — Default unauthenticated service -->
+    <oscpm:link id="Ax2.8" from="Default unauthenticated open port" to="CWE-306" via="service bound to 0.0.0.0 with no auth requirement is directly exploitable without any prior access or credential" owasp="A02 A07" />
+    <!-- Ax2.9 — Complex RBAC configuration -->
+    <oscpm:link id="Ax2.9" from="Complex RBAC configuration" to="CWE-862 CWE-284" via="misconfiguration under RBAC complexity is the norm; wildcard permissions are common in real cloud deployments" owasp="A01" />
+    <!-- Ax2.10 — JavaScript mutable prototype chain -->
+    <oscpm:link id="Ax2.10" from="JavaScript mutable prototype chain" to="CWE-1321" via="__proto__ or constructor.prototype key injection in merge/clone operations overwrites Object.prototype, polluting all downstream objects" owasp="A03 A08" />
+    <!-- Ax2.11 — Dynamic code evaluation (Python SSTI, JS eval) -->
+    <oscpm:link id="Ax2.11" from="Dynamic code evaluation (Python Jinja2 SSTI, JS eval)" to="CWE-94" via="render_template_string(user_input) evaluates Jinja2 as Python code; eval() and Function() in JS execute user-controlled strings" owasp="A03 A05" />
+  </oscpm:causal-chain-template>
+
+</oscpm:causal-model>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 5 · LANGUAGE VULNERABILITY MODEL  (step-origin="3")
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:language-vulnerability-model step-origin="3">
+
+  <oscpm:language id="C" risk-score="10" trainable="true" step-origin="3">
+    <oscpm:memory-model>Manual: malloc/free, raw pointer arithmetic, no bounds checking</oscpm:memory-model>
+    <oscpm:structurally-enables>
+      <oscpm:cwe-class ref="CWE-787" certainty="categorical" />
+      <oscpm:cwe-class ref="CWE-120" certainty="categorical" />
+      <oscpm:cwe-class ref="CWE-121" certainty="categorical" />
+      <oscpm:cwe-class ref="CWE-122" certainty="categorical" />
+      <oscpm:cwe-class ref="CWE-416" certainty="categorical" />
+      <oscpm:cwe-class ref="CWE-125" certainty="categorical" />
+      <oscpm:cwe-class ref="CWE-476" certainty="categorical" />
+    </oscpm:structurally-enables>
+    <oscpm:structurally-prevents>None — all CWE classes are physically achievable</oscpm:structurally-prevents>
+    <oscpm:risk-score-justification>Manual memory management makes buffer overflow and use-after-free classes categorical, not probabilistic.</oscpm:risk-score-justification>
+  </oscpm:language>
+
+  <oscpm:language id="C++" risk-score="10" trainable="true" step-origin="3">
+    <oscpm:memory-model>Manual (default); RAII/smart-pointers reduce UAF risk but do not eliminate OOB write/read</oscpm:memory-model>
+    <oscpm:structurally-enables>
+      <oscpm:cwe-class ref="CWE-787" certainty="categorical" />
+      <oscpm:cwe-class ref="CWE-120" certainty="categorical" />
+      <oscpm:cwe-class ref="CWE-416" certainty="high" note="smart-pointer use reduces but cannot eliminate" />
+      <oscpm:cwe-class ref="CWE-125" certainty="categorical" />
+    </oscpm:structurally-enables>
+  </oscpm:language>
+
+  <oscpm:language id="PHP" risk-score="9" trainable="true" step-origin="3">
+    <oscpm:memory-model>Garbage-collected; no memory safety CWE classes. Primary risk from permissive type system and interpolation idioms.</oscpm:memory-model>
+    <oscpm:structurally-enables>
+      <oscpm:cwe-class ref="CWE-89"  certainty="high" rationale="string concatenation is the natural PHP DB access idiom" />
+      <oscpm:cwe-class ref="CWE-79"  certainty="high" rationale="echo $var is the natural output idiom with no encoding" />
+      <oscpm:cwe-class ref="CWE-352" certainty="high" rationale="no framework-level CSRF protection by default" />
+      <oscpm:cwe-class ref="CWE-434" certainty="high" rationale="move_uploaded_file() provides no validation" />
+      <oscpm:cwe-class ref="CWE-78"  certainty="medium" rationale="shell_exec/system common in utility scripts" />
+      <oscpm:cwe-class ref="CWE-502" certainty="medium" rationale="unserialize() widely used without type checking" />
+    </oscpm:structurally-enables>
+    <oscpm:risk-score-justification>PHP's idioms (string concatenation, direct echo, no default CSRF, unserialize) guide novice developers toward injection patterns.</oscpm:risk-score-justification>
+  </oscpm:language>
+
+  <oscpm:language id="Java" risk-score="7" trainable="true" step-origin="3">
+    <oscpm:memory-model>Garbage-collected; eliminates memory-safety CWE classes. Primary risk from object serialization and expression language evaluation.</oscpm:memory-model>
+    <oscpm:structurally-enables>
+      <oscpm:cwe-class ref="CWE-502" certainty="high" rationale="ObjectInputStream reconstructs live objects including method invocation" />
+      <oscpm:cwe-class ref="CWE-94"  certainty="high" rationale="OGNL, SpEL, MVEL expression languages evaluate strings as code" />
+      <oscpm:cwe-class ref="CWE-918" certainty="medium" rationale="JNDI, URL fetching, and SSO flows create SSRF paths" />
+    </oscpm:structurally-enables>
+    <oscpm:structurally-prevents>
+      <oscpm:cwe-class ref="CWE-787" note="impossible in pure Java — JVM bounds-checks all array accesses" />
+      <oscpm:cwe-class ref="CWE-416" note="impossible — GC eliminates manual deallocation" />
+    </oscpm:structurally-prevents>
+  </oscpm:language>
+
+  <oscpm:language id="JavaScript" risk-score="7" trainable="true" step-origin="3">
+    <oscpm:memory-model>Garbage-collected; primary risk from eval/dynamic execution and npm supply chain exposure.</oscpm:memory-model>
+    <oscpm:structurally-enables>
+      <oscpm:cwe-class ref="CWE-94"  certainty="high" rationale="eval(), Function() constructor, vm.runInNewContext()" />
+      <oscpm:cwe-class ref="CWE-400" certainty="high" rationale="regex backtracking engine enables ReDoS" />
+      <oscpm:cwe-class ref="CWE-79"  certainty="high" rationale="DOM manipulation without sanitization" />
+      <oscpm:cwe-class ref="CWE-1321" certainty="high" rationale="prototype chain mutable via __proto__ key in merge operations" />
+      <oscpm:cwe-class ref="CWE-1395" certainty="critical" rationale="2.5M packages; transitive dependency chains amplify supply chain exposure" />
+    </oscpm:structurally-enables>
+  </oscpm:language>
+
+  <oscpm:language id="Python" risk-score="6" trainable="true" step-origin="3">
+    <oscpm:memory-model>Garbage-collected; primary risk from powerful serialization primitives.</oscpm:memory-model>
+    <oscpm:structurally-enables>
+      <oscpm:cwe-class ref="CWE-502" certainty="high" rationale="pickle.loads() executes arbitrary Python bytecode" />
+      <oscpm:cwe-class ref="CWE-94"  certainty="high" rationale="Jinja2 render_template_string(user_input) = SSTI → RCE" />
+      <oscpm:cwe-class ref="CWE-78"  certainty="medium" rationale="subprocess with shell=True and user input" />
+    </oscpm:structurally-enables>
+  </oscpm:language>
+
+  <oscpm:language id="Go" risk-score="4" trainable="true" step-origin="3">
+    <oscpm:memory-model>Garbage-collected with runtime bounds-checking; eliminates most memory-safety CWE classes.</oscpm:memory-model>
+    <oscpm:structurally-enables>
+      <oscpm:cwe-class ref="CWE-22"  certainty="medium" rationale="filepath operations without canonicalization" />
+      <oscpm:cwe-class ref="CWE-362" certainty="medium" rationale="goroutine concurrency without mutex enforcement" />
+    </oscpm:structurally-enables>
+    <oscpm:structurally-prevents>
+      <oscpm:cwe-class ref="CWE-787" note="bounds-checked at runtime" />
+      <oscpm:cwe-class ref="CWE-416" note="GC prevents manual memory management bugs" />
+    </oscpm:structurally-prevents>
+    <oscpm:risk-score-justification>Low language risk, but architectural complexity can still produce A01/A02 risks regardless of language.</oscpm:risk-score-justification>
+  </oscpm:language>
+
+  <oscpm:language id="Ruby" risk-score="6" trainable="true" step-origin="3">
+    <oscpm:memory-model>Garbage-collected; primary risk from metaprogramming and mass-assignment patterns.</oscpm:memory-model>
+    <oscpm:structurally-enables>
+      <oscpm:cwe-class ref="CWE-915" certainty="high" rationale="mass-assignment via params without strong parameters" />
+      <oscpm:cwe-class ref="CWE-94"  certainty="medium" rationale="eval and metaprogramming patterns" />
+    </oscpm:structurally-enables>
+  </oscpm:language>
+
+</oscpm:language-vulnerability-model>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 6 · PREDICTION FACTORS  (step-origin="4")
+     The five primary factors plus the expert-knowledge factor (hidden).
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:prediction-factors step-origin="4">
+
+  <oscpm:factor id="lang" name="Language Risk"
+    step-origin="3 4"
+    scale-min="1" scale-max="10"
+    weight="0.25" trainable="true"
+    calibration-method="Stratified CVE frequency analysis by primary language across NVD dataset"
+    cross-validation-metric="Pearson r between lang scores and observed memory-safety CVE fraction"
+    hidden="false">
+    <oscpm:description>Reflects the structural vulnerability classes enabled by the project's primary programming language(s). Derived from the memory model and standard-library idioms of each language. This is the single most deterministic factor — it answers "what CWE classes are architecturally possible here?"</oscpm:description>
+    <oscpm:scale-anchors>
+      <oscpm:anchor value="10" label="C or C++ with manual memory management and untrusted binary input" />
+      <oscpm:anchor value="9"  label="PHP with web-facing form processing" />
+      <oscpm:anchor value="7"  label="Java or JavaScript with complex runtime features" />
+      <oscpm:anchor value="6"  label="Python or Ruby with powerful serialization primitives" />
+      <oscpm:anchor value="4"  label="Go with GC and runtime bounds-checking" />
+      <oscpm:anchor value="2"  label="Rust with ownership model and compile-time safety guarantees" />
+    </oscpm:scale-anchors>
+    <oscpm:multi-language-rule>When a project uses multiple languages, score = weighted average by code fraction, with a +1 bonus if the highest-risk language handles the primary attack surface.</oscpm:multi-language-rule>
+  </oscpm:factor>
+
+  <oscpm:factor id="surface" name="Input Surface"
+    step-origin="4"
+    scale-min="1" scale-max="10"
+    weight="0.25" trainable="true"
+    calibration-method="Binary classification (exploitable yes/no) regressed against surface category, using CISA KEV as ground truth"
+    cross-validation-metric="AUC-ROC for exploitability prediction given surface category alone"
+    hidden="false">
+    <oscpm:description>Measures the reachability of potentially vulnerable code by an unauthenticated or low-privilege attacker over a network. A vulnerability is only exploitable if an attacker can deliver controlled input to the affected code path. Internet-facing == maximum reachability.</oscpm:description>
+    <oscpm:scale-anchors>
+      <oscpm:anchor value="10" label="Internet-facing web application or service accepting arbitrary user input" />
+      <oscpm:anchor value="9"  label="Network service with direct internet exposure (SMTP, TLS, HTTP proxy)" />
+      <oscpm:anchor value="8"  label="Backend service processing semi-trusted data from upstream services" />
+      <oscpm:anchor value="6"  label="Library called by internet-facing applications (indirect exposure)" />
+      <oscpm:anchor value="5"  label="Infrastructure service on private network (CI/CD, orchestration)" />
+      <oscpm:anchor value="3"  label="CLI tool invoked by local users only" />
+    </oscpm:scale-anchors>
+  </oscpm:factor>
+
+  <oscpm:factor id="eco" name="Ecosystem Complexity"
+    step-origin="4"
+    scale-min="1" scale-max="10"
+    weight="0.20" trainable="true"
+    calibration-method="Regression: plugin/package count vs supply-chain CVE rate per project, using NVD + npm/PyPI registry data"
+    cross-validation-metric="Spearman rho between eco score and annual supply-chain CVE count"
+    hidden="false">
+    <oscpm:description>Measures the number of independently-maintained third-party components (plugins, packages, modules) that run with the project's privileges. Attack surface grows non-linearly with ecosystem size because each plugin is independently maintained with variable security posture. This factor specifically predicts A03 and CWE-1395 exposure.</oscpm:description>
+    <oscpm:scale-anchors>
+      <oscpm:anchor value="10" label="50,000+ plugins/packages of variable quality (WordPress, npm)" />
+      <oscpm:anchor value="8"  label="1,000–50,000 plugins with weak quality gating (Jenkins, Kubernetes Helm)" />
+      <oscpm:anchor value="6"  label="Large transitive dependency tree (>200 direct/indirect deps)" />
+      <oscpm:anchor value="4"  label="Moderate dependencies, maintained by known organisations" />
+      <oscpm:anchor value="2"  label="Minimal external dependencies; mostly self-contained" />
+    </oscpm:scale-anchors>
+  </oscpm:factor>
+
+  <oscpm:factor id="cve" name="Historical CVE Rate"
+    step-origin="4 8"
+    scale-min="1" scale-max="10"
+    weight="0.20" trainable="true"
+    calibration-method="Quartile analysis of annual high/critical CVE count per project over rolling 5-year window using NVD data"
+    cross-validation-metric="Rank correlation between cve factor score and observed next-year CVE count (temporal holdout)"
+    hidden="false">
+    <oscpm:description>The empirical anchor. Represents the historical rate of high/critical severity CVE production. Used both as a predictor and as a sanity check against theoretical predictions. Caution: a high CVE rate may reflect a mature disclosure program (not solely bad code) — this context is captured in the expert adjustment where relevant.</oscpm:description>
+    <oscpm:scale-anchors>
+      <oscpm:anchor value="10" label="Very high annual rate: 10+ high/critical CVEs per year, sustained over 5+ years" />
+      <oscpm:anchor value="8"  label="High rate: 5–10 high/critical CVEs per year" />
+      <oscpm:anchor value="5"  label="Medium rate: 2–5 per year" />
+      <oscpm:anchor value="3"  label="Low rate: 0–2 per year, or disclosure program known to be thorough" />
+      <oscpm:anchor value="1"  label="Very low rate: rare CVEs, well-audited codebase" />
+    </oscpm:scale-anchors>
+    <oscpm:confound-note>High cve-factor score may conflate poor code quality with an active, transparent disclosure program. When a mature security team is detected, the expert adjustment may partially offset this confound.</oscpm:confound-note>
+  </oscpm:factor>
+
+  <oscpm:factor id="sec" name="Security Program Gap"
+    step-origin="4"
+    scale-min="1" scale-max="10"
+    weight="0.10" trainable="true"
+    calibration-method="Ordinal regression against OpenSSF Scorecard ratings and known security team rosters"
+    cross-validation-metric="Ordinal agreement between sec factor category and independent OpenSSF Scorecard tier"
+    hidden="false"
+    note="Higher value = larger gap = higher risk. Score of 10 = no security team; score of 2 = well-funded mature program.">
+    <oscpm:description>Represents the inverse of security program maturity — the gap between what an ideal program would do and what the project actually does. Lower score = better security posture = lower residual risk. Receives the lowest weight (0.10) because it is the most temporally variable factor: a project can substantially improve its security posture in 12–18 months, whereas language, surface, and ecosystem are structural and change slowly or not at all.</oscpm:description>
+    <oscpm:scale-anchors>
+      <oscpm:anchor value="10" label="No dedicated security team; no disclosure policy; volunteer-only development" />
+      <oscpm:anchor value="8"  label="Volunteer security committee; responsive but not proactive" />
+      <oscpm:anchor value="6"  label="Partial team; some proactive auditing but limited resources" />
+      <oscpm:anchor value="4"  label="Dedicated security team; regular audits; CVD policy enforced" />
+      <oscpm:anchor value="2"  label="Well-funded program; third-party audits; fuzzing infrastructure; bug bounty program" />
+    </oscpm:scale-anchors>
+  </oscpm:factor>
+
+</oscpm:prediction-factors>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 7 · WEIGHTING RATIONALE  (step-origin="5")
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:weighting-rationale step-origin="5">
+
+  <oscpm:weight-set id="W-DEFAULT" version="1.0" trainable="true"
+    calibration-method="Constrained optimisation minimising rank error against held-out CVE-confirmed project set; constraints: Σ weights = 1.0, all weights > 0"
+    cross-validation-metric="Spearman rho between predicted ranking and CISA KEV exploitation frequency rank">
+
+    <oscpm:weight factor-ref="lang"    value="0.25" rationale="Language determines the set of physically achievable CWE classes — the most structurally deterministic factor. Shared highest weight with surface." />
+    <oscpm:weight factor-ref="surface" value="0.25" rationale="Vulnerability requires attacker reachability to produce a CVE. A theoretically vulnerable system that attackers cannot reach is not practically dangerous. Shared highest weight with lang." />
+    <oscpm:weight factor-ref="eco"     value="0.20" rationale="Supply chain attacks are now a top-3 breach vector. Ecosystem size creates multiplicative, not additive, attack surface growth." />
+    <oscpm:weight factor-ref="cve"     value="0.20" rationale="Empirical anchor validates theoretical predictions and captures project-specific structural factors not explained by other four." />
+    <oscpm:weight factor-ref="sec"     value="0.10" rationale="Lowest weight because most temporally variable. Security posture can change substantially in 12–18 months; language and surface cannot." />
+
+    <oscpm:joint-effect id="LANG-SURFACE-SYNERGY" step-origin="5" hidden="true" trainable="true">
+      <oscpm:description>When both lang and surface are simultaneously high (lang &gt;= 9 AND surface &gt;= 9), the joint exploitability exceeds the sum of independent contributions. This synergy is partially captured by the expert adjustment amplifiers in Step 7, not in the deterministic formula.</oscpm:description>
+      <oscpm:synergy-premium value="0.2–0.5" notes="Applied via blast-radius or structural-nature amplifier when both conditions hold" />
+    </oscpm:joint-effect>
+
+  </oscpm:weight-set>
+
+</oscpm:weighting-rationale>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 8 · SCORING MODEL  (step-origin="7")
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:scoring-model step-origin="7">
+
+  <oscpm:deterministic-component step-origin="4 5 7">
+    <oscpm:formula id="DET-FORMULA"><![CDATA[
+      deterministic_score =
+          factor_value[lang]    × weight[lang]    +
+          factor_value[surface] × weight[surface] +
+          factor_value[eco]     × weight[eco]     +
+          factor_value[cve]     × weight[cve]     +
+          factor_value[sec]     × weight[sec]
+
+      Using defaults: W = {lang:0.25, surface:0.25, eco:0.20, cve:0.20, sec:0.10}
+    ]]></oscpm:formula>
+    <oscpm:scale>0–10 (continuous)</oscpm:scale>
+    <oscpm:note>This is a discipline scaffold, not the final score. It forces structured assessment and prevents expert judgment from dominating arbitrarily. The gap between this value and the final score is the expert_adjustment.</oscpm:note>
+  </oscpm:deterministic-component>
+
+  <oscpm:expert-knowledge-component step-origin="7">
+    <oscpm:formula id="EXPERT-FORMULA"><![CDATA[
+      expert_adjustment = Σ amplifier_contribution[j]
+          for j ∈ {blast_radius, propagation_speed, structural_nature,
+                   default_exposure, exploitation_pattern,
+                   institutional_criticality, project_specific_amplifiers}
+
+      final_score = deterministic_score + expert_adjustment
+
+      Constraint: expert_adjustment must be decomposed into named amplifiers
+                  whose contributions sum to the adjustment value.
+                  This decomposition is what separates principled expert judgment
+                  from arbitrary score inflation.
+    ]]></oscpm:formula>
+    <oscpm:scale>expert_adjustment ∈ [-2.0, +2.0] — scores outside [0,10] are clamped</oscpm:scale>
+    <oscpm:note>The expert adjustment encodes qualitative information that resists numeric encoding but materially affects real-world risk: structural architectural flaws, default deployment exposure, propagation speed of exploit campaigns, and identity-wide or infrastructure-wide blast radius.</oscpm:note>
+  </oscpm:expert-knowledge-component>
+
+  <oscpm:final-score-derivation step-origin="7">
+    <oscpm:risk-levels>
+      <oscpm:level id="CRITICAL" min-score="9.0" max-score="10.0" color-code="danger" />
+      <oscpm:level id="HIGH"     min-score="8.0" max-score="8.99" color-code="warning" />
+      <oscpm:level id="MEDIUM"   min-score="7.0" max-score="7.99" color-code="info" />
+      <oscpm:level id="MODERATE" min-score="0.0" max-score="6.99" color-code="success" />
+    </oscpm:risk-levels>
+  </oscpm:final-score-derivation>
+
+</oscpm:scoring-model>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 9 · EXPERT KNOWLEDGE AMPLIFIERS  (step-origin="7")
+     Named, calibratable amplifiers that decompose the expert adjustment.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:expert-knowledge-amplifiers step-origin="7">
+
+  <oscpm:amplifier id="blast-radius" step-origin="7" trainable="true"
+    calibration-method="Regression: downstream project count affected per historical incident vs amplifier level"
+    cross-validation-metric="Rank correlation between blast-radius level and observed downstream organisations affected per CVE">
+    <oscpm:description>How many distinct downstream projects, organisations, or end-users are affected when the vulnerability is exploited. High blast radius amplifies practical risk independent of the five factors.</oscpm:description>
+    <oscpm:levels>
+      <oscpm:level value="NONE"     contribution="0.00" />
+      <oscpm:level value="LOW"      contribution="0.10" notes="Single organisation or narrow user set" />
+      <oscpm:level value="MEDIUM"   contribution="0.25" notes="Multiple organisations, tens of thousands of users" />
+      <oscpm:level value="HIGH"     contribution="0.50" notes="Broad industry sector or millions of deployments" />
+      <oscpm:level value="CRITICAL" contribution="0.60" notes="Near-universal: internet infrastructure, 40%+ of all websites" />
+    </oscpm:levels>
+  </oscpm:amplifier>
+
+  <oscpm:amplifier id="propagation-speed" step-origin="7" trainable="true"
+    calibration-method="Time-series analysis of npm/PyPI malicious package propagation events">
+    <oscpm:description>Speed at which an exploit or compromised package propagates to downstream victims after initial publication or disclosure. Supply chain attacks propagate near-instantly; traditional CVEs propagate slowly as patches are applied.</oscpm:description>
+    <oscpm:levels>
+      <oscpm:level value="SLOW"      contribution="0.00" notes="Days-to-months before widespread exploitation" />
+      <oscpm:level value="MODERATE"  contribution="0.10" notes="Hours-to-days propagation window" />
+      <oscpm:level value="FAST"      contribution="0.20" notes="Minutes-to-hours after publication" />
+      <oscpm:level value="INSTANT"   contribution="0.30" notes="Propagates within seconds via auto-update or CDN delivery" />
+    </oscpm:levels>
+  </oscpm:amplifier>
+
+  <oscpm:amplifier id="structural-nature" step-origin="7" trainable="true"
+    calibration-method="Expert panel classification of CVE root causes as architectural vs implementation-specific">
+    <oscpm:description>Whether the vulnerability class is a one-time implementation bug (patchable) or an architectural flaw inherent to the project's design (recurring or only partially fixable). Structural flaws produce recurring CVE families; patching one instance does not close the class.</oscpm:description>
+    <oscpm:levels>
+      <oscpm:level value="INCIDENTAL"  contribution="0.00" notes="One-time implementation bug; fully patchable; class closed after fix" />
+      <oscpm:level value="MIXED"       contribution="0.20" notes="Partly architectural; patched instances recur in other code areas" />
+      <oscpm:level value="STRUCTURAL"  contribution="0.40" notes="Architectural design enables the vulnerability class; patch reduces instances but cannot close the class" />
+      <oscpm:level value="FOUNDATIONAL" contribution="0.60" notes="The fundamental model of the project (e.g. JNDI evaluation in logging) enables the class; addressing it requires breaking design changes" />
+    </oscpm:levels>
+  </oscpm:amplifier>
+
+  <oscpm:amplifier id="default-exposure" step-origin="7" trainable="true"
+    calibration-method="Survey of default installation states across major Linux distributions and cloud provider templates">
+    <oscpm:description>Whether the default installation creates immediate exposure without any additional misconfiguration by the operator. Redis historically bound to 0.0.0.0 with no authentication by default — this is FULL default exposure. Exim is the default MTA on many Linux distros — also FULL.</oscpm:description>
+    <oscpm:levels>
+      <oscpm:level value="NONE"    contribution="0.00" notes="Default install is locked down; auth required by default" />
+      <oscpm:level value="PARTIAL" contribution="0.20" notes="Default install exposes some features; requires additional misconfiguration for critical exposure" />
+      <oscpm:level value="FULL"    contribution="0.70" notes="Default install directly exposed; operator action required to secure (not to leave insecure). Upper bound raised to 0.70 to cover extreme cases such as Redis unauthenticated 0.0.0.0 binding confirmed on Shodan at scale." />
+    </oscpm:levels>
+  </oscpm:amplifier>
+
+  <oscpm:amplifier id="exploitation-pattern" step-origin="7" trainable="true"
+    calibration-method="Classification of CISA KEV entries by attacker campaign type (targeted vs mass exploit)">
+    <oscpm:description>Whether historical exploitation is targeted (specific organisations), mass (opportunistic scanning), or individual. Mass exploitation dramatically amplifies practical risk beyond the theoretical vulnerability score.</oscpm:description>
+    <oscpm:levels>
+      <oscpm:level value="INDIVIDUAL"  contribution="0.00" notes="Targeted, manual exploitation only" />
+      <oscpm:level value="TARGETED"    contribution="0.20" notes="APT-style campaigns against specific sectors" />
+      <oscpm:level value="MASS"        contribution="0.40" notes="Automated scanning and mass exploitation within days of CVE publication. Upper bound raised to 0.40 to cover extreme no-credentials RCE cases such as Redis." />
+    </oscpm:levels>
+  </oscpm:amplifier>
+
+  <oscpm:amplifier id="institutional-criticality" step-origin="7" trainable="true"
+    calibration-method="Presence in critical infrastructure operator dependency inventories (financial, healthcare, government)">
+    <oscpm:description>Importance of the project to critical infrastructure and the degree to which it underpins other fundamental systems. OpenSSL underpins virtually all encrypted internet traffic — its failure has civilisation-scale impact. Keycloak centralises identity for entire organisations — a bypass affects all downstream systems simultaneously.</oscpm:description>
+    <oscpm:levels>
+      <oscpm:level value="LOW"      contribution="0.00" />
+      <oscpm:level value="MEDIUM"   contribution="0.10" />
+      <oscpm:level value="HIGH"     contribution="0.30" />
+      <oscpm:level value="CRITICAL" contribution="0.55" notes="Internet-wide infrastructure; failure affects millions of unrelated systems simultaneously" />
+    </oscpm:levels>
+  </oscpm:amplifier>
+
+</oscpm:expert-knowledge-amplifiers>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 10 · HIDDEN PARAMETERS MANIFEST  (step-origin="1 2 4 5 7 8")
+     Explicit declaration of all parameters that influenced scoring but were
+     not fully described in prose. Required by Axiom A5.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:hidden-parameters-manifest step-origin="1 2 4 5 7 8">
+
+  <oscpm:hidden-parameter id="prediction-confidence" step-origin="7 8" trainable="true"
+    type="float" range="[0.0, 1.0]"
+    calibration-method="Bootstrap confidence intervals over CVE prediction accuracy across held-out project set"
+    cross-validation-metric="Calibration curve: predicted confidence vs fraction correctly predicted">
+    <oscpm:description>Per-project confidence that the model correctly predicts the actual vulnerability distribution. Increases with: confirmed historical CVE records matching predicted CWE classes, multiple independent sources. Decreases with: few historical CVEs (hard to validate), active recent security investment that may have changed the risk profile, rapidly evolving technology stack.</oscpm:description>
+  </oscpm:hidden-parameter>
+
+  <oscpm:hidden-parameter id="epistemic-uncertainty" step-origin="2 7" trainable="false"
+    type="enum" values="LOW MEDIUM HIGH">
+    <oscpm:description>The degree to which the assessor lacks information needed for confident scoring. Distinct from prediction-confidence (which is about model accuracy) — this is about information availability. A project that has never been publicly audited has high epistemic uncertainty regardless of its theoretical risk class.</oscpm:description>
+  </oscpm:hidden-parameter>
+
+  <oscpm:hidden-parameter id="lang-surface-synergy" step-origin="5" trainable="true"
+    type="float" range="[0.0, 0.5]">
+    <oscpm:description>Additional risk premium when both lang and surface are simultaneously at maximum risk (lang &gt;= 9 AND surface &gt;= 9). The joint exploitability of "dangerous language + maximum reachability" exceeds the sum of independent contributions. Currently encoded implicitly in expert amplifiers rather than as a multiplicative factor in the deterministic formula.</oscpm:description>
+  </oscpm:hidden-parameter>
+
+  <oscpm:hidden-parameter id="active-exploitation-premium" step-origin="7 8" trainable="true"
+    type="float" range="[0.0, 0.3]">
+    <oscpm:description>Additional score weight for projects with ≥5 entries in the CISA Known Exploited Vulnerabilities (KEV) catalog. KEV entries confirm that vulnerabilities are being exploited in the wild against real organisations, not just theoretically possible. This is distinct from the cve factor (which measures production rate) — KEV measures confirmed real-world active exploitation.</oscpm:description>
+  </oscpm:hidden-parameter>
+
+  <oscpm:hidden-parameter id="structural-vs-incidental-ratio" step-origin="7" trainable="true"
+    type="float" range="[0.0, 1.0]"
+    note="Fraction of historical CVEs that are architectural vs one-time bugs">
+    <oscpm:description>For a given project, the fraction of historical CVEs that represent structural/architectural weaknesses (recurring vulnerability classes) vs incidental implementation bugs (one-time occurrences). High ratio signals that patching is insufficient — the architecture itself generates vulnerabilities. Encoded in the structural-nature amplifier but the underlying ratio is a continuous hidden parameter.</oscpm:description>
+  </oscpm:hidden-parameter>
+
+  <oscpm:hidden-parameter id="patch-lag" step-origin="7" trainable="true"
+    type="enum" values="FAST MODERATE SLOW VERY-SLOW"
+    note="Time from CVE disclosure to patch availability and widespread adoption">
+    <oscpm:description>How quickly does the project release patches and how quickly do deployers apply them? Projects with slow patch adoption (Exim on many inherited Linux servers) maintain their exposure window far longer than projects with rapid auto-update mechanisms. Affects the practical exploitability window per CVE. Currently partially encoded in the security-gap factor but not explicitly parameterised.</oscpm:description>
+  </oscpm:hidden-parameter>
+
+  <oscpm:hidden-parameter id="representativeness-criterion" step-origin="6" trainable="false">
+    <oscpm:description>The rule used for project selection: include a project only if it (a) covers at least one OWASP category not yet covered, (b) represents a language risk class, (c) has a confirmed public incident anchoring the prediction, and (d) the assessor's prediction confidence exceeds 0.75. Projects below this threshold were excluded, introducing selection bias toward well-documented projects.</oscpm:description>
+  </oscpm:hidden-parameter>
+
+  <oscpm:hidden-parameter id="causal-query-framing" step-origin="2" trainable="false">
+    <oscpm:description>The specific question asked during assessment: "What structural properties of this project make specific vulnerability classes physically achievable and likely to produce CVEs, regardless of security investment?" This framing, chosen in Step 2, determines which properties are treated as causal (language, architecture) vs epiphenomenal (CVE count, disclosure history).</oscpm:description>
+  </oscpm:hidden-parameter>
+
+  <oscpm:hidden-parameter id="falsifiability-threshold" step-origin="1" trainable="true"
+    type="float" range="[0.0, 1.0]" default="0.70"
+    note="Minimum prediction confidence below which a prediction is flagged as low-confidence">
+    <oscpm:description>Any susceptibility prediction with prediction-confidence below this threshold is flagged as requiring additional validation before operational use. Currently set to 0.70 for CWE-class predictions and 0.60 for OWASP-category predictions (broader categories are easier to confirm).</oscpm:description>
+  </oscpm:hidden-parameter>
+
+  <oscpm:hidden-parameter id="temporal-validity-window" step-origin="8" trainable="true"
+    type="duration" default="P18M"
+    note="ISO 8601 duration; P18M = 18 months">
+    <oscpm:description>Scores are considered valid for this duration before recalibration is recommended. Security posture (sec-gap factor) changes most rapidly and should be rechecked first. Language risk changes slowest. The model should be recalibrated if any scored project receives a high-severity CVE in a CWE class that was NOT predicted.</oscpm:description>
+  </oscpm:hidden-parameter>
+
+  <oscpm:hidden-parameter id="recalibration-trigger" step-origin="8" trainable="false">
+    <oscpm:description>Events that invalidate a score and require recalibration: (a) a new high/critical CVE in a CWE class NOT predicted for the project; (b) a major architectural change (language migration, authentication model change); (c) CISA KEV entry for a vulnerability of a type not predicted; (d) reported prediction-confidence delta > 0.15 after cross-validation against new CVE data.</oscpm:description>
+  </oscpm:hidden-parameter>
+
+</oscpm:hidden-parameters-manifest>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 11 · PROJECT SELECTION CRITERIA  (step-origin="6")
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:project-selection-criteria step-origin="6">
+
+  <oscpm:criterion id="SC1" name="OWASP coverage" mandatory="true">At least one project must exemplify each of the 10 OWASP Top 10:2025 categories as its primary predicted risk.</oscpm:criterion>
+  <oscpm:criterion id="SC2" name="Language class coverage" mandatory="true">Each defined language risk class (C/C++, PHP, Java, JavaScript, Python, Go, Ruby) must have at least one representative project.</oscpm:criterion>
+  <oscpm:criterion id="SC3" name="Incident anchoring" mandatory="true">Each project must have at least one well-documented, publicly confirmed CVE or breach incident that validates the model's predicted vulnerability class for that project.</oscpm:criterion>
+  <oscpm:criterion id="SC4" name="Prediction confidence floor" mandatory="true" threshold="0.75">Exclude projects where prediction-confidence cannot exceed 0.75 based on available public information.</oscpm:criterion>
+  <oscpm:criterion id="SC5" name="Deployment diversity" mandatory="false">Prefer projects spanning diverse deployment contexts: web CMS, CI/CD, infrastructure, cryptography, media processing, email, data stores, auth, frameworks, ecosystems.</oscpm:criterion>
+
+  <oscpm:selection-bias-declaration step-origin="6">
+    Known biases: (a) Excludes poorly-documented projects where incident anchoring fails (SC3). (b) Over-represents English-language open-source projects due to documentation availability. (c) All projects have English CVE records — non-English projects with limited NVD representation may be under-scored. These biases are acknowledged and constitute a recalibration trigger when identified.
+  </oscpm:selection-bias-declaration>
+
+</oscpm:project-selection-criteria>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 12 · CROSS-VALIDATION SCHEMA  (step-origin="8 9")
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:cross-validation-schema step-origin="8 9">
+
+  <oscpm:validation-method id="CVM1" name="Hold-out CWE prediction" step-origin="8">
+    <oscpm:procedure>For each project, verify the predicted CWE classes against actual CVE records in NVD. Compute precision and recall: precision = fraction of predicted CWE classes with confirmed CVE; recall = fraction of actual high-severity CWE classes that were predicted. Target: precision &gt;= 0.80, recall &gt;= 0.70.</oscpm:procedure>
+    <oscpm:metric name="precision" target-min="0.80" />
+    <oscpm:metric name="recall"    target-min="0.70" />
+  </oscpm:validation-method>
+
+  <oscpm:validation-method id="CVM2" name="Rank correlation (Spearman)" step-origin="8">
+    <oscpm:procedure>Compute Spearman's rank correlation between the final susceptibility scores and: (a) annual high/critical CVE count per project from NVD; (b) CISA KEV entry count per project. Target: rho &gt;= 0.70 for CVE count; rho &gt;= 0.60 for KEV count (lower due to KEV selection bias toward actively exploited software).</oscpm:procedure>
+    <oscpm:metric name="rho-cve-count" target-min="0.70" />
+    <oscpm:metric name="rho-kev-count" target-min="0.60" />
+  </oscpm:validation-method>
+
+  <oscpm:validation-method id="CVM3" name="Temporal holdout" step-origin="8">
+    <oscpm:procedure>Score projects using only CVE data published before 2022. Verify that predicted CWE classes and relative rankings match 2023–2025 CVE publications. This tests whether the model predicts future vulnerabilities, not just retro-fits historical ones.</oscpm:procedure>
+    <oscpm:metric name="rank-inversion-rate" target-max="0.20" notes="Fraction of project pairs whose ranking inverts between prediction and 2023-2025 actuals" />
+  </oscpm:validation-method>
+
+  <oscpm:validation-method id="CVM4" name="Peer expert agreement" step-origin="8">
+    <oscpm:procedure>Submit scores to an independent security expert panel (n &gt;= 3 experts with &gt;= 5 years OSS security experience). Measure intraclass correlation coefficient (ICC) between model scores and expert panel means. Target ICC &gt;= 0.75.</oscpm:procedure>
+    <oscpm:metric name="ICC" target-min="0.75" />
+  </oscpm:validation-method>
+
+  <oscpm:validation-method id="CVM5" name="Expert-adjustment decomposition sanity check" step-origin="7">
+    <oscpm:procedure>For each project, verify that: (a) the amplifier contributions sum exactly to the stated expert_adjustment; (b) each amplifier level is consistent with the definitions in Section 9; (c) no amplifier contribution exceeds its defined maximum for its level. This is a consistency check, not an empirical validation.</oscpm:procedure>
+    <oscpm:metric name="decomposition-sum-error" target-max="0.01" notes="Maximum allowed rounding error in amplifier sum vs stated expert_adjustment" />
+  </oscpm:validation-method>
+
+</oscpm:cross-validation-schema>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 13 · PROJECTS  (step-origin="6 7 8")
+     20 assessed projects with full deterministic + expert decomposition.
+     Formula: deterministic = Σ(factor × weight); det weights = {0.25,0.25,0.20,0.20,0.10}
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:projects step-origin="6 7 8">
+
+
+  <!-- ─── PROJECT 1: npm Ecosystem ─────────────────────────────────────── -->
+  <oscpm:project id="npm-ecosystem" name="npm Ecosystem" category="ecosystem"
+    step-origin="6" prediction-confidence="0.93" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.10" patch-lag="MODERATE">
+
+    <oscpm:languages><oscpm:lang ref="JavaScript" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A03" /><oscpm:risk ref="A05" /><oscpm:risk ref="A08" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-94" /><oscpm:cwe ref="CWE-400" /><oscpm:cwe ref="CWE-79" /><oscpm:cwe ref="CWE-502" /><oscpm:cwe ref="CWE-1395" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="7"  rationale="JavaScript language risk from eval/prototype; ecosystem risk scored separately in eco factor" />
+      <oscpm:f ref="surface" value="10" rationale="npm packages reach internet-facing apps across every JS deployment" />
+      <oscpm:f ref="eco"     value="10" rationale="2.5 million packages; no quality gate for publish; maintainer transfer trivially possible" />
+      <oscpm:f ref="cve"     value="9"  rationale="event-stream, ua-parser-js, colors.js, node-ipc, dozens of 2023-2024 credential-theft packages" />
+      <oscpm:f ref="sec"     value="5"  rationale="npm has security processes but cannot audit 2.5M packages; provenance only recently available" />
+      <oscpm:deterministic-score value="8.55" formula-verified="true">
+        <!-- 7×0.25 + 10×0.25 + 10×0.20 + 9×0.20 + 5×0.10 = 1.75+2.50+2.00+1.80+0.50 = 8.55 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+0.95">
+      <oscpm:amplifier ref="blast-radius"         level="CRITICAL"  contribution="+0.50" justification="2.5M packages; every JavaScript developer and application is downstream; malicious code reaches millions within hours of publish" />
+      <oscpm:amplifier ref="propagation-speed"    level="INSTANT"   contribution="+0.25" justification="Auto-update via ^ semver ranges propagates malicious versions to dependent projects within minutes of publish with no human action required" />
+      <oscpm:amplifier ref="structural-nature"    level="STRUCTURAL" contribution="+0.20" justification="The npm publish-without-review model and transitive dependency trust chain are architectural — individual package removals do not close the supply chain attack class" />
+      <oscpm:amplifier-sum-check computed="+0.95" stated="+0.95" pass="true" />
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="9.50" risk-level="CRITICAL" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="event-stream (2018), ua-parser-js (2021), colors.js/node-ipc (2022) all confirm supply-chain CWE-1395/A03 prediction" />
+    <oscpm:step11-status ref="npm-ecosystem" complete="true" attack-scenarios="5" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 2: WordPress + Plugins ──────────────────────────────── -->
+  <oscpm:project id="wordpress-plugins" name="WordPress + Plugins" category="cms"
+    step-origin="6" prediction-confidence="0.95" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.10" patch-lag="SLOW">
+
+    <oscpm:languages><oscpm:lang ref="PHP" primary="true" /><oscpm:lang ref="JavaScript" primary="false" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A01" /><oscpm:risk ref="A05" /><oscpm:risk ref="A07" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-79" /><oscpm:cwe ref="CWE-89" /><oscpm:cwe ref="CWE-352" /><oscpm:cwe ref="CWE-434" /><oscpm:cwe ref="CWE-862" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="9"  rationale="PHP: injection idioms structurally enabled; plugin PHP code quality highly variable" />
+      <oscpm:f ref="surface" value="10" rationale="43% of the web; directly internet-facing; every installed plugin is an attack surface" />
+      <oscpm:f ref="eco"     value="10" rationale="60,000+ plugins; WordPress.org review minimal; plugins granted near-full DB and filesystem access" />
+      <oscpm:f ref="cve"     value="10" rationale="Thousands of plugin CVEs annually; multiple core CVEs per year; WPScan tracks 50,000+ vulnerabilities" />
+      <oscpm:f ref="sec"     value="6"  rationale="Core has security team; plugin ecosystem does not; highly uneven security posture" />
+      <oscpm:deterministic-score value="9.35" formula-verified="true">
+        <!-- 9×0.25 + 10×0.25 + 10×0.20 + 10×0.20 + 6×0.10 = 2.25+2.50+2.00+2.00+0.60 = 9.35 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+0.05">
+      <oscpm:amplifier ref="blast-radius" level="CRITICAL" contribution="+0.05" justification="43% of all websites creates effectively unlimited scale; factors already encode most of this via eco=10 and surface=10; marginal amplifier captures the unique scale of WordPress deployments" />
+      <oscpm:amplifier-sum-check computed="+0.05" stated="+0.05" pass="true" />
+      <oscpm:note>Near-zero expert adjustment: all five factors already at near-maximum values capture WordPress risk comprehensively. Final score slightly below deterministic baseline is appropriate — the high deterministic score already reflects reality.</oscpm:note>
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="9.40" risk-level="CRITICAL" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="CVE-2022-21661 (SQLi), CVE-2023-2745 (path traversal), annual WPScan reports confirm all predicted CWE classes" />
+    <oscpm:step11-status ref="wordpress-plugins" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 3: Exim MTA ──────────────────────────────────────────── -->
+  <oscpm:project id="exim-mta" name="Exim MTA" category="email"
+    step-origin="6" prediction-confidence="0.91" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.10" patch-lag="SLOW">
+
+    <oscpm:languages><oscpm:lang ref="C" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A05" /><oscpm:risk ref="A10" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-120" /><oscpm:cwe ref="CWE-787" /><oscpm:cwe ref="CWE-78" /><oscpm:cwe ref="CWE-416" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="10" rationale="C MTA parsing attacker-controlled binary SMTP content" />
+      <oscpm:f ref="surface" value="9"  rationale="Public internet-facing SMTP; directly parses attacker-controlled email headers and bodies" />
+      <oscpm:f ref="eco"     value="2"  rationale="Minimal external dependencies; self-contained C codebase" />
+      <oscpm:f ref="cve"     value="10" rationale="Return of the WIZard (2019), 21 CVEs in single batch (2020), multiple 2023 CVEs; chronic history" />
+      <oscpm:f ref="sec"     value="5"  rationale="Small volunteer team; responsive but not proactive; long exposure windows historically" />
+      <oscpm:deterministic-score value="7.65" formula-verified="true">
+        <!-- 10×0.25 + 9×0.25 + 2×0.20 + 10×0.20 + 5×0.10 = 2.50+2.25+0.40+2.00+0.50 = 7.65 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+1.65">
+      <oscpm:amplifier ref="default-exposure"     level="FULL"       contribution="+0.60" justification="Default MTA on Debian, Ubuntu, many Linux distros; installed and internet-facing without operator action required" />
+      <oscpm:amplifier ref="blast-radius"         level="HIGH"       contribution="+0.50" justification="Every default Linux server installation is in scope; millions of unpatched Exim instances exist globally" />
+      <oscpm:amplifier ref="structural-nature"    level="STRUCTURAL"  contribution="+0.35" justification="C SMTP parsing architecture produces recurring memory corruption families; patching one instance does not close the class" />
+      <oscpm:amplifier ref="exploitation-pattern" level="MASS"       contribution="+0.20" justification="21-CVE batch disclosure, automated mass exploitation documented; Qualys research confirmed industrial-scale impact" />
+      <oscpm:amplifier-sum-check computed="+1.65" stated="+1.65" pass="true" />
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="9.30" risk-level="CRITICAL" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="CVE-2019-10149, CVE-2020-28007–28026 batch confirm C memory corruption and command injection predictions exactly" />
+    <oscpm:step11-status ref="exim-mta" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 4: ImageMagick ───────────────────────────────────────── -->
+  <oscpm:project id="imagemagick" name="ImageMagick" category="media"
+    step-origin="6" prediction-confidence="0.94" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.08" patch-lag="SLOW">
+
+    <oscpm:languages><oscpm:lang ref="C" primary="true" /><oscpm:lang ref="C++" primary="false" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A05" /><oscpm:risk ref="A10" /><oscpm:risk ref="A06" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-78" /><oscpm:cwe ref="CWE-120" /><oscpm:cwe ref="CWE-787" /><oscpm:cwe ref="CWE-22" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="10" rationale="C/C++ parsing 100+ image formats; each is an independent memory-safety attack surface" />
+      <oscpm:f ref="surface" value="9"  rationale="Called on user-uploaded images in millions of web applications; indirect but high-reach exposure" />
+      <oscpm:f ref="eco"     value="3"  rationale="Self-contained C/C++ library; limited external dependencies" />
+      <oscpm:f ref="cve"     value="9"  rationale="ImageTragick (2016), annual codec-specific memory corruption CVEs, CVE-2023-34151" />
+      <oscpm:f ref="sec"     value="5"  rationale="Volunteer team; patches available but operators slow to update; no dedicated security program" />
+      <oscpm:deterministic-score value="7.65" formula-verified="true">
+        <!-- 10×0.25 + 9×0.25 + 3×0.20 + 9×0.20 + 5×0.10 = 2.50+2.25+0.60+1.80+0.50 = 7.65 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+1.55">
+      <oscpm:amplifier ref="blast-radius"         level="CRITICAL"   contribution="+0.60" justification="Called on user uploads in virtually every PHP/Python web application pipeline; ImageTragick affected the majority of all web servers processing image uploads" />
+      <oscpm:amplifier ref="structural-nature"    level="FOUNDATIONAL" contribution="+0.40" justification="SVG delegate architecture invokes external programs via shell; this design is inherently unsafe and cannot be patched without removing SVG support entirely" />
+      <oscpm:amplifier ref="exploitation-pattern" level="MASS"       contribution="+0.35" justification="ImageTragick within 48h had automated scanners probing every web server; mass campaign scale documented" />
+      <oscpm:amplifier ref="default-exposure"     level="PARTIAL"    contribution="+0.20" justification="Enabled by default in most Linux distributions; unsafe coders (MVG, SVG, PS) enabled without operator action" />
+      <oscpm:amplifier-sum-check computed="+1.55" stated="+1.55" pass="true" />
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="9.20" risk-level="CRITICAL" step-origin="7">
+      <oscpm:step7-worked-example note="This is the project cited in Step 7 of the framework description as the primary illustration of deterministic vs expert score divergence">
+        <oscpm:det-score>7.65</oscpm:det-score>
+        <oscpm:final-score-value>9.20</oscpm:final-score-value>
+        <oscpm:gap>+1.55</oscpm:gap>
+        <oscpm:gap-explanation>The gap of +1.55 is not arbitrary — it is justified by four named amplifiers: (1) ImageTragick proved that this vulnerability affects virtually every PHP/Python web app processing user uploads (+0.60 blast-radius), (2) the SVG delegate architecture cannot be fully patched — it is foundational (+0.40 structural-nature), (3) mass exploitation within 48h of disclosure (+0.35 exploitation-pattern), (4) unsafe coders enabled by default (+0.20 default-exposure). These four qualitative facts are NOT captured in any of the five numeric factors but materially change real-world risk.</oscpm:gap-explanation>
+      </oscpm:step7-worked-example>
+    </oscpm:final-score>
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="CVE-2016-3714 (ImageTragick) confirmed CWE-78 prediction; annual codec CVEs confirm CWE-787/120" />
+    <oscpm:step11-status ref="imagemagick" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 5: Apache Log4j 2 ───────────────────────────────────── -->
+  <oscpm:project id="apache-log4j2" name="Apache Log4j 2" category="framework"
+    step-origin="6" prediction-confidence="0.97" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.10" patch-lag="SLOW">
+
+    <oscpm:languages><oscpm:lang ref="Java" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A05" /><oscpm:risk ref="A03" /><oscpm:risk ref="A06" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-94" /><oscpm:cwe ref="CWE-20" /><oscpm:cwe ref="CWE-400" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="7"  rationale="Java: expression language (JNDI, MessageLookup) evaluates strings as code; memory safety not the risk" />
+      <oscpm:f ref="surface" value="8"  rationale="Logging framework processes every HTTP header, user-agent, username seen by the application; indirect surface" />
+      <oscpm:f ref="eco"     value="8"  rationale="Embedded invisibly in thousands of vendor products; operators often don't know they're running it" />
+      <oscpm:f ref="cve"     value="9"  rationale="Log4Shell (CVE-2021-44228) and two bypass CVEs; compound disclosure over weeks; extremely high severity" />
+      <oscpm:f ref="sec"     value="6"  rationale="Apache Software Foundation team; responsive; but dependency embedding prevents rapid patching across ecosystem" />
+      <oscpm:deterministic-score value="7.75" formula-verified="true">
+        <!-- 7×0.25 + 8×0.25 + 8×0.20 + 9×0.20 + 6×0.10 = 1.75+2.00+1.60+1.80+0.60 = 7.75 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+1.35">
+      <oscpm:amplifier ref="blast-radius"          level="CRITICAL"    contribution="+0.55" justification="Embedded in thousands of vendor products; operators who thought they were safe were not — invisible dependency amplified the blast radius enormously" />
+      <oscpm:amplifier ref="structural-nature"     level="FOUNDATIONAL" contribution="+0.40" justification="JNDI lookup in message interpolation is a design feature of Log4j, not a bug; logging untrusted user data via a framework that evaluates expressions is an architectural anti-pattern that cannot be patched without removing the feature" />
+      <oscpm:amplifier ref="propagation-speed"     level="INSTANT"     contribution="+0.25" justification="Log4Shell was trivially exploitable with a single HTTP header; automated scanners probing every server appeared within hours of disclosure" />
+      <oscpm:amplifier ref="institutional-criticality" level="HIGH"    contribution="+0.15" justification="Used by virtually every large Java application including government, financial, and healthcare systems" />
+      <oscpm:amplifier-sum-check computed="+1.35" stated="+1.35" pass="true" />
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="9.10" risk-level="CRITICAL" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="CVE-2021-44228 perfectly confirms the JNDI/CWE-94 prediction; the Java expression language causal chain was validated exactly" />
+    <oscpm:step11-status ref="apache-log4j2" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 6: Jenkins ───────────────────────────────────────────── -->
+  <oscpm:project id="jenkins" name="Jenkins" category="cicd"
+    step-origin="6" prediction-confidence="0.90" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.08" patch-lag="MODERATE">
+
+    <oscpm:languages><oscpm:lang ref="Java" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A03" /><oscpm:risk ref="A08" /><oscpm:risk ref="A01" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-78" /><oscpm:cwe ref="CWE-94" /><oscpm:cwe ref="CWE-502" /><oscpm:cwe ref="CWE-862" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="7"  rationale="Java: Groovy script execution and Java deserialization in plugin interface; expression evaluation" />
+      <oscpm:f ref="surface" value="9"  rationale="CI/CD system with internet-accessible web UI; often exposed for webhook integration" />
+      <oscpm:f ref="eco"     value="9"  rationale="1,800+ plugins each independently maintained; Jenkins plugin ecosystem is a supply chain attack surface" />
+      <oscpm:f ref="cve"     value="9"  rationale="CVE-2024-23897 (arbitrary file read), annual pipeline RCE CVEs, multiple deserialization CVEs" />
+      <oscpm:f ref="sec"     value="6"  rationale="CloudBees-backed security team; good disclosure; plugin ecosystem less controlled" />
+      <oscpm:deterministic-score value="8.20" formula-verified="true">
+        <!-- 7×0.25 + 9×0.25 + 9×0.20 + 9×0.20 + 6×0.10 = 1.75+2.25+1.80+1.80+0.60 = 8.20 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+0.80">
+      <oscpm:amplifier ref="structural-nature"     level="STRUCTURAL"  contribution="+0.40" justification="Groovy script execution is a core Jenkins feature; any code execution path produces OS-level access — this architectural property cannot be patched without removing pipeline functionality" />
+      <oscpm:amplifier ref="exploitation-pattern"  level="MASS"        contribution="+0.25" justification="Jenkins instances are high-value CI/CD targets; targeted APT exploitation documented; CVE-2024-23897 mass-exploited within 24h" />
+      <oscpm:amplifier ref="default-exposure"      level="PARTIAL"     contribution="+0.15" justification="Default Jenkins installs often bind to 0.0.0.0; anonymous access historically enabled by default before hardening was enforced" />
+      <oscpm:amplifier-sum-check computed="+0.80" stated="+0.80" pass="true" />
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="9.00" risk-level="CRITICAL" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="CVE-2024-23897 (arbitrary file read), pipeline sandbox bypass CVEs confirm Groovy/CWE-94 prediction" />
+    <oscpm:step11-status ref="jenkins" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 7: FFmpeg ────────────────────────────────────────────── -->
+  <oscpm:project id="ffmpeg" name="FFmpeg" category="media"
+    step-origin="6" prediction-confidence="0.88" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.06" patch-lag="MODERATE">
+
+    <oscpm:languages><oscpm:lang ref="C" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A10" /><oscpm:risk ref="A06" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-120" /><oscpm:cwe ref="CWE-122" /><oscpm:cwe ref="CWE-787" /><oscpm:cwe ref="CWE-125" /><oscpm:cwe ref="CWE-416" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="10" rationale="C implementing 100+ audio/video codec parsers; each codec is an independent memory-safety attack surface" />
+      <oscpm:f ref="surface" value="9"  rationale="Used in server-side transcoding pipelines processing user-uploaded media; indirect but high-reach" />
+      <oscpm:f ref="eco"     value="3"  rationale="Self-contained C library; minimal external dependencies" />
+      <oscpm:f ref="cve"     value="9"  rationale="Dozens of memory corruption CVEs annually across codec-specific parsers; steady annual rate confirmed" />
+      <oscpm:f ref="sec"     value="6"  rationale="Active development; responsible disclosure; fuzzing infrastructure; but volunteer-led security" />
+      <oscpm:deterministic-score value="7.75" formula-verified="true">
+        <!-- 10×0.25 + 9×0.25 + 3×0.20 + 9×0.20 + 6×0.10 = 2.50+2.25+0.60+1.80+0.60 = 7.75 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+1.25">
+      <oscpm:amplifier ref="blast-radius"         level="HIGH"       contribution="+0.50" justification="Embedded in virtually every server-side media processing pipeline; YouTube, Twitch, and millions of web apps call FFmpeg on user uploads; compromised version affects entire media ecosystem" />
+      <oscpm:amplifier ref="structural-nature"    level="FOUNDATIONAL" contribution="+0.45" justification="100+ independently-implemented codec parsers in C, each with its own memory management logic; the scale and heterogeneity of the codebase structurally guarantees ongoing memory corruption discoveries" />
+      <oscpm:amplifier ref="propagation-speed"    level="INSTANT"     contribution="+0.30" justification="Server-side media processing means a crafted video file uploaded to any platform triggers the vulnerability; no user interaction required beyond file upload" />
+      <oscpm:amplifier-sum-check computed="+1.25" stated="+1.25" pass="true" />
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="9.00" risk-level="CRITICAL" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="Steady annual CVE stream (CWE-787, CWE-122, CWE-125) across codec-specific parsers confirms C memory safety causal chain" />
+    <oscpm:step11-status ref="ffmpeg" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 8: OpenSSL ───────────────────────────────────────────── -->
+  <oscpm:project id="openssl" name="OpenSSL" category="crypto"
+    step-origin="6" prediction-confidence="0.92" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.06" patch-lag="MODERATE">
+
+    <oscpm:languages><oscpm:lang ref="C" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A04" /><oscpm:risk ref="A10" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-125" /><oscpm:cwe ref="CWE-787" /><oscpm:cwe ref="CWE-416" /><oscpm:cwe ref="CWE-327" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="10" rationale="C implementing complex cryptographic protocol parsing; ASN.1 and X.509 parsing in C are historical vulnerability sources" />
+      <oscpm:f ref="surface" value="9"  rationale="Used by virtually every TLS-enabled internet service; attack surface is the entire encrypted internet" />
+      <oscpm:f ref="eco"     value="7"  rationale="Wide adoption as dependency; BoringSSL/LibreSSL forks exist but OpenSSL remains dominant" />
+      <oscpm:f ref="cve"     value="8"  rationale="Heartbleed, CVE-2022-0778, CVE-2022-3786; steady stream; lower rate than Exim/FFmpeg due to active security investment" />
+      <oscpm:f ref="sec"     value="7"  rationale="OpenSSL Project has dedicated security team; rapid disclosure response; but volunteer-led overall" />
+      <oscpm:deterministic-score value="8.45" formula-verified="true">
+        <!-- 10×0.25 + 9×0.25 + 7×0.20 + 8×0.20 + 7×0.10 = 2.50+2.25+1.40+1.60+0.70 = 8.45 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+0.35">
+      <oscpm:amplifier ref="institutional-criticality" level="CRITICAL" contribution="+0.25" justification="OpenSSL underpins the encryption layer of virtually all internet traffic; Heartbleed demonstrated that a single C memory bug here has civilisation-scale impact" />
+      <oscpm:amplifier ref="blast-radius"             level="LOW"      contribution="+0.10" justification="Marginal additional adjustment for the degree to which OpenSSL is embedded in systems that cannot easily update (embedded devices, legacy infrastructure)" />
+      <oscpm:amplifier-sum-check computed="+0.35" stated="+0.35" pass="true" />
+      <oscpm:note>Relatively small expert adjustment because the high factor scores already capture most of the risk. OpenSSL's active security team partially offsets the C language risk — more than average projects of this type.</oscpm:note>
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="8.80" risk-level="HIGH" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="Heartbleed (CVE-2014-0160, CWE-125) and CVE-2022-3786 (CWE-787) confirm C memory safety prediction for ASN.1/X.509 parsing" />
+    <oscpm:step11-status ref="openssl" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 9: Redis ─────────────────────────────────────────────── -->
+  <oscpm:project id="redis" name="Redis" category="infrastructure"
+    step-origin="6" prediction-confidence="0.89" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.05" patch-lag="SLOW">
+
+    <oscpm:languages><oscpm:lang ref="C" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A02" /><oscpm:risk ref="A07" /><oscpm:risk ref="A01" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-306" /><oscpm:cwe ref="CWE-287" /><oscpm:cwe ref="CWE-787" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="10" rationale="C in-memory data store; RESP protocol parsing in C; Lua sandbox in C" />
+      <oscpm:f ref="surface" value="8"  rationale="Backend service; directly internet-exposed in millions of misconfigured deployments" />
+      <oscpm:f ref="eco"     value="4"  rationale="Limited dependency ecosystem; self-contained" />
+      <oscpm:f ref="cve"     value="7"  rationale="CVE-2022-0543 (Lua sandbox), CVE-2023-28856; steady moderate rate; security investment improving" />
+      <oscpm:f ref="sec"     value="7"  rationale="Redis Ltd maintains dedicated security; responsive; improving default security posture in recent versions" />
+      <oscpm:deterministic-score value="7.40" formula-verified="true">
+        <!-- 10×0.25 + 8×0.25 + 4×0.20 + 7×0.20 + 7×0.10 = 2.50+2.00+0.80+1.40+0.70 = 7.40 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+1.30">
+      <oscpm:amplifier ref="default-exposure"     level="FULL"       contribution="+0.70" justification="Historically bound to 0.0.0.0 with no authentication by default; millions of internet-exposed instances confirmed by Shodan; the exploit pattern (SLAVEOF + CONFIG SET → write SSH keys) requires only network access, no credentials" />
+      <oscpm:amplifier ref="exploitation-pattern" level="MASS"       contribution="+0.40" justification="Automated Redis exploitation scripts are trivially available; mass scanning for port 6379 with no auth is documented; RCE without credentials changes the risk class" />
+      <oscpm:amplifier ref="structural-nature"    level="MIXED"      contribution="+0.20" justification="The CONFIG SET write-to-disk RCE pattern is architectural (a feature, not a bug) — it cannot be removed without breaking backup functionality; partially structural" />
+      <oscpm:amplifier-sum-check computed="+1.30" stated="+1.30" pass="true" />
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="8.70" risk-level="HIGH" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="Shodan research confirms millions of CWE-306 instances; SLAVEOF RCE pattern confirms CONFIG/CWE-78 prediction" />
+    <oscpm:step11-status ref="redis" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 10: Apache Struts ───────────────────────────────────── -->
+  <oscpm:project id="apache-struts" name="Apache Struts" category="framework"
+    step-origin="6" prediction-confidence="0.96" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.08" patch-lag="SLOW">
+
+    <oscpm:languages><oscpm:lang ref="Java" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A05" /><oscpm:risk ref="A08" /><oscpm:risk ref="A06" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-502" /><oscpm:cwe ref="CWE-94" /><oscpm:cwe ref="CWE-20" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="7"  rationale="Java: OGNL expression evaluation in action layer; deserialization in file upload handling" />
+      <oscpm:f ref="surface" value="9"  rationale="Internet-facing MVC framework; every request parameter is an attack vector for OGNL injection" />
+      <oscpm:f ref="eco"     value="6"  rationale="Large Java dependency tree; used in enterprise applications with long deployment lifespans" />
+      <oscpm:f ref="cve"     value="8"  rationale="CVE-2017-5638 (Equifax), CVE-2018-11776, CVE-2023-50164; recurring OGNL/file-upload CVE families" />
+      <oscpm:f ref="sec"     value="6"  rationale="Apache project; security team; responsive disclosure; but complex codebase with recurring vulnerability classes" />
+      <oscpm:deterministic-score value="7.40" formula-verified="true">
+        <!-- 7×0.25 + 9×0.25 + 6×0.20 + 8×0.20 + 6×0.10 = 1.75+2.25+1.20+1.60+0.60 = 7.40 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+1.20">
+      <oscpm:amplifier ref="structural-nature"    level="FOUNDATIONAL" contribution="+0.50" justification="OGNL expression evaluation as the action layer mechanism means user-controlled strings reach a code evaluator by design; CVE-2017-5638 and CVE-2023-50164 are in different code areas but the same architectural class" />
+      <oscpm:amplifier ref="blast-radius"         level="HIGH"        contribution="+0.40" justification="Equifax breach (147M records) as confirmed example of blast radius when Struts vulnerability is exploited at scale in enterprise applications" />
+      <oscpm:amplifier ref="exploitation-pattern" level="MASS"        contribution="+0.30" justification="CVE-2017-5638 and CVE-2023-50164 both saw mass automated exploitation within days of disclosure" />
+      <oscpm:amplifier-sum-check computed="+1.20" stated="+1.20" pass="true" />
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="8.60" risk-level="HIGH" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="CVE-2017-5638 confirms CWE-94 OGNL prediction; Equifax breach confirms blast-radius assessment; CVE-2023-50164 confirms recurring structural nature" />
+    <oscpm:step11-status ref="apache-struts" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 11: Apache HTTP Server ──────────────────────────────── -->
+  <oscpm:project id="apache-httpd" name="Apache HTTP Server" category="infrastructure"
+    step-origin="6" prediction-confidence="0.91" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.07" patch-lag="MODERATE">
+
+    <oscpm:languages><oscpm:lang ref="C" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A02" /><oscpm:risk ref="A10" /><oscpm:risk ref="A01" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-22" /><oscpm:cwe ref="CWE-787" /><oscpm:cwe ref="CWE-120" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="10" rationale="C web server; URL path parsing and normalisation in C; complex module architecture" />
+      <oscpm:f ref="surface" value="10" rationale="Primary internet-facing web server; directly parses all HTTP requests from any client" />
+      <oscpm:f ref="eco"     value="7"  rationale="Rich module ecosystem (150+ modules); mod_proxy, mod_rewrite complexity creates interaction bugs" />
+      <oscpm:f ref="cve"     value="7"  rationale="CVE-2021-41773/42013 (path traversal), CVE-2022-22720 (request smuggling); moderate steady rate" />
+      <oscpm:f ref="sec"     value="7"  rationale="Apache Software Foundation security team; rapid response; well-funded; strong disclosure program" />
+      <oscpm:deterministic-score value="8.50" formula-verified="true">
+        <!-- 10×0.25 + 10×0.25 + 7×0.20 + 7×0.20 + 7×0.10 = 2.50+2.50+1.40+1.40+0.70 = 8.50 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+0.00">
+      <oscpm:note>Unique case: zero expert adjustment. All five factors together already fully capture the risk. The active security team (sec=7) partially offsets the C+internet-facing risk. Apache httpd is the baseline case where the deterministic formula produces a well-calibrated final score. It is used as a reference point when validating the expert adjustment process for other projects.</oscpm:note>
+      <oscpm:amplifier-sum-check computed="0.00" stated="+0.00" pass="true" />
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="8.50" risk-level="HIGH" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="CVE-2021-41773 confirms C URL normalisation/CWE-22 prediction; zero expert adjustment confirms model calibration for this project type" />
+    <oscpm:step11-status ref="apache-httpd" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 12: Elasticsearch / OpenSearch ──────────────────────── -->
+  <oscpm:project id="elasticsearch" name="Elasticsearch / OpenSearch" category="infrastructure"
+    step-origin="6" prediction-confidence="0.90" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.05" patch-lag="SLOW">
+
+    <oscpm:languages><oscpm:lang ref="Java" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A02" /><oscpm:risk ref="A01" /><oscpm:risk ref="A07" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-306" /><oscpm:cwe ref="CWE-862" /><oscpm:cwe ref="CWE-94" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="7"  rationale="Java: Groovy/Painless scripting in query DSL enables code injection; memory safety not the primary risk" />
+      <oscpm:f ref="surface" value="9"  rationale="Exposed on port 9200 in millions of deployments; historically no auth by default; often internet-facing" />
+      <oscpm:f ref="eco"     value="5"  rationale="Plugin ecosystem; Kibana frontend; Logstash pipelines; moderate ecosystem complexity" />
+      <oscpm:f ref="cve"     value="7"  rationale="CVE-2015-1427 (Groovy RCE), CVE-2021-22145; moderate rate; many exposure incidents not formally CVE-ed" />
+      <oscpm:f ref="sec"     value="7"  rationale="Elastic/OpenSearch have dedicated security; X-Pack introduced auth; improving but legacy deployments remain" />
+      <oscpm:deterministic-score value="7.10" formula-verified="true">
+        <!-- 7×0.25 + 9×0.25 + 5×0.20 + 7×0.20 + 7×0.10 = 1.75+2.25+1.00+1.40+0.70 = 7.10 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+1.40">
+      <oscpm:amplifier ref="default-exposure"     level="FULL"       contribution="+0.65" justification="Versions prior to 6.x: no authentication, bound to 0.0.0.0 by default. Billions of records breached from unauthenticated instances documented by security researchers (Diachenko, Hunt). This is a historically confirmed FULL default exposure." />
+      <oscpm:amplifier ref="blast-radius"         level="HIGH"       contribution="+0.45" justification="Billions of records leaked from misconfigured instances; medical records, financial data, personal data confirmed in multiple mass-breach incidents" />
+      <oscpm:amplifier ref="exploitation-pattern" level="MASS"       contribution="+0.30" justification="Automated Elasticsearch scanning tools trivially find open instances; mass data theft without any exploitation skill required" />
+      <oscpm:amplifier-sum-check computed="+1.40" stated="+1.40" pass="true" />
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="8.50" risk-level="HIGH" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="CVE-2015-1427 confirms CWE-94/Groovy prediction; billions of records from unauthenticated instances confirm CWE-306/A02 prediction" />
+    <oscpm:step11-status ref="elasticsearch" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 13: PHPMailer ────────────────────────────────────────── -->
+  <oscpm:project id="phpmailer" name="PHPMailer" category="framework"
+    step-origin="6" prediction-confidence="0.93" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.06" patch-lag="SLOW">
+
+    <oscpm:languages><oscpm:lang ref="PHP" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A05" /><oscpm:risk ref="A07" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-78" /><oscpm:cwe ref="CWE-79" /><oscpm:cwe ref="CWE-20" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="9"  rationale="PHP: shell_exec/sendmail invocation with user-controlled arguments enables CWE-78" />
+      <oscpm:f ref="surface" value="8"  rationale="Foundational library called from internet-facing web forms with user-supplied From/Reply-To values" />
+      <oscpm:f ref="eco"     value="5"  rationale="Foundational dependency in most PHP applications; propagates to downstream apps at scale" />
+      <oscpm:f ref="cve"     value="7"  rationale="CVE-2016-10033, CVE-2016-10045 (two generations of the same flaw), CVE-2020-36326; moderate rate" />
+      <oscpm:f ref="sec"     value="6"  rationale="Responsive volunteer maintainer; good disclosure history but limited proactive audit" />
+      <oscpm:deterministic-score value="7.25" formula-verified="true">
+        <!-- 9×0.25 + 8×0.25 + 5×0.20 + 7×0.20 + 6×0.10 = 2.25+2.00+1.00+1.40+0.60 = 7.25 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+1.15">
+      <oscpm:amplifier ref="blast-radius"         level="CRITICAL"   contribution="+0.55" justification="Used in ~95% of PHP web applications for email; CVE-2016-10033 affected virtually the entire PHP web application ecosystem simultaneously" />
+      <oscpm:amplifier ref="structural-nature"    level="STRUCTURAL"  contribution="+0.40" justification="PHP's mail() function invokes sendmail via a shell command; the architectural choice to call sendmail with user-controlled addresses creates the CWE-78 path that is inherent to mail() transport" />
+      <oscpm:amplifier ref="propagation-speed"    level="FAST"        contribution="+0.20" justification="Single library serving most PHP apps means a patch must propagate across millions of independent app deployments; slow real-world patching despite rapid vendor response" />
+      <oscpm:amplifier-sum-check computed="+1.15" stated="+1.15" pass="true" />
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="8.40" risk-level="HIGH" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="CVE-2016-10033 perfectly confirms CWE-78/sendmail command injection prediction; CVE-2016-10045 (bypass) confirms structural nature assessment" />
+    <oscpm:step11-status ref="phpmailer" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 14: GitLab CE ────────────────────────────────────────── -->
+  <oscpm:project id="gitlabce" name="GitLab CE" category="cicd"
+    step-origin="6" prediction-confidence="0.85" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.06" patch-lag="MODERATE">
+
+    <oscpm:languages><oscpm:lang ref="Ruby" primary="true" /><oscpm:lang ref="Go" primary="false" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A01" /><oscpm:risk ref="A05" /><oscpm:risk ref="A08" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-918" /><oscpm:cwe ref="CWE-79" /><oscpm:cwe ref="CWE-78" /><oscpm:cwe ref="CWE-502" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="7"  rationale="Ruby: mass assignment, metaprogramming; Go services add network processing attack surface" />
+      <oscpm:f ref="surface" value="9"  rationale="Internet-facing git host with webhook, CI runner, registry, and wiki attack surfaces" />
+      <oscpm:f ref="eco"     value="6"  rationale="Dependency on ExifTool, various file processors; integration ecosystem includes CI runners" />
+      <oscpm:f ref="cve"     value="8"  rationale="CVE-2021-22205, CVE-2023-7028, CVE-2022-2185; high-severity CVEs with real-world exploitation" />
+      <oscpm:f ref="sec"     value="7"  rationale="GitLab has dedicated security team; HackerOne program; responsive; rapid patch cycle" />
+      <oscpm:deterministic-score value="7.50" formula-verified="true">
+        <!-- 7×0.25 + 9×0.25 + 6×0.20 + 8×0.20 + 7×0.10 = 1.75+2.25+1.20+1.60+0.70 = 7.50 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+0.80">
+      <oscpm:amplifier ref="blast-radius"         level="HIGH"       contribution="+0.40" justification="GitLab self-hosted at thousands of organisations; breach provides access to all code, CI secrets, and deployment credentials across the organisation" />
+      <oscpm:amplifier ref="structural-nature"    level="STRUCTURAL" contribution="+0.25" justification="Broad attack surface (webhook SSRF, file upload, CI runner) means multiple independent structural risk areas; CVE-2021-22205 came from an indirect dependency (ExifTool) — A03 structural risk" />
+      <oscpm:amplifier ref="exploitation-pattern" level="TARGETED"   contribution="+0.15" justification="GitLab instances are high-value targets for APT and ransomware groups; targeted campaigns documented" />
+      <oscpm:amplifier-sum-check computed="+0.80" stated="+0.80" pass="true" />
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="8.30" risk-level="HIGH" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="CVE-2021-22205 confirms SSRF/deserialization prediction; CVE-2023-7028 confirms A07/CWE-287 authentication prediction" />
+    <oscpm:step11-status ref="gitlabce" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 15: Drupal ───────────────────────────────────────────── -->
+  <oscpm:project id="drupal" name="Drupal" category="cms"
+    step-origin="6" prediction-confidence="0.92" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.06" patch-lag="SLOW">
+
+    <oscpm:languages><oscpm:lang ref="PHP" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A05" /><oscpm:risk ref="A01" /><oscpm:risk ref="A04" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-89" /><oscpm:cwe ref="CWE-79" /><oscpm:cwe ref="CWE-502" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="9"  rationale="PHP CMS; entity/field rendering system processes user-controlled content through PHP templates" />
+      <oscpm:f ref="surface" value="9"  rationale="Internet-facing CMS; all content is potentially attacker-controlled" />
+      <oscpm:f ref="eco"     value="7"  rationale="Large contributed module ecosystem; significant portion of Drupal deployments use community modules" />
+      <oscpm:f ref="cve"     value="7"  rationale="Drupalgeddon2 (2018), Drupalgeddon3, CVE-2019-6340; more targeted than WordPress but recurring structural CVEs" />
+      <oscpm:f ref="sec"     value="7"  rationale="Drupal Security Team is dedicated and respected; proactive advisory process; better than average OSS security" />
+      <oscpm:deterministic-score value="8.00" formula-verified="true">
+        <!-- 9×0.25 + 9×0.25 + 7×0.20 + 7×0.20 + 7×0.10 = 2.25+2.25+1.40+1.40+0.70 = 8.00 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+0.30">
+      <oscpm:amplifier ref="structural-nature"    level="MIXED"      contribution="+0.20" justification="Drupalgeddon series showed the entity rendering system produces recurring RCE families; partially structural but Drupal Security Team's proactive approach limits recurrence" />
+      <oscpm:amplifier ref="blast-radius"         level="LOW"        contribution="+0.10" justification="Smaller footprint than WordPress but still significant government and enterprise CMS deployment base" />
+      <oscpm:amplifier-sum-check computed="+0.30" stated="+0.30" pass="true" />
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="8.30" risk-level="HIGH" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="Drupalgeddon2 (CVE-2018-7600) confirms PHP entity rendering/CWE-89 prediction; bypass CVE-2018-7602 confirms structural nature" />
+    <oscpm:step11-status ref="drupal" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 16: Kubernetes ───────────────────────────────────────── -->
+  <oscpm:project id="kubernetes" name="Kubernetes" category="infrastructure"
+    step-origin="6" prediction-confidence="0.82" epistemic-uncertainty="MEDIUM"
+    active-exploitation-premium="0.05" patch-lag="MODERATE">
+
+    <oscpm:languages><oscpm:lang ref="Go" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A01" /><oscpm:risk ref="A02" /><oscpm:risk ref="A03" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-862" /><oscpm:cwe ref="CWE-918" /><oscpm:cwe ref="CWE-284" /><oscpm:cwe ref="CWE-732" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="4"  rationale="Go: memory-safe; risks are architectural (RBAC complexity, network exposure) not language-level" />
+      <oscpm:f ref="surface" value="10" rationale="Orchestrates internet-facing workloads; API server, kubelet, etcd all potentially network-accessible" />
+      <oscpm:f ref="eco"     value="9"  rationale="Helm chart ecosystem; 1000+ charts many with over-permissive RBAC; operator ecosystem adds complexity" />
+      <oscpm:f ref="cve"     value="6"  rationale="CVE-2018-1002105, CVE-2019-11253, CVE-2022-3294; moderate rate; active project with rapid disclosure" />
+      <oscpm:f ref="sec"     value="8"  rationale="CNCF-backed dedicated security team; rapid response; responsible disclosure process mature" />
+      <oscpm:deterministic-score value="7.30" formula-verified="true">
+        <!-- 4×0.25 + 10×0.25 + 9×0.20 + 6×0.20 + 8×0.10 = 1.00+2.50+1.80+1.20+0.80 = 7.30 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+0.90">
+      <oscpm:amplifier ref="structural-nature"    level="FOUNDATIONAL" contribution="+0.50" justification="RBAC complexity in real deployments makes misconfiguration the norm, not the exception. Wildcard ClusterRoleBindings are structurally incentivised by the 'just make it work' pressure of CI/CD setup. A compromised pod with wildcard RBAC = full cluster compromise — this is an architectural property." />
+      <oscpm:amplifier ref="exploitation-pattern" level="MASS"        contribution="+0.25" justification="Kubernetes clusters are targeted by APT groups and ransomware operators; cryptomining campaigns via exposed kubelets documented at scale" />
+      <oscpm:amplifier ref="blast-radius"         level="MEDIUM"      contribution="+0.15" justification="Cluster compromise provides access to all workloads, secrets, and deployment credentials across the entire organisation" />
+      <oscpm:amplifier-sum-check computed="+0.90" stated="+0.90" pass="true" />
+      <oscpm:step8-revision-note>Kubernetes scored higher than the Go language factor (4) alone would predict. The language is safe; the architectural complexity and real-world RBAC misconfiguration pattern are what drive the score. This is the primary Step 8 cross-validation revision in the framework — Go's low language risk was insufficient to offset architectural complexity.</oscpm:step8-revision-note>
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="8.20" risk-level="HIGH" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="CVE-2018-1002105 (unauthenticated cluster-admin) confirms CWE-862/A01 prediction despite Go language safety. Validates Step 2 causal model over language-only prediction." />
+    <oscpm:step11-status ref="kubernetes" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 17: Spring Framework ────────────────────────────────── -->
+  <oscpm:project id="spring-framework" name="Spring Framework" category="framework"
+    step-origin="6" prediction-confidence="0.88" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.06" patch-lag="MODERATE">
+
+    <oscpm:languages><oscpm:lang ref="Java" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A05" /><oscpm:risk ref="A08" /><oscpm:risk ref="A04" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-94" /><oscpm:cwe ref="CWE-502" /><oscpm:cwe ref="CWE-918" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="7"  rationale="Java: SpEL expression evaluation; DataBinder reflection; JMX deserialization paths" />
+      <oscpm:f ref="surface" value="9"  rationale="Primary Java web framework; internet-facing HTTP endpoints process all user input" />
+      <oscpm:f ref="eco"     value="8"  rationale="Spring ecosystem (Security, Cloud, Data, Boot) with 20M+ developers; ecosystem complexity amplifies vulnerability propagation" />
+      <oscpm:f ref="cve"     value="7"  rationale="Spring4Shell, Spring Cloud Function SpEL injection, CVE-2023-20860; moderate-high rate" />
+      <oscpm:f ref="sec"     value="7"  rationale="VMware/Broadcom-backed security team; responsive; good disclosure process; rapid patch availability" />
+      <oscpm:deterministic-score value="7.70" formula-verified="true">
+        <!-- 7×0.25 + 9×0.25 + 8×0.20 + 7×0.20 + 7×0.10 = 1.75+2.25+1.60+1.40+0.70 = 7.70 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+0.30">
+      <oscpm:amplifier ref="blast-radius"         level="MEDIUM"     contribution="+0.20" justification="Used by 20M+ Java developers; every Spring Boot application is affected by framework-level CVEs; broad but moderate (not critical) blast radius" />
+      <oscpm:amplifier ref="structural-nature"    level="MIXED"      contribution="+0.10" justification="SpEL evaluation in Spring Cloud/Data creates a recurring CWE-94 surface; Spring4Shell pattern (ClassLoader via DataBinder) shows deep reflection risks; partially structural" />
+      <oscpm:amplifier-sum-check computed="+0.30" stated="+0.30" pass="true" />
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="8.00" risk-level="HIGH" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="CVE-2022-22965 (Spring4Shell) confirms Java reflection/CWE-94 causal prediction; CVE-2022-22963 confirms SpEL injection prediction" />
+    <oscpm:step11-status ref="spring-framework" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 18: curl / libcurl ───────────────────────────────────── -->
+  <oscpm:project id="curl-libcurl" name="curl / libcurl" category="crypto"
+    step-origin="6" prediction-confidence="0.84" epistemic-uncertainty="LOW"
+    active-exploitation-premium="0.04" patch-lag="FAST">
+
+    <oscpm:languages><oscpm:lang ref="C" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A10" /><oscpm:risk ref="A04" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-120" /><oscpm:cwe ref="CWE-125" /><oscpm:cwe ref="CWE-416" /><oscpm:cwe ref="CWE-22" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="10" rationale="C URL parsing library with multi-protocol support; each protocol parser is an independent C memory-safety surface" />
+      <oscpm:f ref="surface" value="7"  rationale="Library; called by applications with user-supplied URLs; indirect surface but extremely wide reach" />
+      <oscpm:f ref="eco"     value="6"  rationale="Embedded in billions of devices; OS-level dependency in macOS, iOS, Android; wide but managed propagation" />
+      <oscpm:f ref="cve"     value="7"  rationale="CVE-2023-38545 (SOCKS5 heap overflow), cookie bypass CVEs; active CVE stream from proactive disclosure" />
+      <oscpm:f ref="sec"     value="8"  rationale="Daniel Stenberg runs one of the most mature OSS security programs; regular audits; dedicated CVE response; many CVEs reflect proactive discovery, not exploitation" />
+      <oscpm:deterministic-score value="7.65" formula-verified="true">
+        <!-- 10×0.25 + 7×0.25 + 6×0.20 + 7×0.20 + 8×0.10 = 2.50+1.75+1.20+1.40+0.80 = 7.65 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+0.35">
+      <oscpm:amplifier ref="institutional-criticality" level="HIGH"  contribution="+0.20" justification="Embedded in iOS, macOS, Android, and countless IoT devices at the OS level; a critical curl vulnerability has impact in systems that cannot easily update" />
+      <oscpm:amplifier ref="blast-radius"              level="MEDIUM" contribution="+0.15" justification="Embedded in billions of devices but active security program and rapid patching limit the practical blast radius compared to less-maintained C libraries" />
+      <oscpm:amplifier-sum-check computed="+0.35" stated="+0.35" pass="true" />
+      <oscpm:note>curl's active security program (sec=8) is a meaningful mitigator — arguably the CVE rate reflects excellent proactive discovery rather than poor code quality. The relatively small expert adjustment reflects this: the curl security team's quality partially offsets the C language and ubiquity risks.</oscpm:note>
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="8.00" risk-level="HIGH" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="CONFIRMED" evidence="CVE-2023-38545 confirms C memory safety prediction; active disclosure program confirms strong security posture assessment" />
+    <oscpm:step11-status ref="curl-libcurl" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 19: Keycloak ─────────────────────────────────────────── -->
+  <oscpm:project id="keycloak" name="Keycloak" category="auth"
+    step-origin="6" prediction-confidence="0.79" epistemic-uncertainty="MEDIUM"
+    active-exploitation-premium="0.04" patch-lag="MODERATE">
+
+    <oscpm:languages><oscpm:lang ref="Java" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A07" /><oscpm:risk ref="A01" /><oscpm:risk ref="A06" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-287" /><oscpm:cwe ref="CWE-352" /><oscpm:cwe ref="CWE-918" /><oscpm:cwe ref="CWE-601" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="7"  rationale="Java: OAuth/OIDC redirect validation in Java; JWKS URI fetching enables SSRF; protocol complexity creates auth bypass paths" />
+      <oscpm:f ref="surface" value="8"  rationale="Central IdP; internet-accessible login endpoints; JWKS, admin console exposed" />
+      <oscpm:f ref="eco"     value="5"  rationale="Realm-level extension model; moderate ecosystem complexity" />
+      <oscpm:f ref="cve"     value="6"  rationale="CVE-2023-6927, CVE-2024-1132, CVE-2022-2256; moderate rate; fewer CVEs than other Java frameworks" />
+      <oscpm:f ref="sec"     value="7"  rationale="Red Hat-backed security team; responsive; but protocol complexity creates inherent configuration pitfalls" />
+      <oscpm:deterministic-score value="6.65" formula-verified="true">
+        <!-- 7×0.25 + 8×0.25 + 5×0.20 + 6×0.20 + 7×0.10 = 1.75+2.00+1.00+1.20+0.70 = 6.65 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+1.15">
+      <oscpm:amplifier ref="institutional-criticality" level="CRITICAL" contribution="+0.55" justification="Central identity provider: a single authentication bypass affects ALL protected applications across the entire organisation simultaneously. One CVE = organisation-wide identity compromise. This qualitative impact is not captured in any numeric factor." />
+      <oscpm:amplifier ref="blast-radius"              level="HIGH"     contribution="+0.35" justification="Keycloak typically protects 10–100+ applications in large deployments; every downstream app is breached when IdP is compromised" />
+      <oscpm:amplifier ref="structural-nature"         level="STRUCTURAL" contribution="+0.25" justification="OAuth/OIDC protocol complexity creates recurring redirect_uri validation and PKCE bypass families; partially structural" />
+      <oscpm:amplifier-sum-check computed="+1.15" stated="+1.15" pass="true" />
+      <oscpm:note>Keycloak has relatively modest numeric factors but the highest institutional-criticality amplifier in the set. The expert adjustment primarily reflects the identity-wide blast radius that is not captured by the five factors — a 1-CVE = 100-applications scenario.</oscpm:note>
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="7.80" risk-level="MEDIUM" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="PARTIAL" evidence="CVE-2023-6927 confirms CWE-601/redirect prediction; CVE-2024-1132 confirms redirect_uri validation. Fewer CVEs reduce confidence vs other Java projects." />
+    <oscpm:step11-status ref="keycloak" complete="false" />
+  </oscpm:project>
+
+
+  <!-- ─── PROJECT 20: Flask + Jinja2 ──────────────────────────────────── -->
+  <oscpm:project id="flask-jinja2" name="Flask + Jinja2" category="framework"
+    step-origin="6" prediction-confidence="0.81" epistemic-uncertainty="MEDIUM"
+    active-exploitation-premium="0.03" patch-lag="FAST">
+
+    <oscpm:languages><oscpm:lang ref="Python" primary="true" /></oscpm:languages>
+    <oscpm:owasp-primary-risks><oscpm:risk ref="A05" /><oscpm:risk ref="A01" /><oscpm:risk ref="A06" /></oscpm:owasp-primary-risks>
+    <oscpm:cwe-predicted><oscpm:cwe ref="CWE-94" /><oscpm:cwe ref="CWE-20" /><oscpm:cwe ref="CWE-79" /></oscpm:cwe-predicted>
+
+    <oscpm:factor-assessment step-origin="7">
+      <oscpm:f ref="lang"    value="6"  rationale="Python: Jinja2 render_template_string with user input = SSTI; pickle deserialization; moderate baseline risk" />
+      <oscpm:f ref="surface" value="8"  rationale="Internet-facing web framework; all HTTP input reaches application code directly" />
+      <oscpm:f ref="eco"     value="5"  rationale="Rich PyPI ecosystem of Flask extensions; variable quality; dependency chain risk" />
+      <oscpm:f ref="cve"     value="5"  rationale="Fewer framework-level CVEs than Java equivalents; risks manifest in applications built on Flask rather than Flask itself" />
+      <oscpm:f ref="sec"     value="7"  rationale="Pallets Projects maintainer team; responsive; but Flask's rapid-development positioning creates misuse pressure" />
+      <oscpm:deterministic-score value="6.20" formula-verified="true">
+        <!-- 6×0.25 + 8×0.25 + 5×0.20 + 5×0.20 + 7×0.10 = 1.50+2.00+1.00+1.00+0.70 = 6.20 -->
+      </oscpm:deterministic-score>
+    </oscpm:factor-assessment>
+
+    <oscpm:expert-adjustment step-origin="7" magnitude="+1.30">
+      <oscpm:amplifier ref="structural-nature"    level="FOUNDATIONAL" contribution="+0.60" justification="render_template_string(user_input) is a well-documented and commonly demonstrated SSTI/RCE vulnerability pattern that appears continuously in production Flask applications. The Flask documentation presents rapid development as the goal; security guardrails (e.g. no default CSRF protection, no mandatory output encoding) are architectural omissions." />
+      <oscpm:amplifier ref="blast-radius"         level="HIGH"        contribution="+0.40" justification="Flask is the most popular Python micro-framework; SSTI vulnerabilities in Flask applications appear in thousands of security reports annually; the risk manifests at scale across the ecosystem even if the framework itself is not the proximate cause" />
+      <oscpm:amplifier ref="propagation-speed"    level="INSTANT"     contribution="+0.30" justification="Flask debug mode RCE (Werkzeug debugger) is trivially exploitable when exposed; and debug=True in production is a very common misconfiguration documented repeatedly in production incident reports" />
+      <oscpm:amplifier-sum-check computed="+1.30" stated="+1.30" pass="true" />
+      <oscpm:note>High expert adjustment despite moderate factors. The risk manifests primarily in applications BUILT ON Flask (SSTI via render_template_string, debug mode exposure) rather than in Flask itself — the cve factor does not capture application-level CVEs triggered by framework misuse patterns, creating a systematic under-estimate in the deterministic score.</oscpm:note>
+    </oscpm:expert-adjustment>
+
+    <oscpm:final-score value="7.50" risk-level="MEDIUM" step-origin="7" />
+    <oscpm:cross-validation-status step-origin="8" status="PARTIAL" evidence="Werkzeug debugger PIN bypass confirms debug-mode CWE-94 prediction; application-level SSTI CVEs on HackerOne confirm Jinja2 CWE-94 prediction. Lower confidence due to risk manifesting in apps not framework." />
+    <oscpm:step11-status ref="flask-jinja2" complete="false" />
+  </oscpm:project>
+
+
+</oscpm:projects>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 14 · STEP 11 ANALYSES  (step-origin="11")
+     npm is complete. 19 projects are pending. The schema is defined here
+     so Step 11 analyses for other projects can be added conformantly.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:step11-analyses step-origin="11">
+
+  <!-- ─── npm Ecosystem — COMPLETE ──────────────────────────────────────── -->
+  <oscpm:analysis project-ref="npm-ecosystem" status="COMPLETE"
+    attack-scenario-count="5" step-origin="11">
+
+    <oscpm:attack-scenario id="AS1" name="Maintainer account compromise" severity="CRITICAL"
+      difficulty-for-attacker="LOW" detection-timing="Registry Install-time">
+      <oscpm:kill-chain steps="5">
+        <oscpm:step n="1">Identify high-value package with single maintainer and no 2FA using npm registry API and libraries.io dependency graph</oscpm:step>
+        <oscpm:step n="2">Compromise npm account via credential stuffing, phishing, or social engineering (maintainer transfer request)</oscpm:step>
+        <oscpm:step n="3">Publish new patch version with malicious payload embedded in a transitive dependency to reduce diff scrutiny</oscpm:step>
+        <oscpm:step n="4">Infected version propagates via ^ semver ranges in package.json and CI/CD npm update pipelines</oscpm:step>
+        <oscpm:step n="5">Postinstall/runtime payload exfiltrates process.env, ~/.aws/credentials, ~/.npmrc, ~/.ssh/id_rsa</oscpm:step>
+      </oscpm:kill-chain>
+      <oscpm:detection-signatures>
+        <oscpm:sig category="Registry" tool-type="npm-registry-monitor">New maintainer added within 30 days before suspicious publish; publish from new IP geolocation</oscpm:sig>
+        <oscpm:sig category="Network" tool-type="network-monitor">Outbound HTTPS from node/npm process to non-registry domain during npm install</oscpm:sig>
+        <oscpm:sig category="Filesystem" tool-type="auditd-falco">Read syscall on ~/.aws/credentials, ~/.npmrc, ~/.ssh/id_rsa from npm child process</oscpm:sig>
+        <oscpm:sig category="Process" tool-type="sysmon-auditd">npm spawning curl/wget/sh with external URL arguments during postinstall</oscpm:sig>
+      </oscpm:detection-signatures>
+      <oscpm:siem-rule tool="Falco"><![CDATA[rule: npm_credential_read
+  condition: spawned_process and proc.pname="npm" and proc.name="node"
+    and fd.name pmatch (/home/*/.aws/credentials, /root/.aws/credentials, /home/*/.npmrc, /home/*/.ssh/id_rsa)
+  priority: CRITICAL]]></oscpm:siem-rule>
+      <oscpm:mitigation priority="1">Enable npm 2FA for all publish accounts; require Sigstore provenance on all packages; use npm ci with immutable lock files in CI/CD</oscpm:mitigation>
+    </oscpm:attack-scenario>
+
+    <oscpm:attack-scenario id="AS2" name="Dependency confusion" severity="CRITICAL"
+      difficulty-for-attacker="LOW" detection-timing="Registry Install-time">
+      <oscpm:kill-chain steps="5">
+        <oscpm:step n="1">Enumerate internal package names from public GitHub repos, job postings, CI error logs</oscpm:step>
+        <oscpm:step n="2">Register names on public npm with version 9999.0.0 — semver highest-wins resolves to public package</oscpm:step>
+        <oscpm:step n="3">CI/CD runs npm install; npm resolver picks public attacker package over internal version</oscpm:step>
+        <oscpm:step n="4">Postinstall executes with CI agent privileges (cloud keys, GitHub tokens, deployment secrets)</oscpm:step>
+        <oscpm:step n="5">Credentials exfiltrated; attacker uses npm token to publish under victim's own packages (amplification)</oscpm:step>
+      </oscpm:kill-chain>
+      <oscpm:siem-rule tool="bash"><![CDATA[ACTUAL=$(npm config get @company:registry)
+EXPECTED="https://internal.registry.company.com"
+[ "$ACTUAL" != "$EXPECTED" ] && echo "DEPENDENCY_CONFUSION_DETECTED" && exit 1]]></oscpm:siem-rule>
+      <oscpm:mitigation priority="1">Use @scoped packages for all internal code; configure .npmrc to route @company/* exclusively to internal registry; claim org scope on public npm</oscpm:mitigation>
+    </oscpm:attack-scenario>
+
+    <oscpm:attack-scenario id="AS3" name="Typosquatting" severity="HIGH"
+      difficulty-for-attacker="LOW" detection-timing="Registry Install-time">
+      <oscpm:kill-chain steps="5">
+        <oscpm:step n="1">Generate all variants of top-1000 npm package names with edit-distance ≤ 2</oscpm:step>
+        <oscpm:step n="2">Bulk-register available lookalike names with identical README and API surface</oscpm:step>
+        <oscpm:step n="3">Developer mistypes package name or uses LLM-generated code with hallucinated package name (2024+ vector)</oscpm:step>
+        <oscpm:step n="4">Typosquatted package installs and behaves normally while running hidden postinstall exfil hook</oscpm:step>
+        <oscpm:step n="5">Silent credential exfiltration; no error visible to developer</oscpm:step>
+      </oscpm:kill-chain>
+      <oscpm:siem-rule tool="bash"><![CDATA[# In CI: enforce lock file integrity
+npm ci  # exits non-zero if lock file is stale or package hash mismatches]]></oscpm:siem-rule>
+      <oscpm:mitigation priority="1">Use npm ci (never npm install) in all CI/CD; maintain approved-packages allowlist; scan with Socket.dev or Phylum pre-merge</oscpm:mitigation>
+    </oscpm:attack-scenario>
+
+    <oscpm:attack-scenario id="AS4" name="Prototype pollution to application compromise" severity="HIGH"
+      difficulty-for-attacker="MEDIUM" detection-timing="Runtime Registry">
+      <oscpm:kill-chain steps="5">
+        <oscpm:step n="1">Identify application using vulnerable recursive merge function (lodash.merge, $.extend, deepmerge)</oscpm:step>
+        <oscpm:step n="2">Craft payload: {"__proto__": {"isAdmin": true}} or {"constructor": {"prototype": {"shell": "/bin/sh"}}}</oscpm:step>
+        <oscpm:step n="3">Application routes user-controlled JSON to vulnerable merge without schema validation</oscpm:step>
+        <oscpm:step n="4">Object.prototype polluted; ALL objects in process now inherit injected properties</oscpm:step>
+        <oscpm:step n="5">Auth check if(user.isAdmin) passes for everyone; or gadget chain reaches child_process.exec</oscpm:step>
+      </oscpm:kill-chain>
+      <oscpm:siem-rule tool="Nginx"><![CDATA[# WAF: block prototype pollution in request body
+if ($request_body ~* "__proto__|constructor\.prototype") { return 400; }]]></oscpm:siem-rule>
+      <oscpm:mitigation priority="1">Update lodash &gt;= 4.17.21, jQuery &gt;= 3.5; validate user JSON with Ajv (additionalProperties:false) before any merge operation; deploy WAF rule</oscpm:mitigation>
+    </oscpm:attack-scenario>
+
+    <oscpm:attack-scenario id="AS5" name="Postinstall script credential exfiltration" severity="CRITICAL"
+      difficulty-for-attacker="LOW" detection-timing="Install-time">
+      <oscpm:kill-chain steps="5">
+        <oscpm:step n="1">Attacker embeds scripts.postinstall hook in package.json pointing to exfil payload</oscpm:step>
+        <oscpm:step n="2">Victim runs npm install; postinstall executes automatically with full process privileges</oscpm:step>
+        <oscpm:step n="3">Script reads process.env (all CI secrets), ~/.aws/credentials, ~/.npmrc, ~/.ssh/id_rsa</oscpm:step>
+        <oscpm:step n="4">Data base64-encoded and exfiltrated via HTTPS POST or DNS subdomain labels</oscpm:step>
+        <oscpm:step n="5">Attacker uses npm token to publish under victim's packages; AWS keys to access production</oscpm:step>
+      </oscpm:kill-chain>
+      <oscpm:siem-rule tool="Falco"><![CDATA[rule: npm_postinstall_exfil
+  condition: spawned_process and proc.pname="npm"
+    and proc.name in (node, sh, bash, curl, wget)
+    and evt.type=connect and not fd.sip in (npm_registry_known_ips)
+  priority: CRITICAL]]></oscpm:siem-rule>
+      <oscpm:mitigation priority="1">Use npm install --ignore-scripts in ALL CI/CD pipelines; network egress policy allowing only known registries; Falco/eBPF runtime monitoring; rotate all secrets after any compromised install</oscpm:mitigation>
+    </oscpm:attack-scenario>
+
+  </oscpm:analysis>
+
+
+  <!-- ─── 19 Pending Step 11 Analyses — Schema Stubs ─────────────────── -->
+  <oscpm:analysis project-ref="wordpress-plugins" status="PENDING" step-origin="11"
+    anticipated-scenarios="XSS via plugin input, SQLi via WP_Query, CSRF on admin actions, unrestricted file upload, broken access in REST API" />
+  <oscpm:analysis project-ref="exim-mta" status="PENDING" step-origin="11"
+    anticipated-scenarios="SMTP header injection RCE, heap overflow via oversized MAIL FROM, SMTP AUTH brute-force, null dereference DoS, use-after-free in message handling" />
+  <oscpm:analysis project-ref="imagemagick" status="PENDING" step-origin="11"
+    anticipated-scenarios="SVG delegate OS command injection, heap overflow in TIFF parser, path traversal via ZIP/PDF coder, decompression bomb DoS, PNG OOB read" />
+  <oscpm:analysis project-ref="apache-log4j2" status="PENDING" step-origin="11"
+    anticipated-scenarios="JNDI injection via HTTP headers (Log4Shell), bypass of lookup disable, DoS via infinite recursion, information disclosure via MDC values, serialisation via JMS appender" />
+  <oscpm:analysis project-ref="jenkins" status="PENDING" step-origin="11"
+    anticipated-scenarios="Groovy sandbox escape to RCE, arbitrary file read via CLI parser, Java deserialization in plugin install, CSRF on script console, unauthenticated endpoint exposure" />
+  <oscpm:analysis project-ref="ffmpeg" status="PENDING" step-origin="11"
+    anticipated-scenarios="Heap overflow in H.264 parser, use-after-free in audio decoder, OOB read in container demuxer, integer overflow in resolution calculation, codec-specific NULL dereference DoS" />
+  <oscpm:analysis project-ref="openssl" status="PENDING" step-origin="11"
+    anticipated-scenarios="ASN.1 OOB read (Heartbleed pattern), X.509 buffer overflow in name constraints, BN_mod_sqrt infinite loop DoS, TLS state machine bypass, OCSP response parsing overflow" />
+  <oscpm:analysis project-ref="redis" status="PENDING" step-origin="11"
+    anticipated-scenarios="Unauthenticated RCE via SLAVEOF+CONFIG (no-auth default), Lua sandbox escape, RESP protocol injection via proxy, OOB write via OBJECT ENCODING, persistence mechanism abuse" />
+  <oscpm:analysis project-ref="apache-struts" status="PENDING" step-origin="11"
+    anticipated-scenarios="OGNL injection via Content-Type, file upload path traversal to RCE, OGNL in redirect namespace, Java deserialization in REST plugin, mass-assignment via action parameters" />
+  <oscpm:analysis project-ref="apache-httpd" status="PENDING" step-origin="11"
+    anticipated-scenarios="Path traversal via URL normalisation (41773 pattern), mod_proxy SSRF, HTTP request smuggling, mod_rewrite rule bypass, OOB write in mod_lua" />
+  <oscpm:analysis project-ref="elasticsearch" status="PENDING" step-origin="11"
+    anticipated-scenarios="Unauthenticated bulk data exfiltration (no-auth default), Groovy/Painless script injection, cross-tenant index access, information disclosure via error messages, denial of service via malformed queries" />
+  <oscpm:analysis project-ref="phpmailer" status="PENDING" step-origin="11"
+    anticipated-scenarios="Sendmail command injection via From address, email header injection via Subject, object injection via malformed name field, SMTP STARTTLS downgrade, open relay misconfiguration" />
+  <oscpm:analysis project-ref="gitlabce" status="PENDING" step-origin="11"
+    anticipated-scenarios="SSRF via webhook URL, RCE via ExifTool on image upload, account takeover via password reset bypass, project import deserialization RCE, CI runner isolation failure" />
+  <oscpm:analysis project-ref="drupal" status="PENDING" step-origin="11"
+    anticipated-scenarios="SQLi via entity query system (Drupalgeddon pattern), RCE via form API render, REST API type confusion RCE, PHP unserialize in node export, XSS via WYSIWYG field" />
+  <oscpm:analysis project-ref="kubernetes" status="PENDING" step-origin="11"
+    anticipated-scenarios="Wildcard RBAC privilege escalation, kubelet anonymous auth RCE, etcd unauthenticated access, Helm chart over-permissive RBAC, YAML bomb API server DoS" />
+  <oscpm:analysis project-ref="spring-framework" status="PENDING" step-origin="11"
+    anticipated-scenarios="SpEL injection via routing expression, ClassLoader manipulation via DataBinder (Spring4Shell), Actuator env+restart RCE, JMX deserialization, mass-assignment via @ModelAttribute" />
+  <oscpm:analysis project-ref="curl-libcurl" status="PENDING" step-origin="11"
+    anticipated-scenarios="SOCKS5 heap overflow, POST-after-redirect credential leak, cookie domain bypass, SSRF via user-supplied URL, IMAP/SMTP buffer overflow in protocol parsers" />
+  <oscpm:analysis project-ref="keycloak" status="PENDING" step-origin="11"
+    anticipated-scenarios="redirect_uri open redirect, PKCE bypass via auth code interception, JWKS URI SSRF, admin console CSRF full realm takeover, SAML assertion bypass" />
+  <oscpm:analysis project-ref="flask-jinja2" status="PENDING" step-origin="11"
+    anticipated-scenarios="SSTI via render_template_string with user input, Werkzeug debugger PIN bypass when debug=True, pickle deserialization in Flask-Session, missing authentication on endpoints, YAML safe_load bypass" />
+
+</oscpm:step11-analyses>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 15 · CALIBRATION SPECIFICATION
+     Defines how every trainable parameter can be updated with new data.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:calibration-specification step-origin="5 7 8">
+
+  <oscpm:calibration-procedure id="CAL-WEIGHTS" target="factor-weights" step-origin="5">
+    <oscpm:method>Constrained least-squares optimisation minimising mean absolute rank error between predicted susceptibility scores and ground-truth exploitation frequency rank (CISA KEV count + NVD annual CVE count per project)</oscpm:method>
+    <oscpm:constraints>Σ weights = 1.0; all weights in [0.05, 0.40]; lang and surface weights must remain within 0.10 of each other (symmetry constraint reflecting joint exploitability)</oscpm:constraints>
+    <oscpm:data-requirements>Minimum 50 projects with confirmed CVE history; minimum 5 years of annual CVE data per project; minimum 10 CISA KEV entries across the project set</oscpm:data-requirements>
+    <oscpm:recalibration-trigger>Weight recalibration warranted when: (a) mean absolute rank error exceeds 2.0 rank positions on held-out validation set; (b) two consecutive annual NVD releases shift the composition of the CWE Top 25 significantly</oscpm:recalibration-trigger>
+  </oscpm:calibration-procedure>
+
+  <oscpm:calibration-procedure id="CAL-LANG-SCORES" target="language-risk-scores" step-origin="3">
+    <oscpm:method>Regression of annual high/critical memory-safety CVE rate per language against lang-risk score, stratified by project type. C and C++ scores re-evaluated when new compiler mitigations (CFI, MTE) achieve widespread adoption. Rust scores re-evaluated as adoption in security-critical projects grows.</oscpm:method>
+    <oscpm:data-requirements>NVD language-stratified CVE frequency analysis over 5-year rolling window; language adoption data from GitHub Language Stats</oscpm:data-requirements>
+  </oscpm:calibration-procedure>
+
+  <oscpm:calibration-procedure id="CAL-AMPLIFIERS" target="expert-knowledge-amplifiers" step-origin="7">
+    <oscpm:method>Each amplifier's contribution values are calibrated by regressing the expert_adjustment magnitude against the sum of amplifier levels scored by the calibration panel, then comparing predicted final scores against observed exploitation impact in the CISA KEV catalog</oscpm:method>
+    <oscpm:panel-requirements>Minimum 3 independent security experts with &gt;= 5 years OSS security assessment experience; ICC agreement threshold &gt;= 0.75</oscpm:panel-requirements>
+  </oscpm:calibration-procedure>
+
+  <oscpm:calibration-procedure id="CAL-CONFIDENCE" target="prediction-confidence" step-origin="7 8">
+    <oscpm:method>Bootstrap calibration: for each confidence level bucket (0.7-0.8, 0.8-0.9, 0.9-1.0), measure the actual fraction of predictions that proved correct against historical CVE data. A well-calibrated model should show: projects scored 0.9 confidence → 90% of predicted CWE classes confirmed in CVE history.</oscpm:method>
+    <oscpm:expected-calibration>Calibration error (ECE) &lt; 0.05 for CWE-class predictions at the 0.80+ confidence tier</oscpm:expected-calibration>
+  </oscpm:calibration-procedure>
+
+</oscpm:calibration-specification>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SECTION 16 · REPRESENTATIVENESS MATRIX  (step-origin="9")
+     Verifies that the 20 projects cover all intended design dimensions.
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<oscpm:representativeness-matrix step-origin="9">
+
+  <oscpm:owasp-coverage>
+    <oscpm:owasp-category ref="A01" primary-exemplars="npm-ecosystem kubernetes" secondary-exemplars="wordpress-plugins elasticsearch" />
+    <oscpm:owasp-category ref="A02" primary-exemplars="redis elasticsearch" secondary-exemplars="apache-httpd kubernetes" />
+    <oscpm:owasp-category ref="A03" primary-exemplars="npm-ecosystem jenkins" secondary-exemplars="gitlabce spring-framework" />
+    <oscpm:owasp-category ref="A04" primary-exemplars="openssl curl-libcurl" secondary-exemplars="apache-struts" />
+    <oscpm:owasp-category ref="A05" primary-exemplars="wordpress-plugins drupal" secondary-exemplars="apache-struts phpmailer exim-mta imagemagick apache-log4j2 flask-jinja2" />
+    <oscpm:owasp-category ref="A06" primary-exemplars="apache-struts apache-log4j2" secondary-exemplars="imagemagick flask-jinja2" />
+    <oscpm:owasp-category ref="A07" primary-exemplars="keycloak redis" secondary-exemplars="wordpress-plugins elasticsearch" />
+    <oscpm:owasp-category ref="A08" primary-exemplars="jenkins gitlabce" secondary-exemplars="spring-framework apache-struts" />
+    <oscpm:owasp-category ref="A09" primary-exemplars="elasticsearch" secondary-exemplars="redis" note="Weakest coverage — a dedicated logging/SIEM project would strengthen this" />
+    <oscpm:owasp-category ref="A10" primary-exemplars="ffmpeg exim-mta" secondary-exemplars="openssl apache-httpd curl-libcurl" />
+  </oscpm:owasp-coverage>
+
+  <oscpm:language-coverage>
+    <oscpm:lang-class ref="C"          projects="openssl exim-mta ffmpeg redis apache-httpd curl-libcurl imagemagick" />
+    <oscpm:lang-class ref="PHP"        projects="wordpress-plugins drupal phpmailer" />
+    <oscpm:lang-class ref="Java"       projects="apache-log4j2 jenkins apache-struts elasticsearch keycloak spring-framework" />
+    <oscpm:lang-class ref="JavaScript" projects="npm-ecosystem" />
+    <oscpm:lang-class ref="Python"     projects="flask-jinja2" />
+    <oscpm:lang-class ref="Go"         projects="kubernetes gitlabce" />
+    <oscpm:lang-class ref="Ruby"       projects="gitlabce" note="Secondary language; Ruby-primary project selection is a gap" />
+  </oscpm:language-coverage>
+
+  <oscpm:coverage-gaps step-origin="9">
+    <oscpm:gap id="G1">A09 (Security Logging) has only one primary exemplar. A dedicated log aggregation or SIEM project (e.g. Elastic Stack, Graylog) would strengthen coverage.</oscpm:gap>
+    <oscpm:gap id="G2">Ruby-primary project is absent; GitLab CE uses Ruby but Go is also significant. A Ruby-on-Rails standalone project (e.g. Redmine) would fill this gap.</oscpm:gap>
+    <oscpm:gap id="G3">Rust-language projects are absent; as Rust adoption grows in security-critical code (curl is migrating), a Rust project should be added to validate low language-risk predictions.</oscpm:gap>
+  </oscpm:coverage-gaps>
+
+</oscpm:representativeness-matrix>
+
+
+</oscpm:ontology>

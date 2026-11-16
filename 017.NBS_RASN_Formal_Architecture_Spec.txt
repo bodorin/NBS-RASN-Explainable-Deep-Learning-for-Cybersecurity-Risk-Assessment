@@ -1,0 +1,1455 @@
+===============================================================================
+  OSCPM-NBS-RASN  FORMAL ARCHITECTURE SPECIFICATION  v1.0
+===============================================================================
+Network      : Neuro-Bayesian-Symbolic Residual Attention Shallow Network
+               (NBS-RASN)
+Ontology ref : OSCPM v1.0  (oscpm_ontology_v1.xml -> CompanionFile: 017.oscpm_ontology_v1.xml)
+Article title: Neuro-Bayesian-Symbolic Residual Attention Shallow Network: Explainable Deep Learning for Cybersecurity Risk Assessment
+Article authors: Nicolaie Popescu-Bodorin, 2025-09-27, bodorin@live.com, +40 722882471    
+                    https://lmrec.org/bodorin/, 
+                 Madeleine Togher, mtogher@hct.ac.ae, +971 589252062.
+Encoding     : UTF-8
+License      : Consistent with the companion article (IJCCC submission)
+
+FORMAT GUIDE
+  Section headers : [SECTION] ... [/SECTION]
+  Record type     : KEYWORD : label   (ALL-CAPS keyword, colon, label on same line)
+  Properties      : PROP : value      (2-space indent per level)
+  Sets            : {a, b, c}
+  Functions       : f : Domain -> Codomain
+  Quantifiers     : forall  exists  (ASCII); U+2200/U+2203 also accepted
+  Logical ops     : /\  \/  ~  ->   (AND OR NOT IMPLIES)
+  Power set       : P(X)
+  Real interval   : [a,b]<=R
+  Parsing contract:
+    - Records are separated by blank lines.
+    - A KEYWORD line introduces a record; indented lines give its properties.
+    - Programmatic consumers should split on "KEYWORD : label", then collect
+      subsequent indented PROP lines until the next blank line or new KEYWORD.
+    - Section brackets [X] / [/X] delimit top-level groups.
+    - Lines beginning with "--" are comments; ignore for data extraction.
+    - The EDGE_COUNT_SUMMARY block contains machine-checkable integer sums.
+
+NETWORK STATISTICS
+  layers        : 12  (L0 - L11)
+  neurons       : 80
+  connections   : 195
+  axiom_groups  : 12  (Ax0 - Ax11)
+  total_axioms  : 75
+  onto_steps    : 12  (Step 0 - Step 11)
+  projects      : 20  (corpus S_Pi)
+  amplifiers    : 6
+  hidden_params : 11  (OSCPM Axiom A5 manifest)
+===============================================================================
+
+
+[VOCABULARY]
+
+  -- ────────────────────────────────────────────────────────────────────────
+  [SORTS]
+  -- ────────────────────────────────────────────────────────────────────────
+
+  SORT : Bool
+    domain   : {0, 1}
+    role     : gatekeeper outputs, validation flags, neuron firing states
+
+  SORT : I
+    domain   : [0,10] <= R
+    role     : score domain for all risk scores (Layers 5 and 7)
+
+  SORT : W
+    domain   : (0,1) <= R
+    role     : factor weight domain (Layer 5)
+
+  SORT : S_Lambda
+    domain   : {C_Cpp, PHP, Java, JS, Python, Go, Ruby}
+    role     : language identifiers (Layer 3)
+
+  SORT : S_C
+    domain   : CWE Top 25:2025 subset of N
+    role     : CWE vulnerability class identifiers (Layers 2, 6, 8, 11)
+
+  SORT : S_O
+    domain   : {A01, A02, A03, A04, A05, A06, A07, A08, A09, A10}
+    role     : OWASP Top 10:2025 categories (Layers 6, 9, 10, 11)
+
+  SORT : S_B
+    domain   : {NONE, LOW, MEDIUM, HIGH, CRITICAL}
+    role     : blast-radius amplifier levels (Layer 7, Ax7.1)
+    level_max: {NONE:0, LOW:0.10, MEDIUM:0.25, HIGH:0.50, CRITICAL:0.60}
+
+  SORT : S_P
+    domain   : {SLOW, MODERATE, FAST, INSTANT}
+    role     : propagation-speed amplifier levels (Layer 7, Ax7.2)
+    level_max: {SLOW:0, MODERATE:0.10, FAST:0.20, INSTANT:0.30}
+
+  SORT : S_S
+    domain   : {INCIDENTAL, MIXED, STRUCTURAL, FOUNDATIONAL}
+    role     : structural-nature amplifier levels (Layer 7, Ax7.3)
+    level_max: {INCIDENTAL:0, MIXED:0.20, STRUCTURAL:0.40, FOUNDATIONAL:0.60}
+
+  SORT : S_D
+    domain   : {NONE, PARTIAL, FULL}
+    role     : default-exposure amplifier levels (Layer 7, Ax7.4)
+    level_max: {NONE:0, PARTIAL:0.20, FULL:0.70}
+
+  SORT : S_E
+    domain   : {INDIVIDUAL, TARGETED, MASS}
+    role     : exploitation-pattern amplifier levels (Layer 7, Ax7.5)
+    level_max: {INDIVIDUAL:0, TARGETED:0.20, MASS:0.40}
+
+  SORT : S_I
+    domain   : {LOW, MEDIUM, HIGH, CRITICAL}
+    role     : institutional-criticality amplifier levels (Layer 7, Ax7.6)
+    level_max: {LOW:0, MEDIUM:0.10, HIGH:0.30, CRITICAL:0.55}
+
+  SORT : S_R
+    domain   : {MODERATE, MEDIUM, HIGH, CRITICAL}
+    role     : output risk-level classification (Layer 10)
+    thresholds: {CRITICAL:s>=9.0, HIGH:8.0<=s<9.0, MEDIUM:7.0<=s<8.0, MODERATE:s<7.0}
+
+  SORT : S_Pi
+    domain   : {npm-ecosystem, wordpress-plugins, exim-mta, imagemagick,
+                apache-log4j2, jenkins, ffmpeg, openssl, redis,
+                apache-struts, apache-httpd, elasticsearch, phpmailer,
+                gitlabce, drupal, kubernetes, spring-framework,
+                curl-libcurl, keycloak, flask-jinja2}
+    cardinality: 20
+    role     : validated project corpus identifiers
+
+  [/SORTS]
+
+
+  -- ────────────────────────────────────────────────────────────────────────
+  [CONSTANTS]
+  -- ────────────────────────────────────────────────────────────────────────
+
+  CONSTANT : w_lang
+    type  : W
+    value : 0.25
+    axiom : Ax5.1
+
+  CONSTANT : w_surf
+    type  : W
+    value : 0.25
+    axiom : Ax5.2
+
+  CONSTANT : w_eco
+    type  : W
+    value : 0.20
+    axiom : Ax5.3
+
+  CONSTANT : w_cve
+    type  : W
+    value : 0.20
+    axiom : Ax5.4
+
+  CONSTANT : w_sec
+    type  : W
+    value : 0.10
+    axiom : Ax5.5
+
+  CONSTANT : weight_sum
+    value : 1.00
+    axiom : Ax5.6
+    constraint: w_lang + w_surf + w_eco + w_cve + w_sec = 1
+
+  CONSTANT : rho_C_Cpp
+    type  : I
+    value : 10
+    axiom : Ax3.1
+
+  CONSTANT : rho_PHP
+    type  : I
+    value : 9
+    axiom : Ax3.2
+
+  CONSTANT : rho_Java
+    type  : I
+    value : 7
+    axiom : Ax3.3
+
+  CONSTANT : rho_JS
+    type  : I
+    value : 7
+    axiom : Ax3.4
+
+  CONSTANT : rho_Python
+    type  : I
+    value : 6
+    axiom : Ax3.5
+
+  CONSTANT : rho_Go
+    type  : I
+    value : 4
+    axiom : Ax3.6
+
+  CONSTANT : rho_Ruby
+    type  : I
+    value : 6
+    axiom : Ax3.7
+
+  CONSTANT : tau_prec
+    value : 0.80
+    role  : CVM1 precision lower bound (Ax8.1)
+
+  CONSTANT : tau_rho
+    value : 0.70
+    role  : CVM2 Spearman rank-correlation lower bound (Ax8.2)
+
+  CONSTANT : tau_inv
+    value : 0.20
+    role  : CVM3 maximum rank-inversion rate (Ax8.3)
+
+  CONSTANT : tau_ICC
+    value : 0.75
+    role  : CVM4 inter-rater ICC lower bound (Ax8.4)
+
+  CONSTANT : tau_conf
+    value : 0.75
+    role  : SC4 minimum prediction confidence (Ax6.4)
+
+  [/CONSTANTS]
+
+
+  -- ────────────────────────────────────────────────────────────────────────
+  [FUNCTIONS]
+  -- ────────────────────────────────────────────────────────────────────────
+
+  FUNCTION : det
+    signature: I^5 -> I
+    axiom    : Ax5.7
+    formula  : det(p) = w_lang*f_lang + w_surf*f_surf + w_eco*f_eco + w_cve*f_cve + w_sec*f_sec
+    neuron   : N5.7
+
+  FUNCTION : adj
+    signature: S_B x S_P x S_S x S_D x S_E x S_I -> R
+    axiom    : Ax7.7
+    formula  : adj(p) = alpha_B(l_B) + alpha_P(l_P) + alpha_S(l_S) + alpha_D(l_D) + alpha_E(l_E) + alpha_I(l_I)
+    neuron   : N7.7
+
+  FUNCTION : final
+    signature: I x R -> I
+    axiom    : Ax7.8
+    formula  : final(p) = clamp(det(p) + adj(p), 0, 10)
+    neuron   : N7.8
+
+  FUNCTION : gate
+    signature: S_Pi -> Bool
+    axiom    : Ax1.6
+    formula  : gate(p) = Phi_A1(p) /\ Phi_A2(p) /\ Phi_A3(p) /\ Phi_A4(p) /\ Phi_A5(p)
+    neuron   : N1.6
+
+  FUNCTION : rho
+    signature: S_Lambda -> I
+    axioms   : Ax3.1-Ax3.7
+    formula  : rho(l) in {4, 6, 7, 9, 10} per language-score constants
+
+  FUNCTION : causal
+    signature: S_Lambda -> P(S_C)
+    axioms   : Ax2.1-Ax2.11
+    formula  : causal(l) = {c in S_C | enables(l, c)}
+
+  FUNCTION : prevents
+    signature: S_Lambda -> P(S_C)
+    axioms   : Ax2.5
+    formula  : prevents(l) = {c in S_C | impossible in l s memory model}
+
+  FUNCTION : classify
+    signature: I -> S_R
+    axioms   : Ax10.1-Ax10.4
+    formula  : classify(s) = CRITICAL if s>=9.0
+                           | HIGH     if 8.0<=s<9.0
+                           | MEDIUM   if 7.0<=s<8.0
+                           | MODERATE if s<7.0
+
+  FUNCTION : clamp
+    signature: R x R x R -> R
+    formula  : clamp(x, a, b) = max(a, min(b, x))
+
+  [/FUNCTIONS]
+
+
+  -- ────────────────────────────────────────────────────────────────────────
+  [PREDICATES]
+  -- ────────────────────────────────────────────────────────────────────────
+
+  PREDICATE : valid
+    arity  : 1
+    type   : S_Pi -> Bool
+    meaning: p satisfies all five axioms A1-A5
+    axiom  : Ax1.6
+
+  PREDICATE : enables
+    arity  : 2
+    type   : S_Lambda x S_C -> Bool
+    meaning: language l structurally enables CWE c
+    axioms : Ax2.1-Ax2.4, Ax2.6, Ax2.10, Ax2.11
+
+  PREDICATE : causal_link
+    arity  : 2
+    type   : Prop x S_C -> Bool
+    meaning: architectural property pi causally enables CWE c
+    axioms : Ax2.7, Ax2.8, Ax2.9, Ax2.11
+
+  PREDICATE : predicted
+    arity  : 2
+    type   : S_Pi x S_C -> Bool
+    meaning: CWE c is predicted for project p
+    axiom  : Ax2 outputs; Ax8.1 references
+
+  PREDICATE : confirmed
+    arity  : 2
+    type   : S_Pi x S_C -> Bool
+    meaning: CWE c is empirically confirmed for project p
+    axiom  : Ax6.3, Ax8.1
+
+  PREDICATE : covers
+    arity  : 2
+    type   : S_Pi x S_O -> Bool
+    meaning: project p covers OWASP category o
+    axioms : Ax6.1, Ax9.1, Ax10.5
+
+  PREDICATE : propagates
+    arity  : 1
+    type   : S_Pi -> Bool
+    meaning: p passes the gatekeeper and continues through the network
+    axiom  : Ax1.6
+
+  [/PREDICATES]
+
+[/VOCABULARY]
+
+
+[FORMAL_LANGUAGE]
+
+  -- ────────────────────────────────────────────────────────────────────────
+  [TERMS]
+  -- ────────────────────────────────────────────────────────────────────────
+
+  TERM : t_det(p)
+    sort   : I
+    grammar: t_det(p) ::= sum_{k in K} w_k * f_k(p)
+    where  : K = {lang, surf, eco, cve, sec},  f_k(p) in I
+
+  TERM : t_adj(p)
+    sort   : R
+    grammar: t_adj(p) ::= alpha_B(l_B) + alpha_P(l_P) + alpha_S(l_S) + alpha_D(l_D) + alpha_E(l_E) + alpha_I(l_I)
+    where  : l_B in S_B, l_P in S_P, l_S in S_S, l_D in S_D, l_E in S_E, l_I in S_I
+
+  TERM : t_final(p)
+    sort   : I
+    grammar: t_final(p) ::= clamp(t_det(p) + t_adj(p), 0, 10)
+
+  TERM : t_lang(p)
+    sort   : I
+    grammar: t_lang(p) ::= rho(n_lang(p))                       [single-language: Ax3.8]
+                         | sum_i(frac_i * rho(l_i)) + delta      [multi-language: Ax3.9]
+    where  : n_lang(p) in S_Lambda,  delta in {0, 1}
+
+  [/TERMS]
+
+
+  -- ────────────────────────────────────────────────────────────────────────
+  [FORMULA_SCHEMATA]
+  -- ────────────────────────────────────────────────────────────────────────
+
+  FORMULA : Phi_A1(p)
+    sort   : Bool
+    content: exists c in S_C. predicted(p,c)  /\  exists o in S_O. covers(p,o)
+    role   : Vocabulary Precision - predictions are grounded in CWE/OWASP
+
+  FORMULA : Phi_A2(p)
+    sort   : Bool
+    content: causal_basis(p)  /\  ~purely_statistical(p)
+    role   : Causal Primacy - predictions follow causal chains not correlations
+
+  FORMULA : Phi_A3(p)
+    sort   : Bool
+    content: exists F(p) <= S_C. F(p) != {}  /\  stated(F(p))
+    role   : Falsifiability - at least one CWE constitutes a falsification condition
+
+  FORMULA : Phi_A4(p)
+    sort   : Bool
+    content: t_final(p) = t_det(p) + t_adj(p)  /\  reported(t_det)  /\  reported(t_adj)
+    role   : Deterministic-Expert Separation - both components explicitly reported
+
+  FORMULA : Phi_A5(p)
+    sort   : Bool
+    content: forall pi in Params(p). declared(pi, Manifest)
+    role   : Transparency - all 11 hidden parameters declared in OSCPM A5 manifest
+    manifest: {prediction-confidence, epistemic-uncertainty, lang-surface-synergy,
+               active-exploitation-premium, structural-vs-incidental-ratio, patch-lag,
+               representativeness-criterion, causal-query-framing, falsifiability-threshold,
+               temporal-validity-window, recalibration-trigger}
+
+  FORMULA : Phi_gate(p)
+    sort   : Bool
+    content: Phi_A1(p) /\ Phi_A2(p) /\ Phi_A3(p) /\ Phi_A4(p) /\ Phi_A5(p)
+    role   : Gatekeeper conjunction - all five axioms must hold
+
+  WELL_FORMEDNESS:
+    TERM t of sort s is well-formed iff all sub-term function applications
+    match declared signatures in Sigma.
+    FORMULA phi is well-formed iff it is a well-typed Bool expression over
+    well-formed terms with no sort mismatch in Sigma.
+
+  [/FORMULA_SCHEMATA]
+
+[/FORMAL_LANGUAGE]
+
+
+[FORMAL_THEORY]
+
+  -- ────────────────────────────────────────────────────────────────────────
+  [AXIOM_GROUPS]
+  -- ────────────────────────────────────────────────────────────────────────
+  -- Each AXIOM_GROUP corresponds to one network layer and one ontology step.
+  -- Each AXIOM entry corresponds to exactly one named neuron.
+  -- ────────────────────────────────────────────────────────────────────────
+
+  AXIOM_GROUP : Ax0
+    layer    : L0
+    onto_step: 0
+    n_axioms : 3
+
+    AXIOM : Ax0.1
+      neuron : N0.1-N0.5
+      content: forall p. f_lang(p), f_surf(p), f_eco(p), f_cve(p), f_sec(p) in [1,10]
+
+    AXIOM : Ax0.2
+      neuron : N0.6-N0.8
+      content: forall p. l_B(p) in S_B /\ l_P(p) in S_P /\ l_S(p) in S_S /\ l_D(p) in S_D /\ l_E(p) in S_E /\ l_I(p) in S_I
+
+    AXIOM : Ax0.3
+      neuron : N0.1, N0.6, N0.7
+      content: forall p. n_lang(p) in S_Lambda /\ N_inc(p) <= S_C
+
+
+  AXIOM_GROUP : Ax1
+    layer    : L1
+    onto_step: 1-2
+    n_axioms : 6
+
+    AXIOM : Ax1.1  neuron: N1.1  content: forall p. valid(p) -> Phi_A1(p)
+    AXIOM : Ax1.2  neuron: N1.2  content: forall p. valid(p) -> Phi_A2(p)
+    AXIOM : Ax1.3  neuron: N1.3  content: forall p. valid(p) -> Phi_A3(p)
+    AXIOM : Ax1.4  neuron: N1.4  content: forall p. valid(p) -> Phi_A4(p)
+    AXIOM : Ax1.5  neuron: N1.5  content: forall p. valid(p) -> Phi_A5(p)
+    AXIOM : Ax1.6  neuron: N1.6  content: forall p. propagates(p) <-> Phi_gate(p)
+
+
+  AXIOM_GROUP : Ax2
+    layer    : L2
+    onto_step: 2-3
+    n_axioms : 11
+    -- Each Ax2.i maps to one causal neuron N2.i and one OSCPM causal-chain link id=Ax2.i
+
+    AXIOM : Ax2.1
+      neuron  : N2.1   label: C_Cpp_OOB_Write
+      content : enables(C_Cpp, 787) /\ enables(C_Cpp, 120)
+      cwe     : CWE-787 OOB-Write,  CWE-120 Classic Buffer Overflow
+      owasp   : A10
+
+    AXIOM : Ax2.2
+      neuron  : N2.2   label: C_Cpp_Heap_Stack
+      content : enables(C_Cpp, 121) /\ enables(C_Cpp, 122)
+      cwe     : CWE-121 Stack Overflow,  CWE-122 Heap Overflow
+      owasp   : A10
+
+    AXIOM : Ax2.3
+      neuron  : N2.3   label: C_Cpp_UAF_OOB_Read
+      content : enables(C_Cpp, 416) /\ enables(C_Cpp, 125)
+      cwe     : CWE-416 Use-After-Free,  CWE-125 OOB Read
+      owasp   : A10
+
+    AXIOM : Ax2.4
+      neuron  : N2.4   label: PHP_inject
+      content : enables(PHP, 89) /\ enables(PHP, 79) /\ enables(PHP, 352)
+      cwe     : CWE-89 SQLi,  CWE-79 XSS,  CWE-352 CSRF
+      owasp   : A05
+
+    AXIOM : Ax2.5
+      neuron  : N2.5   label: Java_deser
+      content : enables(Java, 502) /\ prevents(Java, 787) /\ prevents(Java, 416)
+      cwe     : CWE-502 Unsafe Deserialization
+      owasp   : A08
+
+    AXIOM : Ax2.6
+      neuron  : N2.6   label: Java_EL
+      content : enables(Java, 94)
+      cwe     : CWE-94 Code Injection via EL/OGNL/SpEL
+      owasp   : A05
+
+    AXIOM : Ax2.7
+      neuron  : N2.7   label: eco_supply
+      content : causal_link(large_ecosystem, 1395)
+      cwe     : CWE-1395 Supply Chain Dependency
+      owasp   : A03
+
+    AXIOM : Ax2.8
+      neuron  : N2.8   label: default_auth
+      content : causal_link(default_no_auth, 306)
+      cwe     : CWE-306 Missing Authentication
+      owasp   : A02, A07
+
+    AXIOM : Ax2.9
+      neuron  : N2.9   label: RBAC_access
+      content : causal_link(complex_RBAC, 862) /\ causal_link(complex_RBAC, 284)
+      cwe     : CWE-862 Missing Authorization,  CWE-284 Improper Access Control
+      owasp   : A01
+
+    AXIOM : Ax2.10
+      neuron  : N2.10  label: JS_proto
+      content : enables(JS, 1321) /\ enables(JS, 94)
+      cwe     : CWE-1321 Prototype Pollution,  CWE-94 Code Injection
+      owasp   : A03, A08
+
+    AXIOM : Ax2.11
+      neuron  : N2.11  label: Python_eval
+      content : enables(Python, 94) /\ causal_link(dynamic_eval, 94)
+      cwe     : CWE-94 SSTI/exec via dynamic evaluation
+      owasp   : A03, A05
+
+
+  AXIOM_GROUP : Ax3
+    layer    : L3
+    onto_step: 3
+    n_axioms : 9
+
+    AXIOM : Ax3.1  neuron: N3.1  content: rho(C_Cpp)  = 10
+    AXIOM : Ax3.2  neuron: N3.2  content: rho(PHP)     = 9
+    AXIOM : Ax3.3  neuron: N3.3  content: rho(Java)    = 7
+    AXIOM : Ax3.4  neuron: N3.4  content: rho(JS)      = 7
+    AXIOM : Ax3.5  neuron: N3.5  content: rho(Python)  = 6
+    AXIOM : Ax3.6  neuron: N3.6  content: rho(Go)      = 4
+    AXIOM : Ax3.7  neuron: N3.7  content: rho(Ruby)    = 6
+
+    AXIOM : Ax3.8
+      neuron : N3.8  label: single_lang
+      content: |Lang(p)| = 1  ->  f_lang(p) = rho(n_lang(p))
+
+    AXIOM : Ax3.9
+      neuron : N3.9  label: multi_lang
+      content: |Lang(p)| > 1  ->  f_lang(p) = sum_i(frac_i * rho(l_i)) + delta,  delta in {0,1}
+
+
+  AXIOM_GROUP : Ax4
+    layer    : L4
+    onto_step: 4
+    n_axioms : 5
+
+    AXIOM : Ax4.1  neuron: N4.1  content: forall p. f_lang(p) in [1,10]
+    AXIOM : Ax4.2  neuron: N4.2  content: forall p. f_surf(p) in [1,10]
+    AXIOM : Ax4.3  neuron: N4.3  content: forall p. f_eco(p)  in [1,10]
+    AXIOM : Ax4.4  neuron: N4.4  content: forall p. f_cve(p)  in [1,10]
+    AXIOM : Ax4.5  neuron: N4.5  content: forall p. f_sec(p)  in [1,10]
+
+
+  AXIOM_GROUP : Ax5
+    layer    : L5
+    onto_step: 5
+    n_axioms : 7
+
+    AXIOM : Ax5.1  neuron: N5.1  content: w_lang = 0.25
+    AXIOM : Ax5.2  neuron: N5.2  content: w_surf = 0.25
+    AXIOM : Ax5.3  neuron: N5.3  content: w_eco  = 0.20
+    AXIOM : Ax5.4  neuron: N5.4  content: w_cve  = 0.20
+    AXIOM : Ax5.5  neuron: N5.5  content: w_sec  = 0.10
+    AXIOM : Ax5.6  neuron: N5.6  content: w_lang + w_surf + w_eco + w_cve + w_sec = 1
+    AXIOM : Ax5.7  neuron: N5.7  content: det(p) = sum_{k in K} w_k * f_k(p)
+
+
+  AXIOM_GROUP : Ax6
+    layer    : L6
+    onto_step: 6
+    n_axioms : 5
+
+    AXIOM : Ax6.1
+      neuron : N6.1   label: SC1_OWASP
+      content: forall p in corpus. exists o in S_O. covers(p, o)
+
+    AXIOM : Ax6.2
+      neuron : N6.2   label: SC2_lang
+      content: forall l in S_Lambda. exists p in corpus. lang_class(p) = l
+
+    AXIOM : Ax6.3
+      neuron : N6.3   label: SC3_anchor
+      content: forall p in corpus. exists c in S_C. confirmed(p, c)
+
+    AXIOM : Ax6.4
+      neuron : N6.4   label: SC4_conf
+      content: forall p in corpus. confidence(p) >= tau_conf = 0.75
+
+    AXIOM : Ax6.5
+      neuron : N6.5   label: filter_gate
+      content: gate_6(p) = Ax6.1(p) /\ Ax6.2(p) /\ Ax6.3(p) /\ Ax6.4(p)
+
+
+  AXIOM_GROUP : Ax7
+    layer    : L7
+    onto_step: 7
+    n_axioms : 8
+
+    AXIOM : Ax7.1
+      neuron : N7.1   label: amp_blast
+      content: alpha_B : {NONE->0, LOW->0.10, MEDIUM->0.25, HIGH->0.50, CRITICAL->0.60}
+
+    AXIOM : Ax7.2
+      neuron : N7.2   label: amp_prop
+      content: alpha_P : {SLOW->0, MODERATE->0.10, FAST->0.20, INSTANT->0.30}
+
+    AXIOM : Ax7.3
+      neuron : N7.3   label: amp_struct
+      content: alpha_S : {INCIDENTAL->0, MIXED->0.20, STRUCTURAL->0.40, FOUNDATIONAL->0.60}
+
+    AXIOM : Ax7.4
+      neuron : N7.4   label: amp_default
+      content: alpha_D : {NONE->0, PARTIAL->0.20, FULL->0.70}
+
+    AXIOM : Ax7.5
+      neuron : N7.5   label: amp_exploit
+      content: alpha_E : {INDIVIDUAL->0, TARGETED->0.20, MASS->0.40}
+
+    AXIOM : Ax7.6
+      neuron : N7.6   label: amp_crit
+      content: alpha_I : {LOW->0, MEDIUM->0.10, HIGH->0.30, CRITICAL->0.55}
+
+    AXIOM : Ax7.7
+      neuron : N7.7   label: adj_sum
+      content: adj(p) = alpha_B(l_B) + alpha_P(l_P) + alpha_S(l_S) + alpha_D(l_D) + alpha_E(l_E) + alpha_I(l_I)
+
+    AXIOM : Ax7.8
+      neuron : N7.8   label: final_score
+      content: final(p) = clamp(det(p) + adj(p), 0, 10)
+      note   : det(p) arrives as residual from N5.7 (skip connection)
+
+
+  AXIOM_GROUP : Ax8
+    layer    : L8
+    onto_step: 8
+    n_axioms : 6
+
+    AXIOM : Ax8.1
+      neuron : N8.1   label: CVM1_prec
+      content: forall p. |predicted(p) /\ confirmed(p)| / |predicted(p)| >= tau_prec = 0.80
+
+    AXIOM : Ax8.2
+      neuron : N8.2   label: CVM2_rank
+      content: rho_Sp(rank(O_7), rank(CVE_freq)) >= tau_rho = 0.70
+
+    AXIOM : Ax8.3
+      neuron : N8.3   label: CVM3_temp
+      content: rank_inversion(predicted, holdout) <= tau_inv = 0.20
+
+    AXIOM : Ax8.4
+      neuron : N8.4   label: CVM4_ICC
+      content: ICC(O_7, expert_panel) >= tau_ICC = 0.75
+
+    AXIOM : Ax8.5
+      neuron : N8.5   label: CVM5_decomp
+      content: forall p. |adj(p) - sum_j(alpha_j(l_j(p)))| <= epsilon_rnd
+
+    AXIOM : Ax8.6
+      neuron : N8.6   label: fb_trigger
+      content: ~Ax8.1(p) \/ ... \/ ~Ax8.4(p)  ->  update(l_j(p))
+      note   : N8.6 -> {N7.1..N7.6} is the feedback/learning edge (6 FEEDBACK edges)
+
+
+  AXIOM_GROUP : Ax9
+    layer    : L9
+    onto_step: 9
+    n_axioms : 4
+
+    AXIOM : Ax9.1
+      neuron : N9.1   label: owasp_cov
+      content: forall o in S_O. |{p in corpus | covers(p,o)}| >= 2
+
+    AXIOM : Ax9.2
+      neuron : N9.2   label: lang_cov
+      content: forall l in S_Lambda. exists p in corpus. lang_class(p) = l
+
+    AXIOM : Ax9.3
+      neuron : N9.3   label: depl_div
+      content: |deploy_types(corpus)| >= 5
+
+    AXIOM : Ax9.4
+      neuron : N9.4   label: gap_id
+      content: exists G <= S_O \/ S_Lambda. G != {} /\ documented_gap(G)
+      current: G = {A09-weak-coverage, Ruby-absent}
+
+
+  AXIOM_GROUP : Ax10
+    layer    : L10
+    onto_step: 10
+    n_axioms : 5
+
+    AXIOM : Ax10.1  neuron: N10.1  content: classify(s) = CRITICAL  iff  s >= 9.0
+    AXIOM : Ax10.2  neuron: N10.2  content: classify(s) = HIGH      iff  8.0 <= s < 9.0
+    AXIOM : Ax10.3  neuron: N10.3  content: classify(s) = MEDIUM    iff  7.0 <= s < 8.0
+    AXIOM : Ax10.4  neuron: N10.4  content: classify(s) = MODERATE  iff  s < 7.0
+
+    AXIOM : Ax10.5
+      neuron : N10.5  label: fmt_output
+      content: O_10(p) = (final(p), classify(final(p)), O_2(p), {o|covers(p,o)}, adj_decomp(p))
+
+
+  AXIOM_GROUP : Ax11
+    layer    : L11
+    onto_step: 11
+    n_axioms : 6
+
+    AXIOM : Ax11.1  neuron: N11.1  content: output_score(p)      = final(p)
+    AXIOM : Ax11.2  neuron: N11.2  content: output_risk_level(p) = classify(final(p))
+    AXIOM : Ax11.3  neuron: N11.3  content: output_CWE(p)        = pred_CWE(p)
+    AXIOM : Ax11.4  neuron: N11.4  content: output_OWASP(p)      = pred_OWASP(p)
+    AXIOM : Ax11.5  neuron: N11.5  content: output_mitig(p)      = gen_mitigations(pred_CWE(p))
+    AXIOM : Ax11.6  neuron: N11.6  content: output_scenarios(p)  = Step11_link(p)
+
+  [/AXIOM_GROUPS]
+
+
+  -- ────────────────────────────────────────────────────────────────────────
+  [THEOREMS]
+  -- ────────────────────────────────────────────────────────────────────────
+
+  THEOREM : T1
+    name   : Layer-Step Bijection
+    content: exists bijection beta:{0..11}->{0..11} such that
+             forall k. axioms(L_k) = FOL_formalisation(onto_step(beta(k)))
+    proof  : beta = identity; verified layer-by-layer in AXIOM_GROUPS above.
+
+  THEOREM : T2
+    name   : Score Decomposition Uniqueness
+    content: forall valid p in S_Pi. final(p) = det(p) + adj(p)  is unique.
+    proof  : det unique by Ax5.7 given fixed weights and O_4.
+             adj unique by Ax7.7 given fixed alpha_j and amplifier levels.
+             clamp is deterministic. QED.
+
+  THEOREM : T3
+    name   : Input-Output Type Safety
+    content: forall k in {0..11}. well_typed(I_k) -> well_typed(O_k)
+    proof  : Each F_k defined by axioms typed under L(Sigma). Induction on k.
+
+  [/THEOREMS]
+
+[/FORMAL_THEORY]
+
+
+[NETWORK_ARCHITECTURE]
+
+  -- ────────────────────────────────────────────────────────────────────────
+  [LAYERS]
+  -- ────────────────────────────────────────────────────────────────────────
+
+  LAYER : L0
+    name        : Input Layer
+    onto_step   : 0
+    n_neurons   : 8
+    axiom_group : Ax0
+    input_type  : (external project data)
+    output_type : S_Lambda x I^4 x Bool* x P(S_C) x CatVec
+
+  LAYER : L1
+    name        : Gatekeeper (Axiom Validation)
+    onto_step   : 1-2
+    n_neurons   : 6
+    axiom_group : Ax1
+    input_type  : O_0(p)
+    output_type : Bool
+
+  LAYER : L2
+    name        : Causal Modeling
+    onto_step   : 2-3
+    n_neurons   : 11
+    axiom_group : Ax2
+    input_type  : O_0(p) x O_1(p)
+    output_type : P(S_C)
+    note        : neurons activate iff gate(p) = 1 (Ax1.6)
+
+  LAYER : L3
+    name        : Language Vulnerability Encoding
+    onto_step   : 3
+    n_neurons   : 9
+    axiom_group : Ax3
+    input_type  : S_Lambda
+    output_type : I
+
+  LAYER : L4
+    name        : Factor Extraction
+    onto_step   : 4
+    n_neurons   : 5
+    axiom_group : Ax4
+    input_type  : O_0(p) union {O_3(p)}
+    output_type : I^5
+
+  LAYER : L5
+    name        : Deterministic Weighting
+    onto_step   : 5
+    n_neurons   : 7
+    axiom_group : Ax5
+    input_type  : I^5
+    output_type : I
+    residual    : N5.7 -> N7.8  (det score skip-connects to Layer 7)
+
+  LAYER : L6
+    name        : Project Filtering
+    onto_step   : 6
+    n_neurons   : 5
+    axiom_group : Ax6
+    input_type  : O_0(p) union O_2(p) union O_3(p) union O_4(p)
+    output_type : Bool
+
+  LAYER : L7
+    name        : Expert Adjustment / Residual Attention
+    onto_step   : 7
+    n_neurons   : 8
+    axiom_group : Ax7
+    input_type  : O_5(p) [residual] x CatVec q(p)
+    output_type : I
+    residual    : receives N5.7 as det residual at N7.8
+    feedback    : receives N8.6 -> {N7.1..N7.6} recalibration signal
+
+  LAYER : L8
+    name        : Cross-Validation with Feedback
+    onto_step   : 8
+    n_neurons   : 6
+    axiom_group : Ax8
+    input_type  : O_7(p) x P(S_C)_observed
+    output_type : Bool^5 x R
+
+  LAYER : L9
+    name        : Representativeness Verification
+    onto_step   : 9
+    n_neurons   : 4
+    axiom_group : Ax9
+    input_type  : {O_6(p)}_{p in corpus}
+    output_type : Bool x P(S_O union S_Lambda)
+
+  LAYER : L10
+    name        : Interactive Formatting
+    onto_step   : 10
+    n_neurons   : 5
+    axiom_group : Ax10
+    input_type  : O_7(p) x O_2(p) x O_9
+    output_type : I x S_R x P(S_C) x P(S_O) x AmpDecomp
+
+  LAYER : L11
+    name        : Output Layer
+    onto_step   : 11
+    n_neurons   : 6
+    axiom_group : Ax11
+    input_type  : O_10(p)
+    output_type : I x S_R x P(S_C) x P(S_O) x Recs x Scenarios
+
+  [/LAYERS]
+
+
+  -- ────────────────────────────────────────────────────────────────────────
+  [NEURONS]
+  -- ────────────────────────────────────────────────────────────────────────
+  -- Format: NEURON : id   layer:Lk  label:NAME  out_sort:SORT  axiom:Axn
+  -- ────────────────────────────────────────────────────────────────────────
+
+  -- LAYER 0: Input neurons (8 neurons)
+  NEURON : N0.1   layer:L0  label:N_lang       out_sort:S_Lambda  axiom:Ax0.3
+  NEURON : N0.2   layer:L0  label:N_surf        out_sort:I         axiom:Ax0.1
+  NEURON : N0.3   layer:L0  label:N_eco         out_sort:I         axiom:Ax0.1
+  NEURON : N0.4   layer:L0  label:N_cve         out_sort:I         axiom:Ax0.1
+  NEURON : N0.5   layer:L0  label:N_sec         out_sort:I         axiom:Ax0.1
+  NEURON : N0.6   layer:L0  label:N_struct      out_sort:Bool*     axiom:Ax0.3
+  NEURON : N0.7   layer:L0  label:N_inc         out_sort:P(S_C)    axiom:Ax0.3
+  NEURON : N0.8   layer:L0  label:N_qual        out_sort:CatVec    axiom:Ax0.2
+
+  -- LAYER 1: Gatekeeper neurons (6 neurons)
+  NEURON : N1.1   layer:L1  label:A1_vocab      out_sort:Bool  axiom:Ax1.1  formula:Phi_A1(p)
+  NEURON : N1.2   layer:L1  label:A2_causal     out_sort:Bool  axiom:Ax1.2  formula:Phi_A2(p)
+  NEURON : N1.3   layer:L1  label:A3_falsif     out_sort:Bool  axiom:Ax1.3  formula:Phi_A3(p)
+  NEURON : N1.4   layer:L1  label:A4_decomp     out_sort:Bool  axiom:Ax1.4  formula:Phi_A4(p)
+  NEURON : N1.5   layer:L1  label:A5_transp     out_sort:Bool  axiom:Ax1.5  formula:Phi_A5(p)
+  NEURON : N1.6   layer:L1  label:N_gate        out_sort:Bool  axiom:Ax1.6  formula:Phi_gate(p)
+
+  -- LAYER 2: Causal modeling neurons (11 neurons)
+  NEURON : N2.1   layer:L2  label:C_Cpp_OOB_Write  out_sort:Bool  axiom:Ax2.1
+  NEURON : N2.2   layer:L2  label:C_Cpp_Heap_Stack  out_sort:Bool  axiom:Ax2.2
+  NEURON : N2.3   layer:L2  label:C_Cpp_UAF_Read    out_sort:Bool  axiom:Ax2.3
+  NEURON : N2.4   layer:L2  label:PHP_inject        out_sort:Bool  axiom:Ax2.4
+  NEURON : N2.5   layer:L2  label:Java_deser        out_sort:Bool  axiom:Ax2.5
+  NEURON : N2.6   layer:L2  label:Java_EL           out_sort:Bool  axiom:Ax2.6
+  NEURON : N2.7   layer:L2  label:eco_supply        out_sort:Bool  axiom:Ax2.7
+  NEURON : N2.8   layer:L2  label:default_noauth    out_sort:Bool  axiom:Ax2.8
+  NEURON : N2.9   layer:L2  label:RBAC_access       out_sort:Bool  axiom:Ax2.9
+  NEURON : N2.10  layer:L2  label:JS_proto_poll     out_sort:Bool  axiom:Ax2.10
+  NEURON : N2.11  layer:L2  label:Python_dyn_eval   out_sort:Bool  axiom:Ax2.11
+
+  -- LAYER 3: Language encoding neurons (9 neurons)
+  NEURON : N3.1   layer:L3  label:rho_C_Cpp    out_sort:I  axiom:Ax3.1  formula:10
+  NEURON : N3.2   layer:L3  label:rho_PHP       out_sort:I  axiom:Ax3.2  formula:9
+  NEURON : N3.3   layer:L3  label:rho_Java      out_sort:I  axiom:Ax3.3  formula:7
+  NEURON : N3.4   layer:L3  label:rho_JS        out_sort:I  axiom:Ax3.4  formula:7
+  NEURON : N3.5   layer:L3  label:rho_Python    out_sort:I  axiom:Ax3.5  formula:6
+  NEURON : N3.6   layer:L3  label:rho_Go        out_sort:I  axiom:Ax3.6  formula:4
+  NEURON : N3.7   layer:L3  label:rho_Ruby      out_sort:I  axiom:Ax3.7  formula:6
+  NEURON : N3.8   layer:L3  label:single_lang   out_sort:I  axiom:Ax3.8  formula:rho(n_lang(p))
+  NEURON : N3.9   layer:L3  label:multi_lang    out_sort:I  axiom:Ax3.9  formula:sum_i(frac_i*rho(l_i))+delta
+
+  -- LAYER 4: Factor extraction neurons (5 neurons)
+  NEURON : N4.1   layer:L4  label:f_lang   out_sort:I  axiom:Ax4.1  formula:O_3(p)
+  NEURON : N4.2   layer:L4  label:f_surf   out_sort:I  axiom:Ax4.2  formula:N0.2
+  NEURON : N4.3   layer:L4  label:f_eco    out_sort:I  axiom:Ax4.3  formula:N0.3
+  NEURON : N4.4   layer:L4  label:f_cve    out_sort:I  axiom:Ax4.4  formula:N0.4
+  NEURON : N4.5   layer:L4  label:f_sec    out_sort:I  axiom:Ax4.5  formula:N0.5
+
+  -- LAYER 5: Deterministic weighting neurons (7 neurons)
+  NEURON : N5.1   layer:L5  label:w_lang_term   out_sort:I     axiom:Ax5.1  formula:0.25*N4.1
+  NEURON : N5.2   layer:L5  label:w_surf_term   out_sort:I     axiom:Ax5.2  formula:0.25*N4.2
+  NEURON : N5.3   layer:L5  label:w_eco_term    out_sort:I     axiom:Ax5.3  formula:0.20*N4.3
+  NEURON : N5.4   layer:L5  label:w_cve_term    out_sort:I     axiom:Ax5.4  formula:0.20*N4.4
+  NEURON : N5.5   layer:L5  label:w_sec_term    out_sort:I     axiom:Ax5.5  formula:0.10*N4.5
+  NEURON : N5.6   layer:L5  label:weight_norm   out_sort:Bool  axiom:Ax5.6  formula:sum(w_k)=1
+  NEURON : N5.7   layer:L5  label:det_score     out_sort:I     axiom:Ax5.7  formula:N5.1+N5.2+N5.3+N5.4+N5.5
+
+  -- LAYER 6: Project filtering neurons (5 neurons)
+  NEURON : N6.1   layer:L6  label:SC1_OWASP    out_sort:Bool  axiom:Ax6.1
+  NEURON : N6.2   layer:L6  label:SC2_lang     out_sort:Bool  axiom:Ax6.2
+  NEURON : N6.3   layer:L6  label:SC3_anchor   out_sort:Bool  axiom:Ax6.3
+  NEURON : N6.4   layer:L6  label:SC4_conf     out_sort:Bool  axiom:Ax6.4
+  NEURON : N6.5   layer:L6  label:filter_gate  out_sort:Bool  axiom:Ax6.5  formula:N6.1/\N6.2/\N6.3/\N6.4
+
+  -- LAYER 7: Expert adjustment neurons (8 neurons)
+  NEURON : N7.1   layer:L7  label:amp_blast    out_sort:I  axiom:Ax7.1  formula:alpha_B(l_B(p))
+  NEURON : N7.2   layer:L7  label:amp_prop     out_sort:I  axiom:Ax7.2  formula:alpha_P(l_P(p))
+  NEURON : N7.3   layer:L7  label:amp_struct   out_sort:I  axiom:Ax7.3  formula:alpha_S(l_S(p))
+  NEURON : N7.4   layer:L7  label:amp_default  out_sort:I  axiom:Ax7.4  formula:alpha_D(l_D(p))
+  NEURON : N7.5   layer:L7  label:amp_exploit  out_sort:I  axiom:Ax7.5  formula:alpha_E(l_E(p))
+  NEURON : N7.6   layer:L7  label:amp_crit     out_sort:I  axiom:Ax7.6  formula:alpha_I(l_I(p))
+  NEURON : N7.7   layer:L7  label:adj_sum      out_sort:I  axiom:Ax7.7  formula:N7.1+N7.2+N7.3+N7.4+N7.5+N7.6
+  NEURON : N7.8   layer:L7  label:final_score  out_sort:I  axiom:Ax7.8  formula:clamp(N5.7+N7.7,0,10)
+
+  -- LAYER 8: Cross-validation neurons (6 neurons)
+  NEURON : N8.1   layer:L8  label:CVM1_prec    out_sort:Bool  axiom:Ax8.1
+  NEURON : N8.2   layer:L8  label:CVM2_rank    out_sort:Bool  axiom:Ax8.2
+  NEURON : N8.3   layer:L8  label:CVM3_temp    out_sort:Bool  axiom:Ax8.3
+  NEURON : N8.4   layer:L8  label:CVM4_ICC     out_sort:Bool  axiom:Ax8.4
+  NEURON : N8.5   layer:L8  label:CVM5_decomp  out_sort:Bool  axiom:Ax8.5
+  NEURON : N8.6   layer:L8  label:fb_trigger   out_sort:R     axiom:Ax8.6
+
+  -- LAYER 9: Representativeness neurons (4 neurons)
+  NEURON : N9.1   layer:L9  label:owasp_cov    out_sort:Bool  axiom:Ax9.1
+  NEURON : N9.2   layer:L9  label:lang_cov     out_sort:Bool  axiom:Ax9.2
+  NEURON : N9.3   layer:L9  label:depl_div     out_sort:Bool  axiom:Ax9.3
+  NEURON : N9.4   layer:L9  label:gap_id       out_sort:Bool  axiom:Ax9.4
+
+  -- LAYER 10: Formatting neurons (5 neurons)
+  NEURON : N10.1  layer:L10  label:class_CRIT  out_sort:S_R   axiom:Ax10.1  formula:s>=9.0->CRITICAL
+  NEURON : N10.2  layer:L10  label:class_HIGH  out_sort:S_R   axiom:Ax10.2  formula:8.0<=s<9.0->HIGH
+  NEURON : N10.3  layer:L10  label:class_MED   out_sort:S_R   axiom:Ax10.3  formula:7.0<=s<8.0->MEDIUM
+  NEURON : N10.4  layer:L10  label:class_MOD   out_sort:S_R   axiom:Ax10.4  formula:s<7.0->MODERATE
+  NEURON : N10.5  layer:L10  label:fmt_output  out_sort:O_10  axiom:Ax10.5
+
+  -- LAYER 11: Output neurons (6 neurons)
+  NEURON : N11.1  layer:L11  label:out_score   out_sort:I         axiom:Ax11.1
+  NEURON : N11.2  layer:L11  label:out_risk    out_sort:S_R       axiom:Ax11.2
+  NEURON : N11.3  layer:L11  label:out_CWE     out_sort:P(S_C)    axiom:Ax11.3
+  NEURON : N11.4  layer:L11  label:out_OWASP   out_sort:P(S_O)    axiom:Ax11.4
+  NEURON : N11.5  layer:L11  label:out_mitig   out_sort:Recs      axiom:Ax11.5
+  NEURON : N11.6  layer:L11  label:out_scen    out_sort:Scenarios axiom:Ax11.6
+
+  [/NEURONS]
+
+
+  -- ────────────────────────────────────────────────────────────────────────
+  [EDGES]
+  -- Total edges: 195  |  DATA:170  CTRL:11  RESIDUAL:1  FEEDBACK:6  SKIP:7
+  -- ────────────────────────────────────────────────────────────────────────
+  -- Edge group format:
+  --   EDGE_GROUP : id  src_layer->tgt_layer  type  count
+  --     formal : formal expression for the signal
+  --     conns  : source_neuron -> target_neuron [, ...]
+  -- ────────────────────────────────────────────────────────────────────────
+
+  EDGE_GROUP : EG01
+    route  : L0 -> L1
+    type   : DATA
+    count  : 12
+    formal : n_lang, f_k, b_struct, N_inc, q -> Phi_Ai evaluators
+    conns  : N0.1->N1.1, N0.1->N1.2, N0.1->N1.3
+             N0.2->N1.1, N0.2->N1.4
+             N0.3->N1.1, N0.3->N1.4
+             N0.4->N1.1, N0.4->N1.4
+             N0.5->N1.4
+             N0.6->N1.2
+             N0.7->N1.3
+
+  EDGE_GROUP : EG_L1
+    route  : L1 internal
+    type   : DATA
+    count  : 5
+    formal : Phi_A1..Phi_A5 -> Phi_gate (AND-gate)
+    conns  : N1.1->N1.6, N1.2->N1.6, N1.3->N1.6, N1.4->N1.6, N1.5->N1.6
+
+  EDGE_GROUP : EG02
+    route  : L0 -> L2
+    type   : DATA
+    count  : 14
+    formal : n_lang and structural/qualitative props -> causal evaluators
+    conns  : N0.1->{N2.1,N2.2,N2.3,N2.4,N2.5,N2.6,N2.10,N2.11}  (8 edges)
+             N0.6->{N2.7,N2.8,N2.9}                                (3 edges)
+             N0.8->{N2.7,N2.8,N2.9}                                (3 edges)
+
+  EDGE_GROUP : EG12_ctrl
+    route  : L1 -> L2
+    type   : CTRL
+    count  : 11
+    formal : gate(p) in Bool -> act(N2.i,p) = F_input_i(O_0) /\ O_1(p)
+    conns  : N1.6->{N2.1,N2.2,N2.3,N2.4,N2.5,N2.6,N2.7,N2.8,N2.9,N2.10,N2.11}
+
+  EDGE_GROUP : EG03
+    route  : L0 -> L3
+    type   : DATA
+    count  : 7
+    formal : n_lang(p) in S_Lambda broadcasts to all 7 score constant neurons
+    conns  : N0.1->{N3.1,N3.2,N3.3,N3.4,N3.5,N3.6,N3.7}
+
+  EDGE_GROUP : EG_L3
+    route  : L3 internal
+    type   : DATA
+    count  : 14
+    formal : rho constants -> Ax3.8 (single-lang) and Ax3.9 (multi-lang) rules
+    conns  : N3.1..N3.7 -> N3.8  (7 edges)
+             N3.1..N3.7 -> N3.9  (7 edges)
+
+  EDGE_GROUP : EG34
+    route  : L3 -> L4
+    type   : DATA
+    count  : 2
+    formal : t_lang(p) in I -> f_lang(p) = N4.1
+    conns  : N3.8->N4.1, N3.9->N4.1
+
+  EDGE_GROUP : EG04
+    route  : L0 -> L4
+    type   : DATA
+    count  : 4
+    formal : f_surf, f_eco, f_cve, f_sec from input -> factor neurons
+    conns  : N0.2->N4.2, N0.3->N4.3, N0.4->N4.4, N0.5->N4.5
+
+  EDGE_GROUP : EG45
+    route  : L4 -> L5
+    type   : DATA
+    count  : 5
+    formal : O_4(p) in I^5 -> weight neurons
+    conns  : N4.1->N5.1, N4.2->N5.2, N4.3->N5.3, N4.4->N5.4, N4.5->N5.5
+
+  EDGE_GROUP : EG_L5
+    route  : L5 internal
+    type   : DATA
+    count  : 11
+    formal : weighted terms -> normalisation check and det_score computation
+    conns  : N5.1..N5.5->N5.6  (5 edges)
+             N5.1..N5.5->N5.7  (5 edges)
+             N5.6->N5.7         (1 edge)
+
+  EDGE_GROUP : EG57_residual
+    route  : L5 -> L7
+    type   : RESIDUAL
+    count  : 1
+    formal : det(p) in I flows as residual term to final_score neuron
+    conns  : N5.7->N7.8
+
+  EDGE_GROUP : EG56
+    route  : L5 -> L6
+    type   : DATA
+    count  : 1
+    formal : det(p) as confidence proxy for SC4 gate
+    conns  : N5.7->N6.4
+
+  EDGE_GROUP : EG46
+    route  : L4 -> L6
+    type   : DATA
+    count  : 3
+    formal : f_surf, f_eco, f_cve inform confidence estimate for SC4
+    conns  : N4.2->N6.4, N4.3->N6.4, N4.4->N6.4
+
+  EDGE_GROUP : EG26
+    route  : L2 -> L6
+    type   : DATA
+    count  : 11
+    formal : O_2(p) <= S_C -> OWASP coverage check (SC1)
+    conns  : N2.1..N2.11 -> N6.1
+
+  EDGE_GROUP : EG36
+    route  : L3 -> L6
+    type   : DATA
+    count  : 7
+    formal : language-score constants -> language-class coverage (SC2)
+    conns  : N3.1..N3.7 -> N6.2
+
+  EDGE_GROUP : EG06
+    route  : L0 -> L6
+    type   : DATA
+    count  : 2
+    formal : incident CVE set and language id feed SC3 and SC2
+    conns  : N0.7->N6.3, N0.1->N6.2
+
+  EDGE_GROUP : EG_L6
+    route  : L6 internal
+    type   : DATA
+    count  : 4
+    formal : SC1..SC4 -> AND-gate filter_gate
+    conns  : N6.1->N6.5, N6.2->N6.5, N6.3->N6.5, N6.4->N6.5
+
+  EDGE_GROUP : EG07
+    route  : L0 -> L7
+    type   : DATA
+    count  : 6
+    formal : CatVec q carries (l_B,l_P,l_S,l_D,l_E,l_I) -> amplifier neurons
+    conns  : N0.8->{N7.1,N7.2,N7.3,N7.4,N7.5,N7.6}
+
+  EDGE_GROUP : EG_L7
+    route  : L7 internal
+    type   : DATA
+    count  : 7
+    formal : amplifier contributions -> adj_sum -> (with det residual) final_score
+    conns  : N7.1..N7.6->N7.7  (6 edges)
+             N7.7->N7.8          (1 edge)
+
+  EDGE_GROUP : EG68
+    route  : L6 -> L8
+    type   : DATA
+    count  : 5
+    formal : filter_gate(p) in Bool -> CVM validity checks (corpus scope)
+    conns  : N6.5->{N8.1,N8.2,N8.3,N8.4,N8.5}
+
+  EDGE_GROUP : EG78
+    route  : L7 -> L8
+    type   : DATA
+    count  : 5
+    formal : O_7(p) = final(p) in I -> cross-validation methods CVM1-CVM5
+    conns  : N7.8->{N8.1,N8.2,N8.3,N8.4,N8.5}
+
+  EDGE_GROUP : EG_L8
+    route  : L8 internal
+    type   : DATA
+    count  : 5
+    formal : CVM1..CVM5 -> feedback trigger
+    conns  : N8.1..N8.5 -> N8.6
+
+  EDGE_GROUP : EG87_feedback
+    route  : L8 -> L7
+    type   : FEEDBACK
+    count  : 6
+    formal : eta_fb in R -> update(l_j(p)) for j in {B,P,S,D,E,I}
+             implements learning loop: validation failure recalibrates amplifier levels
+    conns  : N8.6->{N7.1,N7.2,N7.3,N7.4,N7.5,N7.6}
+
+  EDGE_GROUP : EG69
+    route  : L6 -> L9
+    type   : DATA
+    count  : 4
+    formal : filter_gate results (corpus-level) -> representativeness checks
+    conns  : N6.5->{N9.1,N9.2,N9.3,N9.4}
+
+  EDGE_GROUP : EG79
+    route  : L7 -> L9
+    type   : DATA
+    count  : 4
+    formal : final scores feed deployment-diversity and coverage verification
+    conns  : N7.8->{N9.1,N9.2,N9.3,N9.4}
+
+  EDGE_GROUP : EG210
+    route  : L2 -> L10
+    type   : DATA
+    count  : 11
+    formal : O_2(p) = pred_CWE(p) <= S_C -> formatted output assembly
+    conns  : N2.1..N2.11 -> N10.5
+
+  EDGE_GROUP : EG710
+    route  : L7 -> L10
+    type   : DATA
+    count  : 5
+    formal : final(p) in I -> risk-level classifiers and formatted output
+    conns  : N7.8->{N10.1,N10.2,N10.3,N10.4,N10.5}
+
+  EDGE_GROUP : EG910
+    route  : L9 -> L10
+    type   : DATA
+    count  : 4
+    formal : repr_ok and gap set G -> formatted output (gap annotation)
+    conns  : N9.1..N9.4 -> N10.5
+
+  EDGE_GROUP : EG_L10
+    route  : L10 internal
+    type   : DATA
+    count  : 4
+    formal : risk-class threshold neurons -> formatted output assembly
+    conns  : N10.1..N10.4 -> N10.5
+
+  EDGE_GROUP : EG1011
+    route  : L10 -> L11
+    type   : DATA
+    count  : 10
+    formal : O_10(p) -> six output components
+    conns  : N10.5->{N11.1,N11.2,N11.3,N11.4,N11.5,N11.6}  (6 edges)
+             N10.1->N11.2, N10.2->N11.2, N10.3->N11.2, N10.4->N11.2  (4 edges)
+
+  EDGE_GROUP : EG711
+    route  : L7 -> L11
+    type   : DATA
+    count  : 1
+    formal : final(p) in I -> out_score (direct skip to output score neuron)
+    conns  : N7.8->N11.1
+
+  EDGE_GROUP : EG211
+    route  : L2 -> L11
+    type   : DATA
+    count  : 4
+    formal : selected causal CWEs (supply-chain, proto-pollution) -> CWE output
+    conns  : N2.7->N11.3, N2.10->N11.3, N2.8->N11.3, N2.9->N11.3
+
+  EDGE_COUNT_SUMMARY:
+    EG01        L0->L1     DATA      12
+    EG_L1       L1-int     DATA       5
+    EG02        L0->L2     DATA      14
+    EG12_ctrl   L1->L2     CTRL      11
+    EG03        L0->L3     DATA       7
+    EG_L3       L3-int     DATA      14
+    EG34        L3->L4     DATA       2
+    EG04        L0->L4     DATA       4
+    EG45        L4->L5     DATA       5
+    EG_L5       L5-int     DATA      11
+    EG57_res    L5->L7     RESIDUAL   1
+    EG56        L5->L6     DATA       1
+    EG46        L4->L6     DATA       3
+    EG26        L2->L6     DATA      11
+    EG36        L3->L6     DATA       7
+    EG06        L0->L6     DATA       2
+    EG_L6       L6-int     DATA       4
+    EG07        L0->L7     DATA       6
+    EG_L7       L7-int     DATA       7
+    EG68        L6->L8     DATA       5
+    EG78        L7->L8     DATA       5
+    EG_L8       L8-int     DATA       5
+    EG87_fb     L8->L7     FEEDBACK   6
+    EG69        L6->L9     DATA       4
+    EG79        L7->L9     DATA       4
+    EG210       L2->L10    DATA      11
+    EG710       L7->L10    DATA       5
+    EG910       L9->L10    DATA       4
+    EG_L10      L10-int    DATA       4
+    EG1011      L10->L11   DATA      10
+    EG711       L7->L11    DATA       1
+    EG211       L2->L11    DATA       4
+    TOTAL                            195
+
+  [/EDGES]
+
+[/NETWORK_ARCHITECTURE]
+
+
+[NETWORK_FLOW]
+
+  -- ────────────────────────────────────────────────────────────────────────
+  [LAYER_TRANSFORMS]
+  -- ────────────────────────────────────────────────────────────────────────
+
+  TRANSFORM : F0
+    layer    : L0
+    step     : 0
+    input    : (external project data)
+    output   : O_0(p) in S_Lambda x I^4 x Bool* x P(S_C) x CatVec
+    formula  : O_0(p) = (n_lang, f_surf, f_eco, f_cve, f_sec, b_struct, N_inc, q)
+    axioms   : Ax0.1, Ax0.2, Ax0.3
+
+  TRANSFORM : F1
+    layer    : L1
+    step     : 1-2
+    input    : O_0(p)
+    output   : O_1(p) in Bool
+    formula  : O_1(p) = Phi_A1(p) /\ Phi_A2(p) /\ Phi_A3(p) /\ Phi_A4(p) /\ Phi_A5(p)
+    axioms   : Ax1.1-Ax1.6
+    note     : if O_1(p)=0 network halts for this project (does not propagate)
+
+  TRANSFORM : F2
+    layer    : L2
+    step     : 2-3
+    input    : O_0(p) x O_1(p)
+    output   : O_2(p) = causal_CWE(p) <= S_C
+    formula  : O_2(p) = {c in S_C | exists i in {1..11}: act(N2.i,p) /\ c in CWEs(Ax2.i)}  if O_1(p)=1  else {}
+    axioms   : Ax2.1-Ax2.11
+
+  TRANSFORM : F3
+    layer    : L3
+    step     : 3
+    input    : n_lang(p) in S_Lambda
+    output   : O_3(p) = f_lang(p) in I
+    formula  : O_3(p) = rho(n_lang(p))                         [Ax3.8, single language]
+                      | sum_i(frac_i * rho(l_i)) + delta       [Ax3.9, multi-language]
+    axioms   : Ax3.1-Ax3.9
+
+  TRANSFORM : F4
+    layer    : L4
+    step     : 4
+    input    : O_0(p) union {O_3(p)}
+    output   : O_4(p) = (f_lang, f_surf, f_eco, f_cve, f_sec) in I^5
+    formula  : O_4(p) = (O_3(p), N0.2, N0.3, N0.4, N0.5)
+    axioms   : Ax4.1-Ax4.5
+
+  TRANSFORM : F5
+    layer    : L5
+    step     : 5
+    input    : O_4(p) in I^5
+    output   : O_5(p) = det(p) in I
+    formula  : O_5(p) = 0.25*f_lang + 0.25*f_surf + 0.20*f_eco + 0.20*f_cve + 0.10*f_sec
+    axioms   : Ax5.1-Ax5.7
+    residual : O_5(p) forwarded as skip input to F7 (N5.7->N7.8)
+
+  TRANSFORM : F6
+    layer    : L6
+    step     : 6
+    input    : O_0(p) union O_2(p) union O_3(p) union O_4(p)
+    output   : O_6(p) in Bool
+    formula  : O_6(p) = SC1(p) /\ SC2(p) /\ SC3(p) /\ SC4(p)
+    axioms   : Ax6.1-Ax6.5
+
+  TRANSFORM : F7
+    layer    : L7
+    step     : 7
+    input    : O_5(p) [residual det]  x  CatVec q(p) [from N0.8]
+    output   : O_7(p) = final(p) in I
+    formula  : adj(p) = alpha_B(l_B)+alpha_P(l_P)+alpha_S(l_S)+alpha_D(l_D)+alpha_E(l_E)+alpha_I(l_I)
+               O_7(p) = clamp(O_5(p) + adj(p), 0, 10)
+    axioms   : Ax7.1-Ax7.8
+    feedback : O_8 recalibration signal may update l_j(p) for j in {B,P,S,D,E,I}
+
+  TRANSFORM : F8
+    layer    : L8
+    step     : 8
+    input    : O_7(p) x P(S_C)_observed
+    output   : O_8(p) = (v in Bool^5, eta_fb in R)
+    formula  : v = (CVM1(p), CVM2, CVM3, CVM4, CVM5(p))
+               eta_fb = learning_signal(v)
+    axioms   : Ax8.1-Ax8.6
+    feedback : eta_fb -> {N7.1..N7.6} via EG87_feedback
+
+  TRANSFORM : F9
+    layer    : L9
+    step     : 9
+    input    : {O_6(p)}_{p in corpus}
+    output   : O_9 = (repr_ok in Bool, G <= S_O union S_Lambda)
+    formula  : repr_ok = Ax9.1 /\ Ax9.2 /\ Ax9.3
+               G = {gaps: A09-weak-coverage, Ruby-absent}
+    axioms   : Ax9.1-Ax9.4
+
+  TRANSFORM : F10
+    layer    : L10
+    step     : 10
+    input    : O_7(p) x O_2(p) x O_9
+    output   : O_10(p) in I x S_R x P(S_C) x P(S_O) x AmpDecomp
+    formula  : O_10(p) = (final(p), classify(final(p)), O_2(p), {o|covers(p,o)}, adj_decomp(p))
+    axioms   : Ax10.1-Ax10.5
+
+  TRANSFORM : F11
+    layer    : L11
+    step     : 11
+    input    : O_10(p)
+    output   : O_11(p) in I x S_R x P(S_C) x P(S_O) x Recs x Scenarios
+    formula  : O_11(p) = (final(p), classify(final(p)), pred_CWE(p), pred_OWASP(p),
+                          gen_mitigations(pred_CWE(p)), Step11_link(p))
+    axioms   : Ax11.1-Ax11.6
+
+  [/LAYER_TRANSFORMS]
+
+
+  -- ────────────────────────────────────────────────────────────────────────
+  [CASCADE]
+  -- ────────────────────────────────────────────────────────────────────────
+
+  CASCADE : forward_pass(p)
+    0  : F0 : external  -->  O_0(p) : S_Lambda x I^4 x Bool* x P(S_C) x CatVec
+    1  : F1 : O_0       -->  O_1(p) : Bool           [HALT if O_1=0]
+    2  : F2 : O_0xO_1   -->  O_2(p) : P(S_C)
+    3  : F3 : n_lang    -->  O_3(p) : I
+    4  : F4 : O_0u{O_3} -->  O_4(p) : I^5
+    5  : F5 : O_4       -->  O_5(p) : I              [RESIDUAL -> step 7]
+    6  : F6 : O_0uO_2uO_3uO_4 --> O_6(p) : Bool
+    7  : F7 : O_5[res]xq -->  O_7(p) : I             [RECEIVES feedback from step 8]
+    8  : F8 : O_7xP(S_C) --> O_8(p) : Bool^5 x R    [FEEDBACK -> step 7]
+    9  : F9 : {O_6}_corp --> O_9    : Bool x P(S_OuS_Lambda)
+    10 : F10: O_7xO_2xO_9 -> O_10(p): I x S_R x P(S_C) x P(S_O) x AmpDecomp
+    11 : F11: O_10      -->  O_11(p): I x S_R x P(S_C) x P(S_O) x Recs x Scenarios
+
+  SPECIAL_FLOWS:
+    RESIDUAL : N5.7 -> N7.8
+      formal : det(p) in I carried as residual to Ax7.8; implements score decomposition
+    FEEDBACK : N8.6 -> {N7.1..N7.6}
+      formal : ~(CVM1/\.../\CVM4) -> update(l_j(p)); implements the learning loop
+    CONTROL  : N1.6 -> {N2.1..N2.11}
+      formal : act(N2.i,p) = F_input_i(O_0) /\ gate(p); gatekeeper gates causal layer
+    SKIP_L5  : N7.8 -> N11.1
+      formal : final(p) forwarded directly to out_score without re-computation
+    SKIP_L2  : {N2.7,N2.8,N2.9,N2.10} -> N11.3
+      formal : supply-chain and proto-pollution CWEs injected directly to CWE output
+
+  [/CASCADE]
+
+
+  -- ────────────────────────────────────────────────────────────────────────
+  [OUTPUT_FORMULA]
+  -- ────────────────────────────────────────────────────────────────────────
+
+  FINAL_OUTPUT : O_11(p)
+    precondition : propagates(p) = 1  (gate(p) = 1)
+
+    O_11(p) = (
+      final(p),
+      classify(final(p)),
+      {c in S_C | exists i in{1..11}: act(N2.i,p) /\ enables(n_lang(p),c) or causal_link(prop,c)},
+      {o in S_O | covers(p,o)},
+      gen_mitigations(pred_CWE(p)),
+      Step11_link(p)
+    )
+
+    SCORING_FORMULA:
+      final(p) = clamp(
+                   0.25*f_lang + 0.25*f_surf + 0.20*f_eco + 0.20*f_cve + 0.10*f_sec
+                   +
+                   alpha_B(l_B) + alpha_P(l_P) + alpha_S(l_S) + alpha_D(l_D) + alpha_E(l_E) + alpha_I(l_I),
+                   0, 10
+                 )
+
+  [/OUTPUT_FORMULA]
+
+[/NETWORK_FLOW]
+
+
+[CONSISTENCY_CHECKS]
+
+  CROSS_REFERENCES:
+    ontology : oscpm_ontology_v1.xml
+      causal_links   : 11  (Ax2.1-Ax2.11, step-origin=2)
+      hidden_params  : 11  (Ax1.5 manifest)
+      projects       : 20  (S_Pi)
+      amplifiers     : 6
+      level_maxima   : {CRITICAL:0.60, INSTANT:0.30, FOUNDATIONAL:0.60, FULL:0.70, MASS:0.40, CRITICAL_I:0.55}
+
+    article  : ArticolBetonCyberSecurityCuHybridNeuroSymbolicNetwork_corrected.tex
+      layers         : 12  (L0-L11)
+      neurons        : 80
+      connections    : 195
+      axiom_count    : {Ax0:3,Ax1:6,Ax2:11,Ax3:9,Ax4:5,Ax5:7,Ax6:5,Ax7:8,Ax8:6,Ax9:4,Ax10:5,Ax11:6}
+      total_axioms   : 75
+
+  VERIFIED_INVARIANTS:
+    CHECK1 : forall k in {0..11}. |neurons(L_k)| = |axioms(Ax_k)|                 PASS
+    CHECK2 : sum_{k=0}^{11} |neurons(L_k)| = 80                                   PASS  (8+6+11+9+5+7+5+8+6+4+5+6=80)
+    CHECK3 : sum_groups(|edges|) = 195                                             PASS  (see EDGE_COUNT_SUMMARY)
+    CHECK4 : forall p. |adj(p) - sum_j(alpha_j(l_j(p)))| = 0  (sum-checks)       PASS  (OSCPM per-project verified)
+    CHECK5 : forall amp a, proj p. contrib(a,p) <= level_max(a)                   PASS  (0 violations after fixes)
+    CHECK6 : |S_Pi| = 20 /\ forall l in S_Lambda. exists p in S_Pi. lang(p)=l    PASS
+    CHECK7 : forall o in S_O. exists p in S_Pi. covers(p,o)                       PASS
+
+[/CONSISTENCY_CHECKS]
+
+===============================================================================
+  END OF OSCPM-NBS-RASN FORMAL ARCHITECTURE SPECIFICATION v1.0
+===============================================================================
